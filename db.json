@@ -1,0 +1,104 @@
+{
+  "team": [
+    {
+      "id": 1,
+      "name": "asad",
+      "email": "asad.akberweb@gmail.com",
+      "phone": "03462840459",
+      "state": "sindh",
+      "city": "karachi",
+      "zipcode": "75850"
+    },
+    {
+      "name": "asad",
+      "email": "asad.akbarlogo@gmail.com",
+      "phone": "1234567890",
+      "state": "sindh",
+      "city": "",
+      "zipcode": "75850",
+      "id": 2
+    },
+    {
+      "name": "ali",
+      "email": "ali @gmail.com",
+      "phone": "1234567890",
+      "state": "punjab",
+      "city": "lahore",
+      "zipcode": "75850",
+      "id": 3
+    },
+    {
+      "name": "ahmed",
+      "email": "ahmed@gmail.com",
+      "phone": "0987654321",
+      "state": "balochistan",
+      "city": "islamabad",
+      "zipcode": "79067",
+      "id": 4
+    },
+    {
+      "name": "daniyal",
+      "email": "daniyal@gmail.com",
+      "phone": "0987664321",
+      "state": "balochistan",
+      "city": "islamabad",
+      "zipcode": "56789",
+      "id": 12
+    },
+    {
+      "name": "asad",
+      "email": "asad@gmail.com",
+      "phone": "093458890",
+      "state": "punjab",
+      "city": "islamabad",
+      "zipcode": "12345",
+      "id": 13
+    },
+    {
+      "name": "affan",
+      "email": "affan@gmail.com",
+      "phone": "0987654321",
+      "state": "balochistan",
+      "city": "islamabad",
+      "zipcode": "76590",
+      "id": 14
+    },
+    {
+      "name": "osama",
+      "email": "osama@gmail.com",
+      "phone": "0987654321",
+      "state": "punjab",
+      "city": "lahore",
+      "zipcode": "56098",
+      "id": 15
+    },
+    {
+      "url": "",
+      "name": "faizan",
+      "email": "faizan@livewireapps.com",
+      "phone": "5678904321",
+      "state": "punjab",
+      "city": "lahore",
+      "zipcode": "45678",
+      "id": 16
+    },
+    {
+      "name": "a",
+      "email": "a@gmail.com",
+      "phone": "9876543210",
+      "state": "sindh",
+      "city": "karachi",
+      "zipcode": "78969",
+      "id": 17
+    },
+    {
+      "name": "b",
+      "email": "b@gmail.com",
+      "phone": "0987654321",
+      "state": "sindh",
+      "city": "karachi",
+      "zipcode": "56789",
+      "id": 18
+    }
+  ]
+}
