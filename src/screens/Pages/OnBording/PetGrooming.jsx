@@ -1,15 +1,18 @@
 import React, {useState} from 'react'
-import { Layout, Card, Form, Upload, Input, Radio, TimePicker, message, Checkbox, Avatar, Popover, Modal, Divider } from 'antd'
+import { Layout, Card, Select, Calendar, Form, Upload, Input, Radio, TimePicker, message, Checkbox, Avatar, Popover, Modal, Divider } from 'antd'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import '../../../customcss/custom.css'
-import { LoadingOutlined, PlusOutlined,  MailFilled, UploadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, ClockCircleFilled,  MailFilled, UploadOutlined, PercentageOutlined } from '@ant-design/icons';
 import AddIcon from '@mui/icons-material/Add';
 import sheep from '../../../assets/images/sheep.png'
 import avatar from '../../../assets/images/avatar.png'
 import avatar1 from '../../../assets/images/avatar1.png'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
+import WelcomeScreen from '../WelcomeScreen'
+
+
 
 import moment from 'moment';
 import {
@@ -22,7 +25,7 @@ import {
   } from "@mui/material";
   import rightarrows from '../../../assets/images/rightarrows.png'
 
-
+  const {Option } = Select
 
 function getSteps() {
     return [
@@ -71,19 +74,89 @@ function getSteps() {
     }
     return isJpgOrPng && isLt2M;
   }
+  
+  const weekday = [];
+const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",];
 
-  function PetGrommingForms() {
-    const [ loading, setLoading ] = useState(false);
-    const [value, setValue] = React.useState(1);
+const selectWeekDays = day => {
+  console.log("day", day);
+  let wD = weekday;
+  let index = wD.findIndex(d => d === day);
+  if (index > -1) {
+    wD.splice(index, 1);
+  } else {
+    wD.push(day);
+  }
 
-    const onChange = e => {
-        console.log('radio checked', e.target.value);
-        setValue(e.target.value);
-      };
+  const dayElement = document.getElementById(day);
+  dayElement.classList.toggle("selected-day");
 
+  
+  console.log("wD", weekday);
+};
 
-    const { imageUrl } = loading
+const selectedWeekdays = days => {
+  let index = weekday.findIndex(d => days.value === d);
 
+  console.log(index, "index");
+ 
+  if (index > -1) {
+    console.log(days, "INSIE INDEX COLOR");
+  }
+  console.log(days);
+  return (
+    <Avatar
+      id={days}
+      onClick={() => selectWeekDays(days)}
+      className="week-days"
+      key={days}
+    >
+      {days}
+    </Avatar>
+  );
+};
+
+  function GetSteppers() {
+  
+    const [Loading, setLoading] = useState(false);
+    // const [sat, setSat] = useState(false)
+    // const [sun, setSun] = useState(false)
+    const [chars_left, setCharLeft] = useState(1800)
+    const [max_char, setMaxChar] = useState(1800)
+    const [isValidPercentage, setIsValidPercentage] = useState(false);
+    const [message, setMessage] = useState("")
+    const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+    const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+    const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
+    const [end1SelectedTime, setEnd1SelectedTime] = useState("00:00")
+    const [isModalVisible, setIsModalVisible] = useState(false);
+   
+  
+    const percentageRegex = /(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i;
+  
+    const validPercentage = (e) => {
+      const percentage = e.target.value
+      if(percentage == "") {
+        setIsValidPercentage(false);
+        setMessage('Percentage is Required');
+      }
+      else if(percentageRegex.test(percentage)) {
+        setIsValidPercentage(true);
+          setMessage('');
+      } else {
+        setIsValidPercentage(false);
+        setMessage('Percentage is not valid');
+      }
+    }
+  
+    const handleWordCount = (e) => {
+      const charCount = e.target.value.length
+      const maxChar = max_char;
+      const charLength = maxChar - charCount;
+      setCharLeft(charLength)
+    }
+  
+  
     const handleChange = info => {
       if (info.file.status === 'uploading') {
         this.setState({ loading: true });
@@ -100,125 +173,288 @@ function getSteps() {
       }
     };
   
+    const { imageUrl } = Loading
   
     const uploadButton = (
       <div>
-        {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        <div style={{ marginTop: 8 }}>Upload</div>
+        {Loading ? <LoadingOutlined /> : <PlusOutlined className='plus-outlined' />}
+        <div style={{ marginTop: 8 }}>Logo</div>
       </div>
     );
-      return(
-          <>
-           <div className='container-fluid g-0'>
-        <div className='row'>
-          <div className='col-12 col-md-12'>
-            
-            <div>
-            <Upload
-                name="avatar"
-                listType="picture-card"
-                className="avatar-uploader uploaders text-center"
-                showUploadList={false}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                beforeUpload={beforeUpload}
-                onChange={handleChange}
-              >
-                {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-              </Upload>
-            <label htmlFor=""> Description *</label>
-            <TextArea rows={4} className='text-area'  />
-            <div className='mt-3'>
-              <label htmlFor="">Days of the week *</label>
-              <br />
-              <Button className='col-radius actives'>Mon</Button>
-              <Button  className='col-radius ms-3 actives'>Tue</Button>
-              <Button  className='col-radius ms-3 actives'>Wed</Button>
-              <Button  className='col-radius ms-3 actives'>Thu</Button>
-              <Button  className='col-radius ms-3 actives'>Fri</Button>
-              <Button className='col-radius bg-colors ms-3'>Sat</Button>
-              <Button className='col-radius bg-colors ms-3'>Sun</Button>
-            </div>
-
-            <div className='row'>
-              <div className='col-md-6'>
-                <div className='mt-3'>
-                  <label htmlFor="">Business Timings *</label>
-                  <br />
-                  <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' />
-                </div>
-              </div>
-
-              <div className='col-md-6'>
-                <div className='mt-3'>
-                  <label htmlFor="">Break Timings *</label>
-                  <br />
-                  <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' />
-                </div>
-              </div>
-            </div>
-            <div className='row'>
-              <div className='col-12 col-md-6'>
-                <div className='mt-5'>
-                  <Link to="/petgroomingcalender">
-                  <Button className='col-12 grey-color' variant='outlined' endIcon={<AddIcon />}><Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography></Button></Link>
-                </div>
-              </div>
-              <div className='col-12 col-md-6'>
-                <div className='mt-4'>
-                  <label htmlFor="">Tax Percentage</label>
-                  <Input className='grey-color mt-2' />
-                </div>
-              </div>
-            </div>
-       </div>
-       </div>
-        </div>
-      </div>
-          </>
-      )
-  }
-
-  function AddServices() {
-    const [cat, setCat] = useState(true)
-
-    const [horse, setHorse] = useState(true)
-    const [parrot, setParrot] = useState(true)
   
-    const CatFunc = () => {
-      setCat(!cat)
+    function onChange(time, timeString) {
+      console.log(time, timeString);
     }
+  
+   
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
   
     
-    const HorseFunc = () => {
-      setHorse(!horse)
+    function onPanelChange(value, mode) {
+      console.log(value, mode);
+    }
+    return(
+      <>
+  <div className='container-fluid g-0 postions'>
+          <div className='row'>
+            <div className='col-12 col-md-12'>
+              
+              <div>
+              <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader uploaders text-center"
+                  showUploadList={false}
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  beforeUpload={beforeUpload}
+                  onChange={handleChange}
+                >
+                  {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                </Upload>
+              <label htmlFor=""> Description *</label>
+              <TextArea 
+                rows={4} 
+                id='value' 
+                className='text-area' 
+                maxLength="1800"
+                onChange={handleWordCount}
+              />
+              <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+              <div className='mt-5'>
+                <label htmlFor="">Days of the week *</label>
+                <br />
+                <div className='d-flex flex-row'>
+                  {weekDays.map((days, index) => selectedWeekdays(days))}
+                </div>
+              </div>
+  
+              <div className='row'>
+                <div className='col-md-6'>
+                  <div className='mt-3'>
+                    <label htmlFor="">Business Timings *</label>
+                    <br />
+                    {/* <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' /> */}
+                    <TimePicker 
+                      placeholder='Start Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2 timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(startSelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setStartSelectedTime(timeString)
+                      }}
+                    />
+                    
+                   <TimePicker 
+                      placeholder='End Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2 ms-3 timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(endSelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setEndSelectedTime(timeString)
+                      }}
+                    />
+                  </div>
+                </div>
+  
+                <div className='col-md-6'>
+                  <div className='mt-3'>
+                    <label htmlFor="">Break Timings *</label>
+                    <br />
+                    {/* <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' /> */}
+                    <TimePicker 
+                      placeholder='Start Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2  timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(start1SelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setStart1SelectedTime(timeString)
+                      }}
+                    />
+                   <TimePicker 
+                      placeholder='End Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2 ms-3 timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(end1SelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setEnd1SelectedTime(timeString)
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col-12 col-md-6'>
+                  <div className='mt-5'>
+                    {/* <Link to='/calender'> */}
+                    <Button className='col-12 grey-color mt-1' variant='outlined' endIcon={<AddIcon />} onClick={showModal}>
+                      <Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography>
+                    </Button>
+            
+                    <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <div className="site-calendar-demo-card">
+                        <Calendar fullscreen={false} onPanelChange={onPanelChange} />
+                        
+                      </div>
+                      <Form.Item
+                          name="name"
+                          className='place mt-3'
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Please input your name!',
+                            },
+                          ]}
+                        >
+                          <Input  placeholder=' Enter Holiday Name'  className='name' />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>Add</Button>
+                          <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>Cancel</Button>
+                        </Form.Item>
+                    </Modal>
+                    <Button ></Button>
+                    {/* </Link> */}
+                  </div>
+                </div>
+                <div className='col-12 col-md-6'>
+                  <div className='mt-4'>
+                    <label htmlFor="">Tax Percentage</label>
+                    <Input onKeyPress={(event) => {
+                                              if (!/[0-9]/.test(event.key)) {
+                                              event.preventDefault();
+                                              }
+                                          }} onChange={validPercentage} suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
+                      {message && <span className={`message ${isValidPercentage ? 'success' : 'error'}`}>{message}</span>}
+                  </div>
+                </div>
+              </div>
+         </div>
+         </div>
+          </div>
+        </div>
+      </>
+    )
+  }
+  
+  const animal = [];
+  const animalName = ["Dog", "Cat", "Horse", "Parrot"];
+  
+  const selectAnimal = animals => {
+    console.log(animal)
+    console.log("animal", animals);
+    let SA = animal;
+    let index = SA.findIndex(animal => animal === animals);
+    if (index > -1) {
+      SA.splice(index, 1);
+    } else {
+      SA.push(animals);
     }
   
-    const ParrotFunc = () => {
-      setParrot(!parrot)
+    const dayElement = document.getElementById(animals);
+    dayElement.classList.toggle("selected-day");
+  
+    
+    console.log("SA", animal);
+  };
+  
+  const selectedAnimals = animals => {
+    let index = animal.findIndex(animal => animals.value === animal);
+  
+    console.log(index, "index");
+   
+    if (index > -1) {
+      console.log(animals, "INSIE INDEX COLOR");
     }
+    console.log(animals);
+    return (
+          <div className='col-12 col-md-5 mt-2'>
+            <Button
+            id={animals}
+            onClick={() => selectAnimal(animals)}
+            className="week-days week-btns"
+            key={animals}
+          >
+            {animals}
+          </Button>
+        </div>
+    );
+  };
+
+
+  function AddServices() {
       return(
           <>
           <div className='container-fluid g-0'>
               <div className='row'>
                   <div className='col-12 col-md-12'>
-                    <Card className='color-sky-blue' style={{width: 500}}>
+                    <Card className='color-sky-blue' style={{width: 550}}>
                     <div className='d-flex flex-row justify-content-between align-items-center'>
                         <p className='text-white fs-6'>Please Select the animal categories for  <h5 className='text-white mt-3'>Pet Grooming</h5></p>
                             <img src={sheep} alt="" className='img-fluid max-fluid'  />
                         </div>
                     </Card>
                     <div className='mt-4'>
-         <Button id='inActive' className='col-radius activeted col-4' variant="contained" color="primary"><Typography style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Typography></Button>
-         <Button id='inActive' onClick={CatFunc} className={(cat ? 'greyColor' : 'orangeColor') + ' ms-3 col-4 '} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
-         <br />
-         <Button id='inActive' onClick={HorseFunc} className={(horse ? 'greyColor mt-3 col-4' : 'orangeColor mt-3 col-4') + ''} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
-         <Button id='inActive' className='mt-3 col-radius activeted  ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
-         <br />
-         <Button id='inActive' className='mt-3 col-radius activeted  col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Button>
-         <Button id='inActive' className='mt-3 col-radius bg-colors ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
-         <br />
-         <Button id='inActive' className='mt-3 col-radius bg-colors col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
-         <Button id='inActive' onClick={ParrotFunc} className={(parrot ? 'greyColor mt-3 ms-3 col-4' : 'orangeColor mt-3 ms-3 col-4') + ''} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
+                    <div className='row'>
+                      {animalName.map((animals, index) => selectedAnimals(animals))}
+                    </div>
          </div>
                   </div>
               </div>
@@ -229,7 +465,39 @@ function getSteps() {
   }
 
   function AddCategory() {
-      
+    const [value, setValue] = useState(1)
+    const [chars_left, setCharLeft] = useState(1800)
+    const [max_char, setMaxChar] = useState(1800)
+
+    function handleChange(value) {
+      console.log(`selected ${value}`);
+    }
+
+    const handleWordCount = (e) => {
+      const charCount = e.target.value.length
+      const maxChar = max_char;
+      const charLength = maxChar - charCount;
+      setCharLeft(charLength)
+    }
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+
+    function onPanelChange(value, mode) {
+      console.log(value, mode);
+    }
+
     function onChange(e) {
         console.log(`checked = ${e.target.checked}`);
       }
@@ -245,11 +513,124 @@ function getSteps() {
                             </div>
                         </Card>
                         <div className='mt-4'>
-                            <Link to="/addservices">
-                                <Button className='bg-services col-4' variant="contained" endIcon={<AddIcon />}>
-                                    Add a new Services
-                                </Button>
-                            </Link>
+                            {/* <Link to="/addservices"> */}
+                            <Button className='bg-services col-4' variant='contained' endIcon={<AddIcon />} onClick={showModal}>
+                                Add a new Services
+                            </Button>
+          
+                  <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                  <label htmlFor="" className='ms-4'>Service Type *</label>
+                        <br />
+                        <Radio.Group onChange={onChange} value={value} className='ms-2'> 
+                                        <Radio className='radio ms-3' value={1}> <span className='ms-1'>One-Site</span></Radio>
+                                        <Radio value={2} className='radio mt-3'><span className='ms-1'>Off-Site</span></Radio>
+                                        <Radio value={3} className='radio mt-3'><span className='ms-1'>Both</span></Radio>
+                                    </Radio.Group>
+
+                                    <Form
+                        name="basic"
+     
+                        initialValues={{
+                          remember: true,
+                        }}
+                       
+                        autoComplete="off"
+                    >
+                        <div className='container'>
+                            <div className='row'>
+                                <div className='col-12 col-md-6 mt-3'>
+                                    <label htmlFor="">Service Name *</label>
+                                    <Form.Item
+                                      name="servicename"
+                                      className='place place-radius'
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: 'Please input your Services Name!',
+                                        },
+                                      ]}
+                                    >
+                                        <Input placeholder='Hair Dressing' />
+                                    </Form.Item>
+                                </div>
+
+                                <div className='col-12 col-md-6 mt-3'>
+                                    <label htmlFor="">Select Duration *</label>
+                                    <Form.Item
+                                      name="selectduration"
+                                      className='place place-radius'
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: 'Please input your email!',
+                                        },
+                                      ]}
+                                    >
+                                       <Select defaultValue="lucy"  onChange={handleChange}>
+                                            <Option value="jack">30 Mins</Option>
+                                            <Option value="lucy">40 Mins</Option>
+                                            <Option value="Yiminghe">50 Mins</Option>
+                                        </Select>
+                                    </Form.Item>
+
+
+                                </div>
+
+                                <div className='col-12 col-md-6'>
+                                    <label htmlFor="">One Site Price *</label>
+                                    <Form.Item
+                                      name="onesiteprice"
+                                      className='place place-radius'
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: 'Please input your Price!',
+                                        },
+                                      ]}
+                                    >
+                                     <Input placeholder='$99' />
+                                    </Form.Item>
+
+                                    
+                                </div>
+                                <div className='col-12 col-md-12'>
+                                    <label htmlFor="">Description *</label>
+                                    <Form.Item
+                                      name="description"
+                                      className='place place-radius'
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: 'Please input your Price!',
+                                        },
+                                      ]}
+                                    >
+                                     <TextArea  onChange={handleWordCount} maxLength="300"  rows={4} />
+                                     <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+                                    </Form.Item>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </Form>
+                   <div className='container'>
+                   <Form.Item
+       
+       >
+      
+         <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+           Add
+         </Button>
+         <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+           cancel
+         </Button>
+       </Form.Item>
+       </div>
+                  </Modal>
+                                {/* <Button className='bg-services col-4' variant="contained" endIcon={<AddIcon />}>
+                                   
+                                </Button> */}
+                            {/* </Link> */}
                             <br />
                             <Checkbox className='mt-4 col-4 grroming-hair'>Hair Grooming</Checkbox>
                             <Checkbox className='mt-4 col-4 grroming-hair'>Lice Treatment</Checkbox>
@@ -263,25 +644,356 @@ function getSteps() {
       )
   }
 
-  function TeamMembers() {
-      return(
-          <>
-            <div className='container-fluid g-0'>
-          <div className='row'>
-            <div className='col-12 col-md-12'>
-              <h6>Manage Team Members</h6>
-          
-            <div className='mt-5'> 
-            <Link to="/BusinessProviderServicesForms">  
-                <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='float-left' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button>
-            </Link> 
-            </div>
-         </div>
-          </div>
-        </div>
-          </>
-      )
+
+  const week = [];
+const Days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",];
+
+const selectWeek = day => {
+  console.log("day", day);
+  let wD = week;
+  let index = wD.findIndex(d => d === day);
+  if (index > -1) {
+    wD.splice(index, 1);
+  } else {
+    wD.push(day);
   }
+
+  const dayElement = document.getElementById(day);
+  dayElement.classList.toggle("selected-day");
+
+  
+  console.log("wD", week);
+};
+
+const selecteddays = days => {
+  let index = week.findIndex(d => days.value === d);
+
+  console.log(index, "index");
+ 
+  if (index > -1) {
+    console.log(days, "INSIE INDEX COLOR");
+  }
+  console.log(days);
+  return (
+    <Avatar
+      id={days}
+      onClick={() => selectWeek(days)}
+      className="week-days"
+      key={days}
+    >
+      {days}
+    </Avatar>
+  );
+};
+
+
+const expertise = [];
+const Expertise = ["Pet Grooming", "Veterinary"];
+
+const selectExpertise = day => {
+  console.log("day", day);
+  let wD = expertise;
+  let index = wD.findIndex(d => d === day);
+  if (index > -1) {
+    wD.splice(index, 1);
+  } else {
+    wD.push(day);
+  }
+
+  const dayElement = document.getElementById(day);
+  dayElement.classList.toggle("selected-day");
+
+  
+  console.log("wD", expertise);
+};
+
+const selectedExpertises = days => {
+  let index = expertise.findIndex(d => days.value === d);
+
+  console.log(index, "index");
+ 
+  if (index > -1) {
+    console.log(days, "INSIE INDEX COLOR");
+  }
+  console.log(days);
+  return (
+    <Button
+      id={days}
+      onClick={() => selectExpertise(days)}
+      className="expertise"
+      key={days}
+    >
+      {days}
+    </Button>
+  );
+};
+
+  function TeamMembers() {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+    const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+    const [value, setValue] = React.useState(1);
+
+    const onChange = e => {
+        console.log('radio checked', e.target.value);
+        setValue(e.target.value);
+      };
+
+      function onChangeTime(time, timeString) {
+        console.log(time, timeString);
+      }
+    const [ loading, setLoading ] = useState(false);
+  
+    const { imageUrl } = loading
+  
+     const handleChange = info => {
+      if (info.file.status === 'uploading') {
+        this.setState({ loading: true });
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl =>
+          this.setState({
+            imageUrl,
+            loading: false,
+          }),
+        );
+      }
+    };
+  
+  
+  
+    const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
+  
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+    return(
+      <>
+         <div className='container-fluid g-0'>
+            <div className='row'>
+              <div className='col-12 col-md-12'>
+              <h6>Manage Team Members</h6>
+              <div className='mt-5'>
+              <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"  onClick={showModal}>
+                <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography>
+              </Button>
+            
+                    <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+               
+             
+                    <Form
+                  
+                  name="basic"
+                 
+                  initialValues={{
+                    remember: true,
+                  }}
+                 
+                  autoComplete="off"
+                >
+              
+                  <div className='row'>
+                    <div className='col-12 col-md-12 text-center mt-0'>
+              
+                    <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader avatar-radius"
+                    showUploadList={false}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  </Upload>
+                    </div>
+                   
+                    <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="name"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your name!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder='Name'  className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="email"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your email!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder='Email' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="phone"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phoneNo!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder='Phone' className='name' />
+                  </Form.Item>
+                  </div>
+            
+                  <div className='col-12 col-md-6'>
+                      <label htmlFor="">Services Type *</label>
+                  <Form.Item
+                    name="state"
+                  
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your service Type!',
+                      },
+                    ]}
+                  >
+                    <Radio.Group onChange={onChange} value={value}>
+                            <Radio  value={1}>one-site</Radio>
+                            <Radio value={2}>off-site</Radio>
+                            <Radio value={3}>both</Radio>
+                        </Radio.Group>
+                        
+                  </Form.Item>
+            
+                  
+                 
+                  </div>
+                 
+                  <div className='col-12 col-md-12 '>
+                    <label htmlFor="">Work Days *</label>
+                  <Form.Item
+                    name="city"
+                 
+                  >
+                      <div className='mt-2'>
+                      <div className='d-flex flex-row'>
+                        {Days.map((days, index) => selecteddays(days))}
+                      </div>
+                        </div>
+                  </Form.Item>
+                  </div>
+                  <div className='row'>
+                  <div className='col-12 col-md-6 '>
+                      <label htmlFor="">Work Timings*</label>
+                  <Form.Item
+                    name="zipcode"
+                    className='place mt-2'
+                   
+                  >
+                    <div className='d-flex flex-row'>
+                    <TimePicker 
+                    placeholder='Start Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 timepicker-range' 
+                    onChange={onChangeTime} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(startSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setStartSelectedTime(timeString)
+                    }}
+                  />
+                  
+                 <TimePicker 
+                    placeholder='End Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 ms-3 timepicker-range' 
+                    onChange={onChangeTime} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(endSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setEndSelectedTime(timeString)
+                    }}
+                  />
+                  </div>
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6'>
+                      <label htmlFor="">Expertise*</label>
+                      <div className='d-flex flex-row mt-2 margin-flex'>
+                      <div className='d-flex flex-row '>
+                        {Expertise.map((days, index) => selectedExpertises(days))}
+                      </div>
+                      </div>
+                  </div>
+                  </div>
+                  </div>
+                  <div className='mt-5'>
+                  <Form.Item
+                   
+                  >
+                 
+                    <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      Add
+                    </Button>
+                    <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      cancel
+                    </Button>
+                  
+                  </Form.Item>
+                  </div>
+                </Form>
+              </Modal>
+              </div>
+                </div>
+              </div>
+              {/* <Button ></Button> */}
+          
+          </div>
+      </>
+    )  
+  }
+  
 
   const DeleteModal = () => {
     const [visible, setVisible] = useState(false)
@@ -324,12 +1036,336 @@ function getSteps() {
       <p><DeleteModal /></p>
     </div>
   );
-  
+
 
   function AddTeamMembers() {
-      return(
-          <>
-          <div className='container-fluid g-0'>
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+    const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+    const [value, setValue] = React.useState(1);
+
+    function onChangeTime(time, timeString) {
+      console.log(time, timeString);
+    }
+
+    const onChange = e => {
+        console.log('radio checked', e.target.value);
+        setValue(e.target.value);
+      };
+    const [ loading, setLoading ] = useState(false);
+  
+    const { imageUrl } = loading
+  
+     const handleChange = info => {
+      if (info.file.status === 'uploading') {
+        this.setState({ loading: true });
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl =>
+          this.setState({
+            imageUrl,
+            loading: false,
+          }),
+        );
+      }
+    };
+  
+  
+  
+    const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
+  
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+    return(
+      <>
+         <div className='container-fluid g-0'>
+            <div className='row'>
+              <div className='col-12 col-md-12'>
+              <h6>Manage Team Members</h6>
+              <div className='mt-0'>
+              <Button endIcon={<AddIcon />}  className='outline-border mt-4 col-8' variant="outlined" color="primary"  onClick={showModal}>
+                <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography>
+              </Button>
+            
+                    <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+               
+             
+                    <Form
+                  
+                  name="basic"
+                 
+                  initialValues={{
+                    remember: true,
+                  }}
+                 
+                  autoComplete="off"
+                >
+              
+                  <div className='row'>
+                    <div className='col-12 col-md-12 text-center mt-0'>
+              
+                    <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader avatar-radius"
+                    showUploadList={false}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  </Upload>
+                    </div>
+                   
+                    <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="name"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your name!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder='Name'  className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="email"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your email!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder='Email' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="phone"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phoneNo!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder='Phone' className='name' />
+                  </Form.Item>
+                  </div>
+            
+                  <div className='col-12 col-md-6'>
+                      <label htmlFor="">Services Type *</label>
+                  <Form.Item
+                    name="state"
+                  
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your service Type!',
+                      },
+                    ]}
+                  >
+                    <Radio.Group onChange={onChange} value={value}>
+                            <Radio  value={1}>one-site</Radio>
+                            <Radio value={2}>off-site</Radio>
+                            <Radio value={3}>both</Radio>
+                        </Radio.Group>
+                        
+                  </Form.Item>
+            
+                  
+                 
+                  </div>
+                 
+                  <div className='col-12 col-md-12 '>
+                    <label htmlFor="">Work Days *</label>
+                  <Form.Item
+                    name="city"
+                 
+                  >
+                      <div className='mt-2'>
+                      <div className='d-flex flex-row'>
+                        {Days.map((days, index) => selecteddays(days))}
+                      </div>
+                        </div>
+                  </Form.Item>
+                  </div>
+                  <div className='row'>
+                  <div className='col-12 col-md-6 '>
+                      <label htmlFor="">Work Timings*</label>
+                  <Form.Item
+                    name="zipcode"
+                    className='place mt-2'
+                   
+                  >
+                    <div className='d-flex flex-row'>
+                    <TimePicker 
+                    placeholder='Start Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 timepicker-range' 
+                    onChange={onChangeTime} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(startSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setStartSelectedTime(timeString)
+                    }}
+                  />
+                  
+                 <TimePicker 
+                    placeholder='End Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 ms-3 timepicker-range' 
+                    onChange={onChangeTime} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(endSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setEndSelectedTime(timeString)
+                    }}
+                  />
+                  </div>
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6'>
+                      <label htmlFor="">Expertise*</label>
+                      <div className='d-flex flex-row mt-2 margin-flex'>
+                      <div className='d-flex flex-row '>
+                        {Expertise.map((days, index) => selectedExpertises(days))}
+                      </div>
+                      </div>
+                  </div>
+                  </div>
+                  </div>
+                  <div className='mt-5'>
+                  <Form.Item
+                   
+                  >
+                 
+                    <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      Add
+                    </Button>
+                    <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      cancel
+                    </Button>
+                  
+                  </Form.Item>
+                  </div>
+                </Form>
+              </Modal>
+              </div>
+                </div>
+              </div>
+              {/* <Button ></Button> */}
+          
+          </div>
+      </>
+    )  
+  }
+
+
+
+
+  function getStepContent(step) {
+      switch(step) {
+          case 0 :
+              return(
+                  <>
+              <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
+                  <GetSteppers />
+              </motion.div>
+                  </>
+              )
+
+              case 1 :
+                return(
+                    <>
+                      <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
+                      <AddServices />
+                      </motion.div>
+                    </>
+                )
+                
+                case 2 :
+              return(
+                  <>
+                           <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
+                    <AddCategory />
+                    </motion.div>
+                  </>
+              )
+
+              case 3 :
+              return(
+                  <>
+                             <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
+                   <TeamMembers />
+                   </motion.div>
+                  </>
+              )
+
+              case 4 :
+              return(
+                  <>
+               
+               <div className='container-fluid g-0'>
           <div className='row'>
             <div className='col-12 col-md-12'>
               <h6>Team member added!</h6>
@@ -344,20 +1380,15 @@ function getSteps() {
                       <div className='card-body'>
                           <h6 className='card-title text-card'>Jack Rio</h6>
                           <p className='card-text text-card'>0213462840459 
-                          {/* <Tooltip className='text-align tools-tips' placement="left" title={text}>
-                            <MoreVertIcon />
-                          </Tooltip> */}
-
                           <Popover className='pop text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
-                            <MoreVertIcon className='vector-icon' />
+                                  <MoreVertIcon className='vector-icon' />
                           </Popover>
                           </p>
-                         
+                          
                       </div>
                      </div>
                  </div>
             
-                
                  <div className='card cardes mt-2 mb-3' style={{maxWidth: 450, maxHeight: 74}}>
                  <div className='row g-0'>
                    <div className='col-12 col-md-2'>
@@ -367,8 +1398,8 @@ function getSteps() {
                       <div className='card-body'>
                           <h6 className='card-title text-card'>Rosie Fernadez</h6>
                           <p className='card-text text-card'>0213222382819
-                          <Popover className='text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
-                            <MoreVertIcon className='vector-icon' />
+                          <Popover className='pop text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
+                                  <MoreVertIcon className='vector-icon' />
                           </Popover>
                           </p>
                           
@@ -379,53 +1410,15 @@ function getSteps() {
                  </div>
                </div>
                <div className='mt-5'>
-                    <Link to="/BusinessProviderServicesForms">
-                    
-            <Button endIcon={<AddIcon />} className='outline-border mt-5 col-8' variant="outlined" color="primary"><Typography  style={{textTransform: 'capitalize', fontSize: 12}}>Add another member</Typography></Button>
-            </Link>
+                  
+                    <AddTeamMembers />         
+          
          </div>
          </div>
          </div>
           </div>
         </div>
-          </>
-      )
-  }
-
-  function getStepContent(step) {
-      switch(step) {
-          case 0 :
-              return(
-                  <>
-                   <PetGrommingForms />
-                  </>
-              )
-
-              case 1 :
-                return(
-                    <>
-                      <AddServices />
-                    </>
-                )
-                
-                case 2 :
-              return(
-                  <>
-                    <AddCategory />
-                  </>
-              )
-
-              case 3 :
-              return(
-                  <>
-                   <TeamMembers />
-                  </>
-              )
-
-              case 4 :
-              return(
-                  <>
-                    <AddTeamMembers />
+                  
                   </>
               )
               default:
@@ -446,7 +1439,7 @@ export default function PetGrooming() {
     const handleClose = () => setOpen(false);
 
     const isStepOptional = (step) => {
-        return step === 1 || step === 2 || step === 3
+        return step === 0 || step === 1 || step === 2 || step === 3
       };
     
       const isStepSkipped = (step) => {
@@ -472,11 +1465,7 @@ export default function PetGrooming() {
 
     return (
         <>
-           <motion.div
-             initial={{opacity: 0}}
-             animate={{opacity: 1}}
-             exit={{opacity: 0}} 
-           >
+           
                 <div className='container-fluid g-0 overflow'>
                <div className='row  align-items-center'>
                    <div className='col-12 col-md-4'>
@@ -539,28 +1528,63 @@ export default function PetGrooming() {
         <>
           <form>{getStepContent(activeStep)}</form>
           <div className='d-flex flex-row top-btn mt-5'>
-            <Button
-            className=' btn-button'
-              // className={classes.button}
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              back
-            </Button>
 
+            {activeStep < 1 && (
+              <Link to="/businessprovider">
+                <Button
+                className=' btn-button'
+                  // className={classes.button}
+
+                  // disabled={activeStep === 0}
+                  onClick={handleBack}
+                >
+                  back
+                </Button>
+              </Link>
+            )}
          
-            <Button
-                className=' ms-2 btn-bg col-3'
-              // className={classes.button}
-              variant="contained"
-              color="primary"
-              onClick={handleNext}
-            >
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
+            {activeStep > 0 && (
+              <Button
+              className=' btn-button'
+                // className={classes.button}
 
-      
-            
+                // disabled={activeStep === 0}
+                onClick={handleBack}
+              >
+                back
+              </Button>
+
+            )}
+           
+           {activeStep < steps.length - 1 && (
+          
+                <Button
+                    className=' ms-2 btn-bg col-3'
+                  // className={classes.button}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                >
+                  Next
+                </Button>
+             
+           )}
+           
+           {activeStep === steps.length - 1 && (
+                <Link to="/businessprovider">
+                  <Button
+                  className='ms-2 btn-bg width-btns'
+                  size='large'
+                // className={classes.button}
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                >
+                  Finish
+                </Button>
+            </Link>
+           )}
+         
             {isStepOptional(activeStep)  &&  (
               <Button
               className='skip float-end'
@@ -581,7 +1605,7 @@ export default function PetGrooming() {
                    </div>
                    </div>
                    
-            </motion.div> 
+           
         </>
     )
 }

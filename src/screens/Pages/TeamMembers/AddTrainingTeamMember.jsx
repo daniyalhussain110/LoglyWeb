@@ -77,7 +77,13 @@ export default function AddTrainingTeamMember() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [value, setValue] = useState(1)
-    
+    const [HorsetoggleAnimal, setHorseToggleAnimal] = useState(true) 
+
+    const AnimalToggle = () => {
+      setHorseToggleAnimal(!HorsetoggleAnimal)
+    }
+
+
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
@@ -294,7 +300,7 @@ export default function AddTrainingTeamMember() {
         <br />
         <div className='mt-2'>
         <Button className='col-radius fonted col-2 actives'>Cat</Button>
-        <Button className='col-radius fonted col-2 bg-colors ms-3'>Elephant</Button>
+        <Button onClick={AnimalToggle} className={(HorsetoggleAnimal ? 'greybutton' : 'orangeButton') + ' fonted col-2  ms-3'}>Elephant</Button>
               <Button  className='col-radius fonted col-2 ms-3 actives'>Horse</Button>
               <Button className='col-radius fonted col-2 bg-colors ms-3'>Dog</Button>
         </div>

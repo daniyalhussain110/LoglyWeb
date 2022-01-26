@@ -76,46 +76,56 @@ export default function EmailVerification() {
                                 sent you a verification code.</p>
                                 <div className='d-flex justify-content-center flex-row p-4'>
                                     <Form>
-                                        <Input onKeyPress={(event) => {
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} tabIndex="1" onKeyUp={e => inputfocus(e)} onChange={handleOnInputChange} name='otp1' value={otp1} autoFocus={true} maxLength="1" className='m-1 widths b-r' />
+                                        }} tabIndex="1" onChange={handleOnInputChange} name='otp1' value={otp1} autoFocus={true} maxLength="1" className='m-1 widths b-r' />
                                         <Input 
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
                                         onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
                                         }}
-                                          tabIndex="2" onKeyUp={e => inputfocus(e)} onChange={handleOnInputChange} name='otp2' value={otp2} maxLength="1" className='m-1 widths  b-r' />
+                                          tabIndex="2" onChange={handleOnInputChange} name='otp2' value={otp2} maxLength="1" className='m-1 widths  b-r' />
                                         <Input
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
                                         onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
                                         }}
-                                          tabIndex="3" onKeyUp={e => inputfocus(e)} onChange={handleOnInputChange} name='otp3' value={otp3} maxLength="1" className='m-1 widths  b-r' />
+                                          tabIndex="3" onChange={handleOnInputChange} name='otp3' value={otp3} maxLength="1" className='m-1 widths  b-r' />
                                         <Input
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
                                         onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
                                         }}
-                                         tabIndex="4" onKeyUp={e => inputfocus(e)} onChange={handleOnInputChange} name='otp4' value={otp4} maxLength="1" className='m-1 widths b-r' />
+                                         tabIndex="4" onChange={handleOnInputChange} name='otp4' value={otp4} maxLength="1" className='m-1 widths b-r' />
                                         <Input
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
                                         onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
                                         }}
-                                        tabIndex="5" onKeyUp={e => inputfocus(e)} onChange={handleOnInputChange} name='otp5' value={otp5} maxLength="1" className='m-1 widths b-r' />
-                                        <Input 
+                                        tabIndex="5" onChange={handleOnInputChange} name='otp5' value={otp5} maxLength="1" className='m-1 widths b-r' />
+                                        <Input
+                                        autoComplete='off' 
+                                        onKeyUp={(e) => inputfocus(e)}
                                         onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
                                         }}
-                                       tabIndex="6" onKeyUp={e => inputfocus(e)}  onChange={handleOnInputChange} name='otp6' value={otp6} maxLength="1" className='m-1 widths b-r' />
+                                       tabIndex="6" onChange={handleOnInputChange} name='otp6' value={otp6} maxLength="1" className='m-1 widths b-r' />
                                     </Form>
                                   
                                 </div>

@@ -1,23 +1,68 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import '../../customcss/custom.css'
 import { Form, Input, Button, Select, Checkbox, Row, Col } from 'antd';
 import { UserOutlined, LockOutlined, MailFilled, LockFilled, PhoneFilled, FlagFilled, } from '@ant-design/icons';
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import {TransitionGroup, CSSTransition } from 'react-transition-group';
 import { motion } from 'framer-motion';
 import { Icon } from '@ant-design/icons'
-
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+import Logo from '../../assets/images/logo-logly.png'
+import { getCities, getStates, getZipCode } from '../../store/Actions/Action';
+import { userRegister } from '../../store/Actions/UserAction'
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { toast, ToastContainer } from 'material-react-toastify'
+import 'material-react-toastify/dist/ReactToastify.css';
 
 const { Option } = Select;
 
-export default function Register() {
+ const Register = (props) => {
+  const [value, setValue] = useState()
+
+  const [data, setData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    city: '',
+    state: '',
+    zipcode: '',
+    password: ''
+  })
+
+  const { name, email, phone, city, state, zipcode, password } = data
+
+  const dispatch = useDispatch();
+  const history = useHistory()
+
+  const HandleOnChangeinput = e => {
+    setData({...data, [e.target.value]: e.target.name})
+  }
+
+  const {cities, states, zipcodes} = props
+
+
+  useEffect(() => {
+    props.getCities()
+    props.getStates()
+    props.getZipCode()
+  }, [])
+
+  const submit = (e) => {
+    e.preventDefault();
+      dispatch(userRegister(data))
+      console.log(data)
+    }
+   
+  
     return (
+      
         <>
              <section id='img-bg'>
                 <div className='overlay'>
                 <div className='bone-bg'>
-                <h1 className='logo'>LOGLY</h1>
-                <div className='container'>
+                <h1 className='logo'></h1>
+                <div className='container mt-5 py-3 '>
                     <div className='row displays-flexs'>
                         <div className='col-12 col-md-6'>
                         
@@ -33,86 +78,146 @@ export default function Register() {
                             <p className='f-size reg-get'>Let's Get Registered</p>
                             <Form
       name="basic"
-      wrapperCol={{ span: 10 }}
+      wrapperCol={{ span: 12 }}
       initialValues={{ remember: true }}
       className='formes'
       autoComplete="off"
+      
     >
       <Form.Item
-        name="name"
         rules={[{ required: true, message: 'Please input your name!' }]}
-        
+        name='name'
+        onChange={HandleOnChangeinput} 
+        value={name}
       >
-        <Input className="forms" prefix={<i class="fas fa-user"></i>} placeholder=" Enter Name" />
+        <Input  autoComplete='off' className="forms" prefix={<i className="fas fa-user"></i>} placeholder=" Enter Name" />
       </Form.Item>
-
+    
       <Form.Item
+        rules={[
+          { 
+            required: true,
+            message: 'Please input your email!' 
+          },
+
+          {
+            pattern: new RegExp(/\S+@\S+\.\S+/),
+            message: 'please enter valid email'
+          }
+        ]}
         name="email"
-        rules={[{ required: true, message: 'Please input your email!' }]}
+        onChange={HandleOnChangeinput}  
+        value={email}
       >
-        <Input className="forms" prefix={<i class="fas fa-envelope"></i>} placeholder=" Enter Email" />
+        <Input autoComplete='off' className="forms" prefix={<i className="fas fa-envelope"></i>} placeholder=" Enter Email" />
       </Form.Item>
-
+  
       <Form.Item
-        name="phone"
+      name="phone" 
+      onChange={HandleOnChangeinput} 
+      value={phone}
         rules={[{ required: true, message: 'Please input your phone!' }]}
       >
-        <Input className="forms"  prefix={<i class="fas fa-phone-alt"></i>} placeholder=" Enter Phone" />
+        <Input  className="forms" onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}  prefix={<i className="fas fa-phone"></i>} placeholder=" Enter Phone" />
       </Form.Item>
+
+      <Form.Item
+        name="city"
+        value={city} 
+        onChange={HandleOnChangeinput}
+        rules={[{ required: true, message: 'Please input your city!' }]}
+      >
+      <Select   Icon={<FlagFilled />} className="forms" defaultValue="Select City" >
+        {cities.map((city) => (
+            <Option value={city.name}>{city.name}</Option>
+        
+        ))}
+                
+    </Select>
+    </Form.Item>
 
       <Form.Item
         name="state"
+        onChange={HandleOnChangeinput} 
+        value={state}
         rules={[{ required: true, message: 'Please input your state!' }]}
       >
-      <Select  className="forms" defaultValue="Select State">
-      <Option value="jack">Jack</Option>
-      <Option value="lucy">Lucy</Option>
-      <Option value="disabled" disabled>
-        Disabled
-      </Option>
-      <Option value="Yiminghe">yiminghe</Option>
+      <Select className="forms" defaultValue="Select State">
+        {states.map((state) => (
+          <Option value={state.name}>{state.name}</Option>
+        ))}
     </Select>
     </Form.Item>
 
-    <Form.Item
-        name="city"
-        rules={[{ required: true, message: 'Please input your city!' }]}
-      >
-      <Select className="forms" defaultValue="Select City" >
-      <Option value="jack">Jack</Option>
-      <Option value="lucy">Lucy</Option>
-      <Option value="disabled" disabled>
-        Disabled
-      </Option>
-      <Option value="Yiminghe">yiminghe</Option>
-    </Select>
-    </Form.Item>
-    
 
       <Form.Item
         name="zipcode"
         rules={[{ required: true, message: 'Please input your zipcode!' }]}
+        value={zipcode} 
+        onChange={HandleOnChangeinput}
       >
-        <Input className="forms"  prefix={<i class="fas fa-map-marker-alt"></i>} placeholder=" Zip Code" />
+        <Select  className="forms" defaultValue="Select Zip Code">
+           {zipcodes.map((zip) => (
+            <Option value={zip.zipcode}>{zip.zipcode}</Option>
+          ))} 
+        </Select>
       </Form.Item>
 
       <Form.Item
-     
-        name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
-      >
-        <Input.Password className="forms" prefix={<i class="fas fa-lock"></i>} placeholder=" Password" />
-      </Form.Item>
+      rules={[
+        { 
+          required: true, 
+          message: 'Please input your password!' 
+        },
 
+        {
+          min: 6,
+          message: 'Password must be minimum 6 characters.'
+        },
+
+        {
+          max: 8,
+          message: 'Password must be minimum 8 characters.'
+        },
+        
+        {
+          pattern: new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/),
+          message: "Password must have 1 upper case, 1 lower case character and 1 number",
+        }
+
+      ]}
+      name="password"
+      onChange={HandleOnChangeinput} 
+      value={password}
+      >
+        <Input.Password autoComplete='off' className="forms" prefix={<i className="fas fa-lock"></i>} placeholder=" Password" />
+      </Form.Item>
+            
       <Form.Item name="remember" >
         <Checkbox className='remember-me'><span className="s-f">I accept the <span className='color-link'>Term Of Use</span> and <span className='color-link'>Privacy policy</span></span></Checkbox>
       </Form.Item>
 
-      <Form.Item>
-        <Button className="btn-bg-color" type="primary" htmlType="submit" block>
-         <Link to="/pricelist">CONTINUE <i class="fas fa-arrow-circle-right"></i></Link> 
-        </Button>
-      </Form.Item>
+        <div className='row'>
+          <div className='col-12 col-md-2'>
+            <Button className="btn-bg-color" type="primary" htmlType="submit" block>
+                <Link to="/">BACK</Link> 
+            </Button>
+          </div>
+          <div className='col-12 col-md-4'>
+          <Form.Item>
+            <Button onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
+                  <Link to="/pricelist">
+                    CONTINUE <i className="fas fa-arrow-circle-right"></i>
+                  </Link> 
+            </Button>
+            </Form.Item>
+          </div>
+        </div>
+      <ToastContainer />
     </Form>
     </motion.div>
                         </div>
@@ -124,9 +229,21 @@ export default function Register() {
                 </div>
                 
                 </div>
-                
+                <img src={Logo} alt="" className='float-right'  height="100" />
            </section>
           
         </>
     )
 }
+
+const mapStateToProps = (state) => {
+  return {
+    cities: state.myCities.cities,
+    states: state.myState.states,
+    zipcodes: state.myZipCode.zipcodes
+  }
+}
+
+
+export default connect(mapStateToProps, {getCities, getStates, getZipCode})(Register)
+

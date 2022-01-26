@@ -1,0 +1,23 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "state": "Alabama"
+    },
+
+    {
+      "id": 2,
+      "state": "britain"
+    },
+
+    {
+      "id": 3,
+      "state": "queensland"
+    },
+
+    {
+      "id": 4,
+      "state": "Factiva"
+    }
+  ]
+}

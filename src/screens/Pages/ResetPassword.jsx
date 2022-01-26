@@ -31,14 +31,14 @@ export default function ResetPassword() {
                                         name="password"
                                         rules={[{ required: true, message: 'Please input your password!' }]}
                                     >
-                                        <Input.Password  className='forms input' prefix={<i className="fas fa-lock"></i>} placeholder=' New Password' />
+                                        <Input.Password autoComplete='off' className='forms input' prefix={<i className="fas fa-lock"></i>} placeholder=' New Password' />
                                     </Form.Item>
 
                                     <Form.Item
                                         name="confirmpassword"
                                         rules={[{ required: true, message: 'Please input your confirm password!' }]}
                                     >
-                                        <Input.Password className='forms input' prefix={<i className="fas fa-lock"></i>} placeholder=' Confirm Password' />
+                                        <Input.Password autoComplete='off' className='forms input' prefix={<i className="fas fa-lock"></i>} placeholder=' Confirm Password' />
                                     </Form.Item>
                                     
                                     </div>

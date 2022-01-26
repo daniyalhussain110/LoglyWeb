@@ -71,49 +71,123 @@ export default function BusinessServiceProvider() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [item, setItem] = useState("pet")
+  const [Animal, setAnimal] = useState([]);
+  const [item, setItem] = useState("transportation")
    
   const handleChange = (items) => {
           items === item ? setItem(null): setItem(items);    
   }
+  
 
-  const Transportation = () => {
-    if(item === "grooming") {
+  const onChangeAnimal = (e) => {
+    const isChecked = e.target.checked 
+    if(isChecked) {
+      setAnimal({...Animal, [e.target.name]: e.target.value})
+      console.log(isChecked)
+    } else {
+      const index = Animal.indexOf(e.target.value)
+      Animal.splice(index, 1)
+      setAnimal(Animal)
+    }
+    // console.log()
+  }
+
+  const submit = e => {
+    e.preventDefault();
+    if(Animal == "") {
+      toast.warning('Please PickUp to 3 Services', {
+        position: 'top-center'
+      })    
+    } 
+
+    else if(item === "grooming") {
       window.location.href = '/petgrooming'
     }
-
+    
     else if(item === "veterinary") {
       window.location.href = '/veterniary'
     }
+
     else if(item === "transportation") {
       window.location.href = '/transportation'
     }
+
     else if(item === "training") {
       window.location.href = '/pettraining'
     }
-
+    
     else if(item === "sitting") {
       window.location.href = '/petwalking'
     }
-
+    
     else if(item === "breeding") {
       window.location.href = '/breeding'
     }
-
+    
     else if(item === "boarding") {
       window.location.href = '/petboarding'
     }
+    
+    else {
+       console.log(Animal)
+    }
+  
   }
 
 
+
+
+  // const [item, setItem] = useState("pet")
+   
+  // const handleChange = (items) => {
+  //         items === item ? setItem(null): setItem(items);    
+  // }
+
+  // const Transportation = () => {
+  //   if(item === "grooming") {
+  //     window.location.href = '/petgrooming'
+  //   }
+
+  //   else if(item === "veterinary") {
+  //     window.location.href = '/veterniary'
+  //   }
+  //   else if(item === "transportation") {
+  //     window.location.href = '/transportation'
+  //   }
+  //   else if(item === "training") {
+  //     window.location.href = '/pettraining'
+  //   }
+
+  //   else if(item === "sitting") {
+  //     window.location.href = '/petwalking'
+  //   }
+
+  //   else if(item === "breeding") {
+  //     window.location.href = '/breeding'
+  //   }
+
+  //   else if(item === "boarding") {
+  //     window.location.href = '/petboarding'
+  //   }
+  // }
+  
+
+
   const isStepOptional = (step) => {
-    return step === 1;
+    return step === 0;
   };
 
   const isStepSkipped = (step) => {
     return skippedSteps.includes(step);
   };
+
+  const handleSkip = () => {
+    if (!isStepSkipped(activeStep)) {
+      setSkippedSteps([...skippedSteps, activeStep]);
+    }
+    setActiveStep(activeStep + 1);
+  };
+
 
 
 
@@ -170,8 +244,6 @@ export default function BusinessServiceProvider() {
                                      <Typography style={{textTransform: 'capitalize', fontSize: 18}} > Logout </Typography>
                                   </Button>
                                 </Link>
-                
-                         
                         </div>
                       </div>
                     </div>
@@ -181,13 +253,13 @@ export default function BusinessServiceProvider() {
                   <div className='container-fluid g-0 pickup-services'>
           <h6>Pick upto 3 services</h6>
             <div className='row'>
-              <div className='col-12 col-md-3' >
+              <div className='col-12 col-md-3'>
                     <Card className='color-sky-blue text-center'>
                         <img src={sheep} alt="" className='img-fluid icon-img' />
                         <h5 className='fonts-h5 text-white mt-1'>Pet Grooming</h5>
                     </Card>
                     <div className='text-center mt-2'>
-                        <Checkbox value="sheep" checked={item === "grooming"} onChange={() => handleChange("grooming")} name='sheep'></Checkbox>
+                        <Checkbox checked={item === "grooming"}  value="grooming" onChange={onChangeAnimal}  name='grooming'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="sheep" checked={item === "sheep"} onChange={() => handleChange("sheep")} name='sheep' /></label> */}
                     </div>
            </div>
@@ -199,7 +271,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Veterinary</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox value="vetinary" checked={item === "veterinary"} onChange={() => handleChange("veterinary")} name='vetinary'></Checkbox>
+                        <Checkbox  value="vetinary" onChange={onChangeAnimal} name='vetinary'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="vetinary" checked={item === "vetinary"} onChange={() => handleChange("vetinary")} name='vetinary' /></label> */}
                     </div>
      </div>
@@ -211,7 +283,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Transportation</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox value="transportation" checked={item === "transportation"} onChange={() => handleChange("transportation")} name='transportation'></Checkbox>
+                        <Checkbox checked={item === "transportation"} value="transportation" onChange={onChangeAnimal}  name='transportation'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="transportation" checked={item === "transportation"} onChange={() => handleChange("transportation")} name='transportation' /></label> */}
                     </div>
      </div>
@@ -223,7 +295,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Training</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox value="training" checked={item === "training"} onChange={() => handleChange("training")} name='training'></Checkbox>
+                        <Checkbox    value="training" onChange={onChangeAnimal}  name='training'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="training" checked={item === "training"} onChange={() => handleChange("training")} name='training' /></label> */}
                     </div>
      </div>
@@ -237,7 +309,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Walking</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox value="sitting" checked={item === "sitting"} onChange={() => handleChange("sitting")} name='sitting'></Checkbox>
+                        <Checkbox  value="sitting" onChange={onChangeAnimal}  name='sitting'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="sitting" checked={item === "sitting"} onChange={() => handleChange("sitting")} name='sitting' /></label> */}
                     </div>
      </div>
@@ -250,7 +322,7 @@ export default function BusinessServiceProvider() {
               </Card>
               
               <div className='text-center mt-2'>
-                        <Checkbox value="breeding" checked={item === "breeding"} onChange={() => handleChange("breeding")} name='breeding'></Checkbox>
+                        <Checkbox  value="breeding" onChange={onChangeAnimal}  name='breeding'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="breeding" checked={item === "breeding"} onChange={() => handleChange("breeding")} name='breeding' /></label> */}
                     </div>
      </div>
@@ -262,11 +334,12 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Boarding</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox value="boarding" checked={item === "boarding"} onChange={() => handleChange("boarding")} name='boarding'></Checkbox>
+                        <Checkbox value="boarding" onChange={onChangeAnimal}  name='boarding'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="boarding" checked={item === "boarding"} onChange={() => handleChange("boarding")} name='boarding' /></label> */}
                     </div>
      </div>
      <div className='d-flex flex-row'>
+       
             <Link to="/welcome">
               <Button
                 className='mt-5 btn-button'
@@ -278,12 +351,26 @@ export default function BusinessServiceProvider() {
             <Button
                 className='mt-5 ms-2 btn-bg col-3'
               // className={classes.button}
-              onClick={Transportation}
+              onClick={submit}
               variant="contained"
               color="primary"
             >
               Next
             </Button>
+            {isStepOptional(activeStep)  &&  (
+              <Button
+              className='mt-5 skip float-end'
+                // className={classes.button}
+                variant="contained"
+                color="primary"
+                onClick={handleSkip}
+              >
+                skip
+                <img src={rightarrows} alt="" />
+              </Button>
+              
+            )}
+            <ToastContainer />
             </div>
             </div>
 

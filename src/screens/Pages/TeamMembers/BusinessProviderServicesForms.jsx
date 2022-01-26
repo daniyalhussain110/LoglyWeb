@@ -274,7 +274,7 @@ export default function BusinessProviderServicesForms() {
           },
         ]}
       >
-        <Input placeholder='Phone' className='name' />
+        <Input  placeholder='Phone' className='name' />
       </Form.Item>
       </div>
 

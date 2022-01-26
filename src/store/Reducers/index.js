@@ -1,6 +1,11 @@
 import { combineReducers } from 'redux';
-import PetReducers from './PetReducers';
+import Reducers from './Reducers';
+import userReducer from './UserReducer';
 
 export default combineReducers({
-    myPets: PetReducers
+    myCities: Reducers,
+    myState: Reducers,
+    myZipCode: Reducers,
+    myUser: userReducer
 })
+

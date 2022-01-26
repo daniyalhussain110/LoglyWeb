@@ -6,9 +6,6 @@ import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
 
-
-
-
 const REST_INTERVAL_S = 150;
 
 const formatTime = (time) => 
@@ -107,36 +104,36 @@ export default function OtpVerification() {
                                 sent you a verification code.</p>
                                 <div className='d-flex justify-content-center flex-row p-4'>
                                     <Form>
-                                        <Input onKeyPress={(event) => {
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onKeyUp={e => inputfocus(e)} tabIndex="1" onChange={handleOnInputChange} name='otp1' value={otp1} autoFocus={true} maxLength="1" className='m-1 widths b-r' />
-                                        <Input onKeyPress={(event) => {
+                                        }} tabIndex="1" onChange={handleOnInputChange} name='otp1' value={otp1} autoFocus={true} maxLength="1" className='m-1 widths b-r' />
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onKeyUp={e => inputfocus(e)} tabIndex="2"  onChange={handleOnInputChange} name='otp2' value={otp2} maxLength="1" className='m-1 widths  b-r' />
-                                        <Input onKeyPress={(event) => {
+                                        }} tabIndex="2"  onChange={handleOnInputChange} name='otp2' value={otp2} maxLength="1" className='m-1 widths  b-r' />
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onKeyUp={e => inputfocus(e)} tabIndex="3"  onChange={handleOnInputChange} name='otp3' value={otp3} maxLength="1" className='m-1 widths  b-r' />
-                                        <Input onKeyPress={(event) => {
+                                        }} tabIndex="3"  onChange={handleOnInputChange} name='otp3' value={otp3} maxLength="1" className='m-1 widths  b-r' />
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onKeyUp={e => inputfocus(e)} tabIndex="4"  onChange={handleOnInputChange} name='otp4' value={otp4} maxLength="1" className='m-1 widths b-r' />
-                                        <Input onKeyPress={(event) => {
+                                        }} tabIndex="4"  onChange={handleOnInputChange} name='otp4' value={otp4} maxLength="1" className='m-1 widths b-r' />
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onKeyUp={e => inputfocus(e)} tabIndex="5"  onChange={handleOnInputChange} name='otp5' value={otp5} maxLength="1" className='m-1 widths b-r' />
-                                        <Input onKeyPress={(event) => {
+                                        }} tabIndex="5"  onChange={handleOnInputChange} name='otp5' value={otp5} maxLength="1" className='m-1 widths b-r' />
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onKeyUp={e => inputfocus(e)} tabIndex="6"  onChange={handleOnInputChange} name='otp6' value={otp6} maxLength="1" className='m-1 widths b-r' />
+                                        }} tabIndex="6"  onChange={handleOnInputChange} name='otp6' value={otp6} maxLength="1" className='m-1 widths b-r' />
                                     </Form>
                                 </div>
                                 <Typography className='btn btn-border'>Resend Code <IntervalTimerFunctional /></Typography>

@@ -1,14 +1,58 @@
 import React from 'react'
 import Logo from '../../assets/images/logo-logly.png'
-import { Card, Input, Button, Form, Tabs } from 'antd';
+import { Card, Input, Button, Form } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import '../../customcss/custom.css'
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const { TabPane } = Tabs;
 
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+  
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+        
+      >
+        {value === index && (
+          <Box sx={{ p: 3 }}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
+  
+  TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+  };
+  
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
+
 export default function Packages() {
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
     return (
         <>
            <section id='img-bg'>
@@ -21,15 +65,23 @@ export default function Packages() {
                                 animate={{opacity: 1}}
                                 exit={{opacity: 0}}
                             >
-                            <Card className='opac p-4'>
+                            <Card className='opac p-2'>
                             
                             <h4 className=' text-center fw-bolder'>Select Packages <Link to="/creditcard" className='right-text text-black'><CloseCircleOutlined /></Link></h4>
-                            <Tabs defaultActiveKey="1" className='tabs' centered>
-                                <TabPane tab="Monthly"   key="1">
-                                Content of Tab Pane 1
-                                </TabPane>
-                                <TabPane tab="Yearly" key="2" className='mt-3'>
-                                    <div className='container'>
+                                <Box>
+                                    <Box>
+                                        <Tabs className='justify-content' value={value} onChange={handleChange} aria-label="basic tabs example">
+                                        <Tab className='monthly' label="Monthly" {...a11yProps(0)} />
+                                        <Tab className='yearly' label="Yearly" {...a11yProps(1)} />
+                                        <Tab className='lifetime' label="Lifetime" {...a11yProps(2)} />
+                                        </Tabs>
+                                    </Box>
+                                    <TabPanel value={value} index={0}>
+                                       
+                                    </TabPanel>
+                                    <TabPanel value={value} index={1}>
+                                       
+                                        <div className='container'>
                                         <div className='row justify-content-center'>
                                         <div className='col-12 col-md-4'>
                                         <Card className='radius card-color-bg' >
@@ -67,9 +119,9 @@ export default function Packages() {
                                         </div>
                                         </div>
                                     </div>
-                                </TabPane>
-                                <TabPane tab="Lifetime" key="3" className='mt-3'>
-                                <div className='container'>
+                                    </TabPanel>
+                                    <TabPanel value={value} index={2}>
+                                    <div className='container'>
                                     <div className='row'>
                                         <div className='col-12 col-md-4'>
                                         <Card className='radius'>
@@ -124,8 +176,8 @@ export default function Packages() {
                                         </div>
                                     </div>
                                 </div>
-                                </TabPane>
-                            </Tabs>
+                                    </TabPanel>
+                                    </Box>
                                
                                 
                                 <div className='text-center'>

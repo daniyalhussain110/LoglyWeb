@@ -5,6 +5,7 @@ import truck from '../../../assets/images/Truck.png'
 import PickUp from '../../../assets/images/PickUp.png'
 import Car from '../../../assets/images/Car.png'
 import MotorBike from '../../../assets/images/Bike.png'
+import '../../../customcss/custom.css'
 
 import moment from 'moment';
 import {
@@ -55,6 +56,11 @@ export default function VechicleForms() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [vehicle, setVehicle] = useState("Truck")
+
+    const Vehicle = (index) => {
+      setVehicle(index)
+    }
 
     const isStepOptional = (step) => {
         return step === 1 || step === 2 || step === 3
@@ -144,28 +150,28 @@ export default function VechicleForms() {
                                 <div className='mt-3'>
                                     <div className='row align-items-center'>
                                         <div className='col-12 col-md-3'>
-                                            <Card style={{height:80}} className='bg-purple text-center' variant="contained">
+                                            <Card onClick={() => Vehicle("Truck")} style={{height:80}} className={vehicle === "Truck" ? 'bg-purple' : 'bg-gray'} variant="contained">
                                                 <img src={truck} className='mt-1' />
-                                                <p className='text-white'>Truck</p> 
+                                                <p>Truck</p> 
                                             </Card>
                                         </div>
                                   
                                     <div className='col-12 col-md-3'>
-                                        <Card style={{height:80}} className='bg-gray text-center' variant="contained">
+                                        <Card onClick={() => Vehicle("PickUp")} style={{height:80}} className={vehicle === "PickUp" ? 'bg-purple' : 'bg-gray'} variant="contained">
                                             <img src={PickUp} className='mt-2' />
                                         <p>PickUp</p> 
                                         </Card>
                                      </div>
 
                                      <div className='col-12 col-md-3'>
-                                        <Card style={{height:80}} className='bg-gray  text-center' variant="contained">
+                                        <Card onClick={() => Vehicle("Car")} style={{height:80}} className={vehicle === "Car" ? 'bg-purple ' : 'bg-gray'} variant="contained">
                                             <img src={Car} className='mt-2' />
                                         <p>Car</p> 
                                         </Card>
                                      </div>
 
                                      <div className='col-12 col-md-3'> 
-                                     <Card style={{height:80}} className='bg-gray  text-center' variant="contained">
+                                     <Card onClick={() => Vehicle("MotoBike")} style={{height:80}} className={vehicle === "MotoBike" ? 'bg-purple' : 'bg-gray'} variant="contained">
                                         <img src={MotorBike} className='mt-1' />
                                     <p>MotorBike</p>
                                      

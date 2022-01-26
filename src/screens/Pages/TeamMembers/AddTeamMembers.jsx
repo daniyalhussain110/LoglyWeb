@@ -19,8 +19,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import FlagIcon from '@mui/icons-material/Flag';
 import AddIcon from '@mui/icons-material/Add';
-import { connect, useDispatch } from 'react-redux'
-import { addteam } from '../../../store/Actions/PetActions'
+
 
 const { Sider } = Layout;
 const { Option } = Select;

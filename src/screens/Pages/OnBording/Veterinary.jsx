@@ -3,7 +3,7 @@ import { Layout, Card, Form, Upload, Input, Radio, TimePicker, message, Checkbox
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import '../../../customcss/custom.css'
-import { LoadingOutlined, PlusOutlined,  MailFilled, UploadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined,  MailFilled, UploadOutlined, PercentageOutlined } from '@ant-design/icons';
 import AddIcon from '@mui/icons-material/Add';
 import sheep from '../../../assets/images/sheep.png'
 import avatar from '../../../assets/images/avatar.png'
@@ -75,6 +75,17 @@ import {
     const [ loading, setLoading ] = useState(false);
     const [value, setValue] = React.useState(1);
 
+    const [sat, setSat] = useState(false)
+    const [sun, setSun] = useState(false)
+  
+    const SatFunc = () => {
+      setSat(!sat)
+    }
+  
+    const SunFunc = () => {
+      setSun(!sun)
+    }
+
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
@@ -106,6 +117,11 @@ import {
         <div style={{ marginTop: 8 }}>Upload</div>
       </div>
     );
+
+        
+  function onChangeHandle(time, timeString) {
+    console.log(time, timeString);
+  }
       return(
           <>
            <div className='container-fluid g-0 '>
@@ -130,12 +146,12 @@ import {
               <label htmlFor="">Days of the week *</label>
               <br />
               <Button className='col-radius actives'>Mon</Button>
-              <Button  className='col-radius ms-3 actives'>Tue</Button>
-              <Button  className='col-radius ms-3 actives'>Wed</Button>
-              <Button  className='col-radius ms-3 actives'>Thu</Button>
-              <Button  className='col-radius ms-3 actives'>Fri</Button>
-              <Button className='col-radius bg-colors ms-3'>Sat</Button>
-              <Button className='col-radius bg-colors ms-3'>Sun</Button>
+              <Button className='col-radius ms-3 actives'>Tue</Button>
+              <Button className='col-radius ms-3 actives'>Wed</Button>
+              <Button className='col-radius ms-3 actives'>Thu</Button>
+              <Button className='col-radius ms-3 actives'>Fri</Button>
+              <Button onClick={SatFunc} className={sat ? "col-radius actives ms-3" : "bg-colors ms-3"}>Sat</Button>
+              <Button onClick={SunFunc} className={sun ? 'col-radius actives ms-3' : 'bg-colors ms-3'}>Sun</Button>
             </div>
 
             <div className='row'>
@@ -143,7 +159,8 @@ import {
                 <div className='mt-3'>
                   <label htmlFor="">Business Timings *</label>
                   <br />
-                  <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' />
+                  <TimePicker className='upload-image mt-2 timepicker-range ' onChange={onChangeHandle} defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} />
+                  <TimePicker className='upload-image mt-2 timepicker-range ms-3' onChange={onChangeHandle} defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} />
                 </div>
               </div>
 
@@ -151,7 +168,8 @@ import {
                 <div className='mt-3'>
                   <label htmlFor="">Break Timings *</label>
                   <br />
-                  <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' />
+                  <TimePicker className='upload-image mt-2 timepicker-range ' onChange={onChangeHandle} defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} />
+                  <TimePicker className='upload-image mt-2 timepicker-range ms-3' onChange={onChangeHandle} defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} />
                 </div>
               </div>
             </div>
@@ -159,13 +177,13 @@ import {
               <div className='col-12 col-md-6'>
                 <div className='mt-5'>
                   <Link to="/veterniarycalender">
-                  <Button className='col-12 grey-color' variant='outlined' endIcon={<AddIcon />}><Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography></Button></Link>
+                  <Button className='col-12 grey-color mt-2' variant='outlined' endIcon={<AddIcon />}><Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography></Button></Link>
                 </div>
               </div>
               <div className='col-12 col-md-6'>
                 <div className='mt-4'>
                   <label htmlFor="">Tax Percentage</label>
-                  <Input className='grey-color mt-2' />
+                  <Input prefix={<PercentageOutlined />} className='grey-color mt-2' />
                 </div>
               </div>
             </div>
@@ -179,15 +197,26 @@ import {
 
   function AddServices() {
     const [cat, setCat] = useState(true)
+    const [dog, setDog] = useState(true)
+    const [dog1, setDog1] = useState(true)
 
     const [horse, setHorse] = useState(true)
+
     const [parrot, setParrot] = useState(true)
-  
+ 
     const CatFunc = () => {
       setCat(!cat)
     }
   
-    
+    const DogFunc = () => {
+      setDog(!dog)
+    }
+
+    const Dog1Func = () => {
+      setDog1(!dog1)
+    }
+  
+  
     const HorseFunc = () => {
       setHorse(!horse)
     }
@@ -207,17 +236,17 @@ import {
                         </div>
                     </Card>
                     <div className='mt-4'>
-         <Button id='inActive' className='col-radius bg-colors col-4' variant="contained" color="primary"><Typography style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Typography></Button>
-         <Button id='inActive' onClick={CatFunc} className={(cat ? 'orangeColor' : 'greyColor') + ' ms-3 col-4 '} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
+         <Button id='inActive' onClick={DogFunc} className={dog ? 'greyColor col-4' : 'orangeColor col-4'} variant="contained" color="primary"><Typography style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Typography></Button>
+         <Button id='inActive'  className=' ms-3 col-4 orangeColor' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
          <br />
          <Button id='inActive' onClick={HorseFunc} className={(horse ? 'greyColor mt-3 col-4' : 'orangeColor mt-3 col-4') + ''} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
-         <Button id='inActive' className='mt-3 col-radius bg-colors  ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
+         <Button id='inActive' onClick={ParrotFunc} className={parrot ? 'greyColor ms-3 mt-3 col-4' : 'orangeColor ms-3 mt-3 col-4'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
          <br />
-         <Button id='inActive' className='mt-3 col-radius bg-colors col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Button>
-         <Button id='inActive' className='mt-3 col-radius bg-colors ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
+         <Button id='inActive' onClick={Dog1Func} className={dog1 ? 'greyColor mt-3 col-4' : 'orangeColor  mt-3 col-4'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Button>
+         <Button id='inActive' onClick={CatFunc} className={cat ? 'greyColor mt-3 ms-3 col-4' : 'orangeColor mt-3 ms-3 col-4'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
          <br />
-         <Button id='inActive' className='mt-3 col-radius activeted  col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
-         <Button id='inActive' onClick={ParrotFunc} className={(parrot ? 'orangeColor mt-3 ms-3 col-4' : 'greyColor mt-3 ms-3 col-4') + ''} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
+         <Button id='inActive'  className='mt-3 col-radius activeted  col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
+         <Button id='inActive'  className= 'orangeColor mt-3 ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
          </div>
                   </div>
               </div>
@@ -272,7 +301,7 @@ import {
           
             <div className='mt-5'> 
             <Link to="/BusinessProviderServicesForms">  
-                <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='float-left' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button>
+                <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button>
             </Link> 
             </div>
          </div>
@@ -396,14 +425,27 @@ import {
           case 0 :
               return(
                   <>
-                   <PetGrommingForms />
+                  
+              <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
+                <PetGrommingForms />
+              </motion.div>     
                   </>
               )
 
               case 1 :
                 return(
                     <>
+                      <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
                       <AddServices />
+                      </motion.div>
                     </>
                 )
                 
@@ -417,14 +459,26 @@ import {
               case 2 :
               return(
                   <>
+                         <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
                    <TeamMembers />
+                   </motion.div>
                   </>
               )
 
               case 3 :
               return(
                   <>
+                            <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}} 
+              >
                     <AddTeamMembers />
+                    </motion.div>
                   </>
               )
               default:
@@ -445,7 +499,7 @@ export default function Veterinary() {
     const handleClose = () => setOpen(false);
 
     const isStepOptional = (step) => {
-        return step === 1 || step === 2 || step === 3
+        return step === 0 || step === 1 || step === 2 
       };
     
       const isStepSkipped = (step) => {
@@ -469,11 +523,7 @@ export default function Veterinary() {
       };
     return (
         <div>
-             <motion.div
-             initial={{opacity: 0}}
-             animate={{opacity: 1}}
-             exit={{opacity: 0}} 
-           >
+           
                 <div className='container-fluid g-0 overflow'>
                <div className='row  align-items-center'>
                    <div className='col-12 col-md-4'>
@@ -536,28 +586,58 @@ export default function Veterinary() {
         <>
           <form>{getStepContent(activeStep)}</form>
           <div className='d-flex flex-row top-btn mt-5'>
-            <Button
-            className=' btn-button'
-              // className={classes.button}
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              back
-            </Button>
 
-         
-            <Button
+            {activeStep < 1 && (
+              <Link to="/businessprovider">
+                <Button
+                className=' btn-button'
+                  // className={classes.button}
+                  // disabled={activeStep === 0}
+                  onClick={handleBack}
+                >
+                  back
+                </Button>
+              </Link>
+            )}
+
+            {activeStep > 0 && (
+               <Button
+               className=' btn-button'
+                 // className={classes.button}
+                //  disabled={activeStep === 0}
+                 onClick={handleBack}
+               >
+                 back
+               </Button>
+            )}  
+
+            {activeStep < steps.length - 1 && (
+                <Button
                 className=' ms-2 btn-bg col-3'
               // className={classes.button}
               variant="contained"
               color="primary"
               onClick={handleNext}
-            >
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
+              >
+                Next
+              </Button>
+            )}
+          
+        
+            {activeStep === steps.length - 1 && (
+              <Link to="/businessprovider">
+                <Button
+                className=' ms-2 btn-bg width-btns col-3'
+                // className={classes.button}
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                >
+                  Finish
+                </Button>
+              </Link>
+            )}
 
-      
-            
             {isStepOptional(activeStep)  &&  (
               <Button
               className='skip float-end'
@@ -578,7 +658,7 @@ export default function Veterinary() {
                    </div>
                    </div>
                    
-            </motion.div> 
+          
         </div>
     )
 }

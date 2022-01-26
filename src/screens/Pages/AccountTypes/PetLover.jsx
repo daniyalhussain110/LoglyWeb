@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Layout, Tooltip, Popover, Divider, Modal, Space } from 'antd';
+import { Layout, Tooltip, Popover, Divider, Modal, Space, Form, Upload, Input, Select, message } from 'antd';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import '../../../customcss/custom.css'
@@ -10,6 +10,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import WelcomeScreen from '../WelcomeScreen';
 import Person from '../../../components/Person';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCities, getStates, getZipCode } from '../../../store/Actions/Action'
+import { toast, ToastContainer } from 'material-react-toastify'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
@@ -21,6 +24,11 @@ import {
   StepLabel,
 } from "@mui/material";
 import rightarrows from '../../../assets/images/rightarrows.png'
+import { MailFilled, UploadOutlined, LoadingOutlined, PlusOutlined  } from '@ant-design/icons'
+import PersonIcon from '@mui/icons-material/Person';
+import PhoneIcon from '@mui/icons-material/Phone';
+
+const { Option } = Select;
 
 
 const DeleteModal = () => {
@@ -86,24 +94,54 @@ function getSteps() {
 }
 
 
+const animal = [];
+const animalName = ["Dog", "Cat", "Horse", "Parrot"];
+
+const selectAnimal = animals => {
+  console.log(animal)
+  console.log("animal", animals);
+  let SA = animal;
+  let index = SA.findIndex(animal => animal === animals);
+  if (index > -1) {
+    SA.splice(index, 1);
+  } else {
+    SA.push(animals);
+  }
+
+  const dayElement = document.getElementById(animals);
+  dayElement.classList.toggle("selected-day");
+
+  
+  console.log("SA", animal);
+};
+
+const selectedAnimals = animals => {
+  let index = animal.findIndex(animal => animals.value === animal);
+
+  console.log(index, "index");
+ 
+  if (index > -1) {
+    console.log(animals, "INSIE INDEX COLOR");
+  }
+  console.log(animals);
+  return (
+        <div className='col-12 col-md-6 mt-2'>
+          <Button
+          id={animals}
+          onClick={() => selectAnimal(animals)}
+          className="week-days week-btns"
+          key={animals}
+        >
+          {animals}
+        </Button>
+      </div>
+  );
+};
+
 
 
 const AnimalToggle = () => {
-  const [cat, setCat] = useState(false)
-  const [Horse, setHorse] = useState(false)
-  const [Parrot, setParrot] = useState(false)
 
-  const CatFunc = () => {
-    setCat(!cat)
-  }
-
-  const HorseFunc = () => {
-    setHorse(!Horse)
-  }
-
-  const ParrotFunc = () => {
-    setParrot(!Parrot)
-  }
   return(
     <>
 <div className='container-fluid g-0'>
@@ -111,24 +149,558 @@ const AnimalToggle = () => {
             <div className='col-12 col-md-12'>
               <h6>Animal Info</h6>
               <p>Select the animals you love</p>
-              
-         <Button className='col-radius actives col-4' variant="contained" color="primary"><Typography style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Typography></Button>
-         <Button onClick={CatFunc} className={cat ? 'orangeBtn  ms-3 col-4' : 'greyBtn ms-3 col-4'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
-         <br />
-         <Button onClick={HorseFunc} className={Horse ? 'orangeBtn mt-3 col-4' : 'greyBtn mt-3 col-4'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
-         <Button className='mt-3 col-radius actives ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
-         <br />
-        <Button  className='mt-3 actives col-radius col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Dog</Button>
-        <Button className=' mt-3 col-radius bg-colors ms-3 col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Cat</Button>
-        <br />
-        <Button  className='mt-3 col-radius bg-colors col-4' variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Horse</Button>
-        <Button onClick={ParrotFunc} className={Parrot ? 'orangeBtn mt-3 ms-3 col-4' : 'greyBtn mt-3 ms-3 col-4'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>Parrot</Button>
-     
+              <div className='row'>
+                  {animalName.map((animals, index) => selectedAnimals(animals))}
+                </div>
+
+                
          </div>
          </div>
           </div>
     </>
   )
+}
+
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
+function beforeUpload(file) {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    message.error('You can only upload JPG/PNG file!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!');
+  }
+  return isJpgOrPng && isLt2M;
+}
+
+function handleChange(value) {
+  console.log(`selected ${value}`);
+}
+
+function TeamMembers() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [skippedSteps, setSkippedSteps] = useState([]);
+  const steps = getSteps();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState("")
+  const [cancel, setCancel] = useState(false);
+  
+  const dispatch = useDispatch()
+
+  const emailRegex = /\S+@\S+\.\S+/
+
+  const validateEmail = (e) => {
+    const email = e.target.value;
+    if(email == "") {
+      setMessage('Email is Required')
+    }
+    else if(emailRegex.test(email)) {
+        setIsValid(true);
+        setMessage('');
+    } else {
+      setIsValid(false);
+      setMessage('email is not valid');
+    }
+  }
+
+  const [ loading, setLoading ] = useState(false);
+
+  const { imageUrl } = loading
+
+   handleChange = info => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true });
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, imageUrl =>
+        this.setState({
+          imageUrl,
+          loading: false,
+        }),
+      );
+    }
+  };
+
+
+
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const states = useSelector((state) => state.myState.states)
+  const cities = useSelector((state) => state.myCities.cities)
+  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+
+  useEffect(() => {
+    dispatch(getStates())
+    dispatch(getCities())
+    dispatch(getZipCode())
+  }, [])
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  return(
+    <>
+     <div className='container-fluid g-0'>
+          <div className='row'>
+            <div className='col-12 col-md-12'>
+            <h6>Manage Team Members</h6>
+            <div className='mt-5'>
+            <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"  onClick={showModal}>
+              <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography>
+            </Button>
+          
+                  <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+             
+           
+            <Form
+                  
+                  name="basic"
+                 
+                  initialValues={{
+                    remember: true,
+                  }}
+                 
+                  autoComplete="off"
+                >
+              
+                  <div className='row'>
+                    <div className='col-12 col-md-12 text-center mt-5'>
+              
+                    <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader avatar-radius"
+                    showUploadList={false}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  </Upload>
+                    </div>
+                   
+                    <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="name"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your name!',
+                      },
+                    ]}
+                  >
+                    <Input  prefix={<PersonIcon />} placeholder=' Enter Name'  className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="email"
+                    className='place'
+                    onChange={validateEmail}
+                    
+                  >
+                    <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
+                  </Form.Item>
+                    {message && <span className={`message ${isValid ? 'success' : 'error'}`}> {message}</span>}
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="phone"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phoneNo!',
+                      },
+                    ]}
+                  >
+                    <Input onKeyPress={(event) => {
+                                                        if (!/[0-9]/.test(event.key)) {
+                                                        event.preventDefault();
+                                                        }
+                                                    }}  prefix={<PhoneIcon />} placeholder=' Phone No.' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="state"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your state!',
+                      },
+                    ]}
+                  >
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                        {states.map((state) => (
+                            <Option value={state.name}>{state.name}</Option>
+                        ))}
+                        
+                      </Select>
+                  </Form.Item>
+                 
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="city"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your city!',
+                      },
+                    ]}
+                  >
+                   
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                        {cities.map((city) => (
+                           <Option value={city.name}>{city.name}</Option>
+                        ))}
+                      </Select>
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="zipcode"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your ZipCode!',
+                      },
+                    ]}
+                  >
+                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={handleChange}>
+                      {zipcodes.map((zip) => (
+                        <Option value={zip.zipcode}>{zip.zipcode}</Option>
+                      ))}
+                       
+                      </Select>
+                  </Form.Item>
+                  </div>
+                  </div>
+                  <div className='mt-5'>
+                  <Form.Item
+                   
+                  >
+                 
+                    <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      Add
+                    </Button>
+                    
+                      <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+                        cancel
+                      </Button>
+                    
+                    <ToastContainer />
+                  </Form.Item>
+                  </div>
+                </Form>
+            </Modal>
+            </div>
+              </div>
+            </div>
+            {/* <Button ></Button> */}
+        
+        </div>
+    </>
+  )
+}
+
+function getBase641(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
+function before1Upload(file) {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    message.error('You can only upload JPG/PNG file!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!');
+  }
+  return isJpgOrPng && isLt2M;
+}
+
+function handleChange1(value) {
+  console.log(`selected ${value}`);
+}
+
+function AddTeamMembers() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [skippedSteps, setSkippedSteps] = useState([]);
+  const steps = getSteps();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState("")
+  const [cancel, setCancel] = useState(false);
+  
+  const dispatch = useDispatch()
+
+  const emailRegex = /\S+@\S+\.\S+/
+
+  const validateEmail = (e) => {
+    const email = e.target.value;
+    if(email == "") {
+      setMessage('Email is Required')
+    }
+    else if(emailRegex.test(email)) {
+        setIsValid(true);
+        setMessage('');
+    } else {
+      setIsValid(false);
+      setMessage('email is not valid');
+    }
+  }
+
+  const [ loading, setLoading ] = useState(false);
+
+
+  const { imageUrl } = loading
+
+   handleChange = info => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true });
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, imageUrl =>
+        this.setState({
+          imageUrl,
+          loading: false,
+        }),
+      );
+    }
+  };
+
+
+
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const states = useSelector((state) => state.myState.states)
+  const cities = useSelector((state) => state.myCities.cities)
+  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+
+  useEffect(() => {
+    dispatch(getStates())
+    dispatch(getCities())
+    dispatch(getZipCode())
+  }, [])
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+    return(
+      <>
+       <div className='container-fluid g-0'>
+          <div className='row'>
+            <div className='col-12 col-md-12'>
+            <h6>Manage Team Members</h6>
+            <div >
+            <Button endIcon={<AddIcon />} className='outline-border mt-5 col-8' variant="outlined" color="primary"  onClick={showModal}>
+              <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add Another Member</Typography>
+            </Button>
+                  <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            <Form
+                  
+                  name="basic"
+                 
+                  initialValues={{
+                    remember: true,
+                  }}
+                 
+                  autoComplete="off"
+                >
+              
+                  <div className='row'>
+                    <div className='col-12 col-md-12 text-center mt-5'>
+              
+                    <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader avatar-radius"
+                    showUploadList={false}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  </Upload>
+                    </div>
+                   
+                    <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="name"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your name!',
+                      },
+                    ]}
+                  >
+                    <Input  prefix={<PersonIcon />} placeholder=' Enter Name'  className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="email"
+                    className='place'
+                    onChange={validateEmail}
+                    
+                  >
+                    <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
+                  </Form.Item>
+                    {message && <span className={`message ${isValid ? 'success' : 'error'}`}> {message}</span>}
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="phone"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phoneNo!',
+                      },
+                    ]}
+                  >
+                    <Input onKeyPress={(event) => {
+                                                        if (!/[0-9]/.test(event.key)) {
+                                                        event.preventDefault();
+                                                        }
+                                                    }}  prefix={<PhoneIcon />} placeholder=' Phone No.' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="state"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your state!',
+                      },
+                    ]}
+                  >
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                        {states.map((state) => (
+                            <Option value={state.name}>{state.name}</Option>
+                        ))}
+                        
+                      </Select>
+                  </Form.Item>
+                 
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="city"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your city!',
+                      },
+                    ]}
+                  >
+                   
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                        {cities.map((city) => (
+                           <Option value={city.name}>{city.name}</Option>
+                        ))}
+                      </Select>
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="zipcode"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your ZipCode!',
+                      },
+                    ]}
+                  >
+                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={handleChange}>
+                      {zipcodes.map((zip) => (
+                        <Option value={zip.zipcode}>{zip.zipcode}</Option>
+                      ))}
+                       
+                      </Select>
+                  </Form.Item>
+                  </div>
+                  </div>
+                  <div className='mt-5'>
+                  <Form.Item
+                   
+                  >
+                 
+                    <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      Add
+                    </Button>
+                    
+                      <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+                        cancel
+                      </Button>
+                    
+                    <ToastContainer />
+                  </Form.Item>
+                  </div>
+                </Form>
+            </Modal>
+            </div>
+              </div>
+            </div>
+            {/* <Button ></Button> */}
+        
+        </div>
+      </>
+    )
 }
 
 
@@ -158,19 +730,7 @@ function getStepContent(step) {
       return (
         
         <>
-          <div className='container-fluid g-0'>
-          <div className='row'>
-            <div className='col-12 col-md-12'>
-              <h6>Manage Team Members</h6>
-          
-              <div className='mt-5'>
-                <Link to="/petloverform">
-            <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='float-left' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button>
-         </Link>
-         </div>
-         </div>
-          </div>
-        </div>
+         <TeamMembers />
         </>
       );
     case 2:
@@ -225,11 +785,11 @@ function getStepContent(step) {
                  </div>
                  </div>
                </div>
-               <div className='mt-5'>
-                    <Link to="/petloverform">
+               <div className='mt-0'>
                     
-            <Button endIcon={<AddIcon />} className='outline-border mt-5 col-8' variant="outlined" color="primary"><Typography  style={{textTransform: 'capitalize', fontSize: 12}}>Add another member</Typography></Button>
-            </Link>
+                    <AddTeamMembers />
+           
+            
          </div>
          </div>
          </div>
@@ -289,7 +849,7 @@ const  PetLover = () =>  {
 
 
   const isStepOptional = (step) => {
-    return step === 1;
+    return step === 0 || step === 1;
   };
 
   const isStepSkipped = (step) => {
@@ -383,28 +943,57 @@ const  PetLover = () =>  {
         <>
           <form>{getStepContent(activeStep)}</form>
           <div className='d-flex flex-row'>
-            <Button
-            className='mt-5 btn-button'
-              // className={classes.button}
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              back
-            </Button>
 
-         
-            <Button
-                className='mt-5 ms-2 btn-bg col-3'
+            {activeStep < 1 && (
+              <Link to="/welcome">
+                  <Button
+                className='mt-5 btn-button'
+                  // className={classes.button}
+                  // disabled={activeStep === 0}
+                  onClick={handleBack}
+                >
+                  back
+                </Button>
+              </Link>
+            )}
+          
+            {activeStep > 0 && (
+                <Button
+              className='mt-5 btn-button'
+                // className={classes.button}
+                // disabled={activeStep === 0}
+                onClick={handleBack}
+              >
+                back
+              </Button>
+            )}
+
+            {activeStep < steps.length - 1 && (
+              <Button
+              className='mt-5 ms-2 btn-bg col-3'
               // className={classes.button}
               variant="contained"
               color="primary"
               onClick={handleNext}
-            >
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
-
-      
-            
+              >
+                Next
+              </Button>
+            )}
+           
+            {activeStep === steps.length - 1 && (
+              <Link to="/">
+                <Button
+                className='mt-5 ms-2 width-btns btn-bg col-3'
+                // className={classes.button}
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                >
+                  Finish
+                </Button>
+              </Link>
+            )}
+           
             {isStepOptional(activeStep)  &&  (
               <Button
               className='mt-5 skip float-end'

@@ -1,5 +1,7 @@
+import React, { Suspense, Lazy, lazy } from 'react'
 import logo from './logo.svg';
 import './App.css';
+
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {AnimatePresence} from 'framer-motion'
@@ -54,9 +56,14 @@ import AddTrainingTeamMember from './screens/Pages/TeamMembers/AddTrainingTeamMe
 import AddWalkingTeamMember from './screens/Pages/TeamMembers/AddWalkingTeamMember';
 import AddBreedingTeamMember from './screens/Pages/TeamMembers/AddBreedingTeamMember';
 import AddBoardingTeamMember from './screens/Pages/TeamMembers/AddBoardingTeamMember';
+import ResetEmailVerification from './screens/Pages/ResetEmailVerification';
+
 
 import { Provider } from 'react-redux';
 import store from './store/store'
+
+// const Spinner = lazy(() => import('./screens/Spinner/spinner'));
+// const login = lazy(() => import('./screens/Auth/Login'));
 
 function App() {
   return (
@@ -64,61 +71,67 @@ function App() {
       <Provider store={store}>
       <Router>
          <AnimatePresence>
-            <Switch>
-              <Route exact path="/" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/welcome" component={WelcomeScreen} />
-              <Route path="/pricelist" component={PriceList} />
-              <Route path="/registeation" component={EmailVerification} />
-              <Route path="/creditcard" component={CreditCard} />
-              <Route path="/registereddetails" component={RegisteredDetails} />
-              <Route path="/verification" component={EmailVerification} />
-              <Route path="/forgotpassword" component={ForgotPassword} />
-              <Route path="/otp" component={OtpVerification} />
-              <Route path="/resetpassword" component={ResetPassword} />
-              <Route path="/successpassword" component={SuccessPassword} />
-              <Route path="/packages" component={Packages} />
-              <Route path="/petlover" component={PetLover} />
-              <Route path="/petloverform" component={PetLoverForms} />
-              <Route path="/businesslisting" component={BusinessListing} />
-              <Route path="/businessaccount" component={BusinessAccount} />
-              <Route path="/calender" component={Calender} />
-              <Route path="/thankyou" component={ThankYou_Registrations} />
-              <Route path="/charityaccount" component={CharityAccount} />
-              <Route path="/businessprovider" component={BusinessServiceProvider} />
-              <Route path="/addteamMembers" component={AddTeamMembers} />
-              <Route path="/charityTeamMembers" component={CharityTeamMembers} />
-              <Route path="/listiningTeamMembers" component={ListiningTeamMembers} />
-              <Route path="/petgrooming" component={PetGrooming} />
-              <Route path="/BusinessProviderServicesForms" component={BusinessProviderServicesForms} />
-              <Route path="/addservices" component={AddServices} />
-              <Route path="/transportation" component={Transportation} />
-              <Route path="/pettraining" component={PetTraning} />
-              <Route path="/petwalking" component={PetWalking} />
-              <Route path="/breeding" component={Breeding} />
-              <Route path="/petboarding" component={PetBoarding} />
-              <Route path="/petgrooming" component={PetGrooming} />
-              <Route path="/veterniary" component={Veterinary} />
-              <Route path="/vechicleforms" component={VechicleForms} />
-              <Route path="/petgroomingcalender" component={PetGroomingCalender} />
-              <Route path="/veterniarycalender" component={VeterniaryCalender} />
-              <Route path="/pettransportationcalender" component={PetTransportationCalender} />
-              <Route path="/pettrainingcalender" component={PetTrainingCalender} />
-              <Route path="/petwalkingcalender" component={PetWalkingCalender} />
-              <Route path="/petbreedingcalender" component={PetBreedingCalender} />
-              <Route path="/petboardingcalender" component={PetBoardingCalender} />
-              <Route path="/addtrainingprogram" component={AddTrainingProgram} />
-              <Route path="/addwalkingprogram" component={AddWalkingProgram} />
-              <Route path="/addbreedingforms" component={AddBreedingForms} />
-              <Route path="/addboardingforms" component={AddBoardingForms} />
-              <Route path="/addtransportteammember" component={AddTransportTeamMember} />
-              <Route path="/addtrainingteammember" component={AddTrainingTeamMember} />
-              <Route path="/addwalkingteammember" component={AddWalkingTeamMember} />
-              <Route path="/addbreedingteammember" component={AddBreedingTeamMember} />
-              <Route path="/addboardingteammember" component={AddBoardingTeamMember} />
-              <Route component={NotFound} />
-            </Switch>
-            </AnimatePresence>
+           {/* <Suspense fallback={<></>}>
+             <Spinner> */}
+                <Switch>
+                  <Route exact path="/" component={Login} />
+                  <Route path="/register" component={Register} />
+                  <Route path="/welcome" component={WelcomeScreen} />
+                  <Route path="/pricelist" component={PriceList} />
+                  <Route path="/registeation" component={EmailVerification} />
+                  <Route path="/creditcard" component={CreditCard} />
+                  <Route path="/registereddetails" component={RegisteredDetails} />
+                  <Route path="/verification" component={EmailVerification} />
+                  <Route path="/forgotpassword" component={ForgotPassword} />
+                  <Route path="/otp" component={OtpVerification} />
+                  <Route path="/resetpassword" component={ResetPassword} />
+                  <Route path="/successpassword" component={SuccessPassword} />
+                  <Route path="/packages" component={Packages} />
+                  <Route path="/petlover" component={PetLover} />
+                  <Route path="/petloverform" component={PetLoverForms} />
+                  <Route path="/businesslisting" component={BusinessListing} />
+                  <Route path="/businessaccount" component={BusinessAccount} />
+                  <Route path="/calender" component={Calender} />
+                  <Route path="/thankyou" component={ThankYou_Registrations} />
+                  <Route path="/charityaccount" component={CharityAccount} />
+                  <Route path="/businessprovider" component={BusinessServiceProvider} />
+                  <Route path="/addteamMembers" component={AddTeamMembers} />
+                  <Route path="/charityTeamMembers" component={CharityTeamMembers} />
+                  <Route path="/listiningTeamMembers" component={ListiningTeamMembers} />
+                  <Route path="/petgrooming" component={PetGrooming} />
+                  <Route path="/BusinessProviderServicesForms" component={BusinessProviderServicesForms} />
+                  <Route path="/addservices" component={AddServices} />
+                  <Route path="/transportation" component={Transportation} />
+                  <Route path="/pettraining" component={PetTraning} />
+                  <Route path="/petwalking" component={PetWalking} />
+                  <Route path="/breeding" component={Breeding} />
+                  <Route path="/petboarding" component={PetBoarding} />
+                  <Route path="/petgrooming" component={PetGrooming} />
+                  <Route path="/veterniary" component={Veterinary} />
+                  <Route path="/vechicleforms" component={VechicleForms} />
+                  <Route path="/petgroomingcalender" component={PetGroomingCalender} />
+                  <Route path="/veterniarycalender" component={VeterniaryCalender} />
+                  <Route path="/pettransportationcalender" component={PetTransportationCalender} />
+                  <Route path="/pettrainingcalender" component={PetTrainingCalender} />
+                  <Route path="/petwalkingcalender" component={PetWalkingCalender} />
+                  <Route path="/petbreedingcalender" component={PetBreedingCalender} />
+                  <Route path="/petboardingcalender" component={PetBoardingCalender} />
+                  <Route path="/addtrainingprogram" component={AddTrainingProgram} />
+                  <Route path="/addwalkingprogram" component={AddWalkingProgram} />
+                  <Route path="/addbreedingforms" component={AddBreedingForms} />
+                  <Route path="/addboardingforms" component={AddBoardingForms} />
+                  <Route path="/addtransportteammember" component={AddTransportTeamMember} />
+                  <Route path="/addtrainingteammember" component={AddTrainingTeamMember} />
+                  <Route path="/addwalkingteammember" component={AddWalkingTeamMember} />
+                  <Route path="/addbreedingteammember" component={AddBreedingTeamMember} />
+                  <Route path="/addboardingteammember" component={AddBoardingTeamMember} />
+                  <Route path="/resetEmailVerification" component={ResetEmailVerification} />
+                  <Route component={NotFound} />
+                </Switch>
+              {/* </Spinner>
+            </Suspense> */}
+          </AnimatePresence>
+           
       </Router>
       </Provider>
     </>

@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
-import { Layout, Card, Form, Upload, Input, Radio, TimePicker, message, Checkbox, Avatar, Popover, Modal, Divider } from 'antd'
+import { Layout, Card, Calendar, Form, Upload, Select, Input, Radio, TimePicker, message, Checkbox, Avatar, Popover, Modal, Divider } from 'antd'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import '../../../customcss/custom.css'
-import { LoadingOutlined, PlusOutlined,  MailFilled, UploadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, ClockCircleFilled, MailFilled, UploadOutlined, PercentageOutlined } from '@ant-design/icons';
 import AddIcon from '@mui/icons-material/Add';
 import sheep from '../../../assets/images/sheep.png'
 import avatar from '../../../assets/images/avatar.png'
@@ -11,6 +11,10 @@ import avatar1 from '../../../assets/images/avatar1.png'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import transport from '../../../assets/images/transp.png'
+import truck from '../../../assets/images/Truck.png'
+import PickUp from '../../../assets/images/PickUp.png'
+import Car from '../../../assets/images/Car.png'
+import MotorBike from '../../../assets/images/Bike.png'
 
 import moment from 'moment';
 import {
@@ -22,6 +26,8 @@ import {
     StepLabel,
   } from "@mui/material";
   import rightarrows from '../../../assets/images/rightarrows.png'
+
+  const { Option } = Select
 
   function getSteps() {
     return [
@@ -66,18 +72,88 @@ import {
     return isJpgOrPng && isLt2M;
   }
 
-  function PetGrommingForms() {
-    const [ loading, setLoading ] = useState(false);
-    const [value, setValue] = React.useState(1);
+  const weekday = [];
+  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",];
+  
+  const selectWeekDays = day => {
+    console.log("day", day);
+    let wD = weekday;
+    let index = wD.findIndex(d => d === day);
+    if (index > -1) {
+      wD.splice(index, 1);
+    } else {
+      wD.push(day);
+    }
+  
+    const dayElement = document.getElementById(day);
+    dayElement.classList.toggle("selected-day");
+  
+    
+    console.log("wD", weekday);
+  };
+  
+  const selectedWeekdays = days => {
+    let index = weekday.findIndex(d => days.value === d);
+  
+    console.log(index, "index");
+   
+    if (index > -1) {
+      console.log(days, "INSIE INDEX COLOR");
+    }
+    console.log(days);
+    return (
+      <Avatar
+        id={days}
+        onClick={() => selectWeekDays(days)}
+        className="week-days"
+        key={days}
+      >
+        {days}
+      </Avatar>
+    );
+  };
 
-    const onChange = e => {
-        console.log('radio checked', e.target.value);
-        setValue(e.target.value);
-      };
-
-
-    const { imageUrl } = loading
-
+  function GetSteppers() {
+  
+    const [Loading, setLoading] = useState(false);
+    // const [sat, setSat] = useState(false)
+    // const [sun, setSun] = useState(false)
+    const [chars_left, setCharLeft] = useState(1800)
+    const [max_char, setMaxChar] = useState(1800)
+    const [isValidPercentage, setIsValidPercentage] = useState(false);
+    const [message, setMessage] = useState("")
+    const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+    const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+    const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
+    const [end1SelectedTime, setEnd1SelectedTime] = useState("00:00")
+    const [isModalVisible, setIsModalVisible] = useState(false);
+   
+  
+    const percentageRegex = /(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i;
+  
+    const validPercentage = (e) => {
+      const percentage = e.target.value
+      if(percentage == "") {
+        setIsValidPercentage(false);
+        setMessage('Percentage is Required');
+      }
+      else if(percentageRegex.test(percentage)) {
+        setIsValidPercentage(true);
+          setMessage('');
+      } else {
+        setIsValidPercentage(false);
+        setMessage('Percentage is not valid');
+      }
+    }
+  
+    const handleWordCount = (e) => {
+      const charCount = e.target.value.length
+      const maxChar = max_char;
+      const charLength = maxChar - charCount;
+      setCharLeft(charLength)
+    }
+  
+  
     const handleChange = info => {
       if (info.file.status === 'uploading') {
         this.setState({ loading: true });
@@ -94,85 +170,315 @@ import {
       }
     };
   
+    const { imageUrl } = Loading
   
     const uploadButton = (
       <div>
-        {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        <div style={{ marginTop: 8 }}>Upload</div>
+        {Loading ? <LoadingOutlined /> : <PlusOutlined className='plus-outlined' />}
+        <div style={{ marginTop: 8 }}>Logo</div>
       </div>
     );
-      return(
-          <>
-           <div className='container-fluid g-0'>
-        <div className='row'>
-          <div className='col-12 col-md-12'>
+  
+    function onChange(time, timeString) {
+      console.log(time, timeString);
+    }
+  
+   
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+  
+    
+    function onPanelChange(value, mode) {
+      console.log(value, mode);
+    }
+    return(
+      <>
+  <div className='container-fluid g-0 postions'>
+          <div className='row'>
+            <div className='col-12 col-md-12'>
+              
+              <div>
+              <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader uploaders text-center"
+                  showUploadList={false}
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  beforeUpload={beforeUpload}
+                  onChange={handleChange}
+                >
+                  {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                </Upload>
+              <label htmlFor=""> Description *</label>
+              <TextArea 
+                rows={4} 
+                id='value' 
+                className='text-area' 
+                maxLength="1800"
+                onChange={handleWordCount}
+              />
+              <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+              <div className='mt-5'>
+                <label htmlFor="">Days of the week *</label>
+                <br />
+                <div className='d-flex flex-row'>
+                  {weekDays.map((days, index) => selectedWeekdays(days))}
+                </div>
+              </div>
+  
+              <div className='row'>
+                <div className='col-md-6'>
+                  <div className='mt-3'>
+                    <label htmlFor="">Business Timings *</label>
+                    <br />
+                    {/* <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' /> */}
+                    <TimePicker 
+                      placeholder='Start Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2 timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(startSelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setStartSelectedTime(timeString)
+                      }}
+                    />
+                    
+                   <TimePicker 
+                      placeholder='End Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2 ms-3 timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(endSelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setEndSelectedTime(timeString)
+                      }}
+                    />
+                  </div>
+                </div>
+  
+                <div className='col-md-6'>
+                  <div className='mt-3'>
+                    <label htmlFor="">Break Timings *</label>
+                    <br />
+                    {/* <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' /> */}
+                    <TimePicker 
+                      placeholder='Start Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2  timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(start1SelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setStart1SelectedTime(timeString)
+                      }}
+                    />
+                   <TimePicker 
+                      placeholder='End Time'
+                      renderExtraFooter={() => (
+                        <div className='timePickerHeader'>
+                          <div>HH</div>
+                          <div>MM</div>
+                        </div> 
+                      )} 
+                      className='upload-image mt-2 ms-3 timepicker-range' 
+                      onChange={onChange} 
+                      defaultValue={moment('00:00', 'HH:mm')}
+                      format="HH:mm"
+                      suffixIcon={<ClockCircleFilled />}
+                      showNow={false}
+                      allowClear={false}
+                      value={moment(end1SelectedTime, "HH:mm")}
+                      onSelect={(value) => {
+                        const timeString = moment(value).format("HH:mm");
+                        setEnd1SelectedTime(timeString)
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col-12 col-md-6'>
+                  <div className='mt-5'>
+                    {/* <Link to='/calender'> */}
+                    <Button className='col-12 grey-color mt-1' variant='outlined' endIcon={<AddIcon />} onClick={showModal}>
+                      <Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography>
+                    </Button>
             
-            <div>
-            <Upload
-                name="avatar"
-                listType="picture-card"
-                className="avatar-uploader uploaders text-center"
-                showUploadList={false}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                beforeUpload={beforeUpload}
-                onChange={handleChange}
-              >
-                {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-              </Upload>
-            <label htmlFor=""> Description *</label>
-            <TextArea rows={4} className='text-area'  />
-            <div className='mt-3'>
-              <label htmlFor="">Days of the week *</label>
-              <br />
-              <Button className='col-radius actives'>Mon</Button>
-              <Button  className='col-radius ms-3 actives'>Tue</Button>
-              <Button  className='col-radius ms-3 actives'>Wed</Button>
-              <Button  className='col-radius ms-3 actives'>Thu</Button>
-              <Button  className='col-radius ms-3 actives'>Fri</Button>
-              <Button className='col-radius bg-colors ms-3'>Sat</Button>
-              <Button className='col-radius bg-colors ms-3'>Sun</Button>
-            </div>
-
-            <div className='row'>
-              <div className='col-md-6'>
-                <div className='mt-3'>
-                  <label htmlFor="">Business Timings *</label>
-                  <br />
-                  <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' />
+                    <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <div className="site-calendar-demo-card">
+                        <Calendar fullscreen={false} onPanelChange={onPanelChange} />
+                        
+                      </div>
+                      <Form.Item
+                          name="name"
+                          className='place mt-3'
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Please input your name!',
+                            },
+                          ]}
+                        >
+                          <Input  placeholder=' Enter Holiday Name'  className='name' />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>Add</Button>
+                          <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>Cancel</Button>
+                        </Form.Item>
+                    </Modal>
+                    <Button ></Button>
+                    {/* </Link> */}
+                  </div>
+                </div>
+                <div className='col-12 col-md-6'>
+                  <div className='mt-4'>
+                    <label htmlFor="">Tax Percentage</label>
+                    <Input onKeyPress={(event) => {
+                                              if (!/[0-9]/.test(event.key)) {
+                                              event.preventDefault();
+                                              }
+                                          }} onChange={validPercentage} suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
+                      {message && <span className={`message ${isValidPercentage ? 'success' : 'error'}`}>{message}</span>}
+                  </div>
                 </div>
               </div>
-
-              <div className='col-md-6'>
-                <div className='mt-3'>
-                  <label htmlFor="">Break Timings *</label>
-                  <br />
-                  <TimePicker.RangePicker  className='upload-image mt-2 timepicker-range' />
-                </div>
-              </div>
-            </div>
-            <div className='row'>
-              <div className='col-12 col-md-6'>
-                <div className='mt-5'>
-                  <Link to="/pettransportationcalender">
-                  <Button className='col-12 grey-color' variant='outlined' endIcon={<AddIcon />}><Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography></Button></Link>
-                </div>
-              </div>
-              <div className='col-12 col-md-6'>
-                <div className='mt-4'>
-                  <label htmlFor="">Tax Percentage</label>
-                  <Input className='grey-color mt-2' />
-                </div>
-              </div>
-            </div>
-       </div>
-       </div>
+         </div>
+         </div>
+          </div>
         </div>
-      </div>
-          </>
-      )
+      </>
+    )
   }
 
+  
+  const animal = [];
+  const animalName = ["Dog", "Cat", "Horse", "Elephant"];
+  
+  const selectAnimal = animals => {
+    console.log(animal)
+    console.log("animal", animals);
+    let SA = animal;
+    let index = SA.findIndex(animal => animal === animals);
+    if (index > -1) {
+      SA.splice(index, 1);
+    } else {
+      SA.push(animals);
+    }
+  
+    const dayElement = document.getElementById(animals);
+    dayElement.classList.toggle("selected-day");
+  
+    
+    console.log("SA", animal);
+  };
+  
+  const selectedAnimals = animals => {
+    let index = animal.findIndex(animal => animals.value === animal);
+  
+    console.log(index, "index");
+   
+    if (index > -1) {
+      console.log(animals, "INSIE INDEX COLOR");
+    }
+    console.log(animals);
+    return (
+          <div className='col-12 col-md-6 mt-2 ms-2 '>
+            <Button
+            id={animals}
+            onClick={() => selectAnimal(animals)}
+            className="week-days week-btns"
+            key={animals}
+          >
+            {animals}
+          </Button>
+        </div>
+    );
+  };
+
+
   function AddServices() {
+    const [vehicle, setVehicle] = useState("Truck")
+
+    const Vehicle = (index) => {
+      setVehicle(index)
+    }
+    const [value, setValue] = useState(1)
+    const [chars_left, setCharLeft] = useState(1800)
+    const [max_char, setMaxChar] = useState(1800)
+
+    function handleChange(value) {
+      console.log(`selected ${value}`);
+    }
+
+    const handleWordCount = (e) => {
+      const charCount = e.target.value.length
+      const maxChar = max_char;
+      const charLength = maxChar - charCount;
+      setCharLeft(charLength)
+    }
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+
+    function onPanelChange(value, mode) {
+      console.log(value, mode);
+    }
+
+    function onChange(e) {
+        console.log(`checked = ${e.target.checked}`);
+      }
 
       return(
           <>
@@ -186,11 +492,90 @@ import {
                         </div>
                     </Card>
                     <div className='mt-4'>
-                        <Link to="/vechicleforms">
-                            <Button className='bg-services col-4' variant="contained" endIcon={<AddIcon />}>
-                                Add a Vechicle
+                     
+                    <Button className='bg-services col-4' variant='contained' endIcon={<AddIcon />} onClick={showModal}>
+                                Add a new Services
                             </Button>
-                        </Link>
+          
+                  <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                  <label>Vechicle Type *</label>
+                                <div className='mt-3'>
+                                    <div className='row align-items-center'>
+                                        <div className='col-12 col-md-3'>
+                                            <Card onClick={() => Vehicle("Truck")} style={{height:80}} className={vehicle === "Truck" ? 'bg-purple' : 'bg-gray'} variant="contained">
+                                                <img src={truck} className='mt-1' />
+                                                <p>Truck</p> 
+                                            </Card>
+                                        </div>
+                                  
+                                    <div className='col-12 col-md-3'>
+                                        <Card onClick={() => Vehicle("PickUp")} style={{height:80}} className={vehicle === "PickUp" ? 'bg-purple' : 'bg-gray'} variant="contained">
+                                            <img src={PickUp} className='mt-2' />
+                                        <p>PickUp</p> 
+                                        </Card>
+                                     </div>
+
+                                     <div className='col-12 col-md-3'>
+                                        <Card onClick={() => Vehicle("Car")} style={{height:80}} className={vehicle === "Car" ? 'bg-purple ' : 'bg-gray'} variant="contained">
+                                            <img src={Car} className='mt-2' />
+                                        <p>Car</p> 
+                                        </Card>
+                                     </div>
+
+                                     <div className='col-12 col-md-3'> 
+                                     <Card onClick={() => Vehicle("MotoBike")} style={{height:80}} className={vehicle === "MotoBike" ? 'bg-purple' : 'bg-gray'} variant="contained">
+                                        <img src={MotorBike} className='mt-1' />
+                                    <p>MotorBike</p>
+                                     
+                                     </Card>
+                                     </div>
+                                     <div className='row mt-5'>
+                                         <div className='col-12 col-md-6'>
+                                             <label htmlFor="">Registration Number *</label>
+                                                <Input style={{width: 270}} className='input-forms mt-2' placeholder='KC-0221' />
+                                         </div>
+
+                                         <div className='col-12 col-md-6'>
+                                             <label htmlFor="">Rent Per Mile *</label>
+                                                <Input style={{width: 270}} className='input-forms mt-2' placeholder='$35' />
+                                         </div>
+
+
+                                     </div>
+                                     <div className='row mt-4'>
+                                         <div className='col-12 col-md-6'>
+                                             <label htmlFor="">Animal Type *</label>
+                                             <br />
+                                             {/* <div className='d-flex flex-row mt-2'>
+                                                <Button className='actives fonted col-12'>Dog</Button>
+                                               <Button className='bg-colors fonted col-12 ms-4'>Cat</Button>
+                                             </div>
+
+                                             <div className='d-flex flex-row mt-3'>
+                                                <Button className='bg-colors fonted col-12'>Horse</Button>
+                                               <Button className='bg-colors fonted col-12 ms-4'>Elephant</Button>
+                                             </div> */}
+                                              <div className='d-flex flex-row margin-col'>
+                                                {animalName.map((animals, index) => selectedAnimals(animals))}
+                                              </div>
+
+                                              
+                                            
+                                         </div>
+                                         <div className='container-fluid g-0 mt-4'>
+                                            <label htmlFor="" className='ms-2'>Description *</label>
+                                                <TextArea maxLength="1800" onChange={handleWordCount} className='ms-2 text-area-bg mt-2' rows={5}></TextArea>
+                                                <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+                                         </div>
+                                        <div className='d-flex flex-row justify-content-between mt-5'>
+                                            <Button className='actives fonted'>Add</Button>
+                                            <Button onClick={handleCancel} className='font-black'>Cancel</Button>
+                                        </div>
+                                     </div>
+                                     </div>
+                                </div>
+
+                  </Modal>
          </div>
                   </div>
               </div>
@@ -212,7 +597,7 @@ import {
           
             <div className='mt-5'> 
                 <Link to="/addtransportteammember">
-                <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='float-left' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button></Link>
+                <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button></Link>
            
             </div>
          </div>
@@ -336,14 +721,26 @@ import {
         case 0 :
             return(
                 <>
-                 <PetGrommingForms />
+                  <motion.div
+             initial={{opacity: 0}}
+             animate={{opacity: 1}}
+             exit={{opacity: 0}} 
+           >
+                 <GetSteppers />
+                 </motion.div>
                 </>
             )
 
             case 1 :
               return(
                   <>
+                          <motion.div
+             initial={{opacity: 0}}
+             animate={{opacity: 1}}
+             exit={{opacity: 0}} 
+           >
                     <AddServices />
+                    </motion.div>
                   </>
               )
               
@@ -352,14 +749,26 @@ import {
             case 2 :
             return(
                 <>
+                        <motion.div
+             initial={{opacity: 0}}
+             animate={{opacity: 1}}
+             exit={{opacity: 0}} 
+           >
                  <TeamMembers />
+                 </motion.div>
                 </>
             )
 
             case 3 :
             return(
                 <>
+                            <motion.div
+             initial={{opacity: 0}}
+             animate={{opacity: 1}}
+             exit={{opacity: 0}} 
+           >
                   <AddTeamMembers />
+                  </motion.div>
                 </>
             )
             default:
@@ -380,7 +789,7 @@ export default function Transportation() {
     const handleClose = () => setOpen(false);
 
     const isStepOptional = (step) => {
-        return step === 1 || step === 2
+        return step === 0 || step === 1 || step === 2
       };
     
       const isStepSkipped = (step) => {
@@ -404,11 +813,7 @@ export default function Transportation() {
       };
     return (
         <div>
-           <motion.div
-             initial={{opacity: 0}}
-             animate={{opacity: 1}}
-             exit={{opacity: 0}} 
-           >
+      
                 <div className='container-fluid g-0 overflow'>
                <div className='row  align-items-center'>
                    <div className='col-12 col-md-4'>
@@ -471,28 +876,57 @@ export default function Transportation() {
         <>
           <form>{getStepContent(activeStep)}</form>
           <div className='d-flex flex-row top-btn mt-5'>
-            <Button
-            className=' btn-button'
-              // className={classes.button}
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              back
-            </Button>
 
-         
-            <Button
-                className=' ms-2 btn-bg col-3'
+              {activeStep < 1 && (
+                     <Link to="/businessprovider">
+                  <Button
+                  className=' btn-button'
+                    // className={classes.button}
+                    // disabled={activeStep === 0}
+                    onClick={handleBack}
+                  >
+                    back
+                  </Button>
+                </Link>
+              )}
+        
+              {activeStep > 0 && (
+                <Button
+                className=' btn-button'
+                  // className={classes.button}
+                  // disabled={activeStep === 0}
+                  onClick={handleBack}
+                >
+                  back
+                </Button>
+              )}
+
+            {activeStep < steps.length - 1 && (
+              <Button
+              className=' ms-2 btn-bg col-3'
               // className={classes.button}
               variant="contained"
               color="primary"
               onClick={handleNext}
-            >
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
+              >
+              Next
+              </Button>
+            )}
+           
+           {activeStep === steps.length - 1 && (
+             <Link to="/businessprovider">
+                <Button
+                className=' ms-2 width-btns btn-bg col-3'
+              // className={classes.button}
+              variant="contained"
+              color="primary"
+              onClick={handleNext}
+              >
+              Finish
+              </Button>
+            </Link>
+           )}
 
-      
-            
             {isStepOptional(activeStep)  &&  (
               <Button
               className='skip float-end'
@@ -513,7 +947,7 @@ export default function Transportation() {
                    </div>
                    </div>
                    
-            </motion.div> 
+          
         </div>
     )
 }

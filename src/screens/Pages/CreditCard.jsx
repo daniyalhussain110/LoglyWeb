@@ -1,8 +1,10 @@
 import React from 'react'
 import '../../customcss/custom.css'
 import { Form, Input, Button, Checkbox, Select, Row, Col, Card, Upload,DatePicker, Space, Tag, Divider } from 'antd';
+import { CreditCardFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Logo from '../../assets/images/logo-logly.png'
 
 export default function CreditCard() {
     return (
@@ -10,8 +12,9 @@ export default function CreditCard() {
             <section id='img-bg'>
                 <div className='overlay'>
                     <div className='bone-bg'>
-                        <h1 className='logos'>LOGLY</h1>
-                        <div className='container py-5'>
+                    <img src={Logo} alt="" className='float-left'  height="100" />
+                        <h1 className='logos'></h1>
+                        <div className='container mt-5 py-5'>
                             <div className='row'>
                                 <div className='col-12 col-md-6'>
 
@@ -38,7 +41,7 @@ export default function CreditCard() {
                                         name="cardnumber"
                                         rules={[{ required: true, message: 'Please input your card number!' }]}
                                     >
-                                        <Input className='border-radius-forms' placeholder='0000 1234 0123 0125'/>
+                                        <Input suffix={<i class="fas fa-credit-card"></i>} autoComplete='off' className='border-radius-forms' placeholder='0000 1234 0123 0125'/>
                                     </Form.Item>
 
                                     
@@ -50,18 +53,22 @@ export default function CreditCard() {
                                         rules={[{ required: true, message: 'Please input your expiry date!' }]}
                                     >
                                     <Space direction="vertical">
-                                        <DatePicker className='border-radius-forms' />
+                                        <DatePicker onKeyDown={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}  className='border-radius-forms' />
                                     </Space>
                                     </Form.Item>
                                         </div>
 
                                         <div className='col-12 col-md-6 mar-left'>
                                         <Form.Item
-                                    label="CW"
-                                        name="cw"
-                                        rules={[{ required: true, message: 'Please input your cw!' }]}
+                                    label="CVC"
+                                        name="cvc"
+                                        rules={[{ required: true, message: 'Please input your cvc!' }]}
                                     >
-                                        <Input className='border-radius-forms' placeholder='315'/>
+                                        <Input autoComplete='off' className='border-radius-forms' placeholder='315'/>
                                     </Form.Item>
                                         </div>
                                     </div>
@@ -71,7 +78,7 @@ export default function CreditCard() {
                                         className='rows'
                                         rules={[{ required: true, message: 'Please input your name!' }]}
                                     >
-                                        <Input className='border-radius-forms ' placeholder='Jacob andrew'/>
+                                        <Input autoComplete='off' className='border-radius-forms ' placeholder='Jacob andrew'/>
                                     </Form.Item>
                                     <Checkbox defaultChecked className='checked rows'>Save Card Details</Checkbox>
                                    <div className='top mt-4'>

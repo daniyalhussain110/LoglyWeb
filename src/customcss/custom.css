@@ -110,9 +110,23 @@ Input::placeholder {
     border-radius: 50px !important;
 }
 
+.purple-active {
+    background-color: #503a9f !important;
+    border-radius: 10px !important;
+}
+
+.grey-active {
+    background-color: #f5f5f5 !important;
+    border: 0px !important;
+    border-radius: 10px !important;
+    color: #503a9f !important;
+}
+
 .bg-purple {
     background-color: #503a9f !important;
     border-radius: 10px !important;
+    text-align: center !important;
+    color: white !important;
 }
 
 .input-forms {
@@ -120,6 +134,7 @@ Input::placeholder {
     border: 0px !important;
     border-radius: 5px !important;
     padding: 8px 10px !important;
+
 }
 
 .bg-gray {
@@ -127,16 +142,18 @@ Input::placeholder {
     border: 0px !important;
     border-radius: 10px !important;
     color: #503a9f !important;
+    text-align: center !important;
 }
 
 .top-card {
     margin-top: -250px !important;
 }
 
-.state-city  {
+.state-city  .ant-select-selector  {
     background-color: #f5f5f5 !important;
     border: 0px !important;
     border-radius: 5px !important;
+    
 }
 
 .table-color {
@@ -221,7 +238,7 @@ span.ant-radio-inner:after {
     border-radius: 5px !important;
     background-color: #f5f5f5 !important;
     border: 0px !important;
-    height: 40px !important;
+    padding: 8px !important;
 }
 
 .color-sky-blue{
@@ -394,8 +411,13 @@ span.ant-radio-inner:after {
 }
 
 .float-right {
-    float: right;
-    padding: 30px 100px;
+    float: left ;
+    padding: 25px 100px;
+}
+
+.float-left {
+    float: right !important;
+    padding: 25px 100px;
 }
 
 .pickup-services {
@@ -571,25 +593,208 @@ input[type='radio'], input[type='checkbox'] {
 .active-card {
     background-color: #503a9f !important;
     border-radius: 10px !important;
-    height: 80px !important;
     box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 5%) !important;
     color: white !important;
 }
 
+.active-card:hover {
+    border: 0px !important;
+}
+
+.ant-card-bordered {
+    border: 0px !important;
+}
+
+
 .card-active {
     background-color:  white !important;
     border-radius: 10px !important;
-    height: 80px !important;
+
     box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 5%) !important;
 }
+
+.card-active .lover {
+    color: #503a9f !important;
+}
+
+.PhoneInputInput {
+    border: 0px !important;
+    box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 10%) !important;
+    border-radius: 5px !important;
+    padding: 5px !important;
+}
+
+
 
 .active-list {
     background-color: #503a9f !important;
     border-radius: 5px !important;
+    transition: all 0.5s ease-in-out !important;
     border: 0px !important;
     text-align: left !important;
     /* height: 80px !important; */
     box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 5%) !important;
+    color: white !important;
+}
+
+.css-heg063-MuiTabs-flexContainer {
+    justify-content: center !important;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
+    background-color: #503a9f !important;
+    color: white !important;
+    border-radius: 10px !important;
+   
+}
+
+.css-1aquho2-MuiTabs-indicator {
+    background-color: transparent !important;
+    border: 0px !important;   
+}
+
+.ant-avatar {
+    background-color: #f5f5f5 !important;
+}
+
+.font-time {
+    font-size: 12px !important;
+}
+
+.ant-picker-footer-extra:not(:last-child) {
+    border-bottom: 0px !important;
+}
+
+.ant-picker-footer-extra:not(:first-child) {
+    border-bottom: 0px !important;
+}
+
+.ant-picker-footer-extra {
+    padding: 0px !important;
+}
+
+.percentage {
+    float: right !important;
+}
+
+/* .ant-picker-footer {
+    display: none !important;
+} */
+
+
+.ant-picker-ranges {
+    display: none !important;
+}
+
+.days {
+    cursor: pointer !important;
+    border-radius: 5px!important;
+    margin: 0.2rem !important; 
+    color: #503a9f !important;
+    width: 100% !important;
+    background-color: #f5f5f5 !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+.expertise {
+    cursor: pointer !important;
+    border-radius: 5px!important;
+    margin: 0.2rem !important; 
+    color: #503a9f !important;
+    width: 140px !important;
+    background-color: #f5f5f5 !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+.petslovers {
+    cursor: pointer !important;
+    border-radius: 5px!important;
+    margin: 0.2rem !important; 
+    color: #503a9f !important;
+    width: 240px !important;
+    background-color: #f5f5f5 !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+.week-days {
+    cursor: pointer !important;
+    border-radius: 5px!important;
+    margin: 0.2rem !important; 
+    color: #503a9f !important;
+    width: 100% !important;
+    background-color: #f5f5f5 !important;
+    transition: all 0.3s ease-in-out !important;
+  }
+  
+  .selected-day {
+    background: #ffc081   !important;
+    color: #503a9f !important;
+    transition: all 0.5s ease-in-out !important;
+  }
+
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+    text-transform: capitalize !important;
+    
+}
+
+.ant-picker-footer-extra {
+    padding: 0;
+  }
+  
+  .timePickerHeader {
+    display: grid;
+    grid-auto-flow: column;
+  }
+  
+  .timePickerHeader div {
+    text-align: center;
+  }
+
+.monthly {
+    background-color: white !important;
+    border-radius: 10px !important;
+}
+
+.yearly {
+    background-color: white !important;
+    border-radius: 10px !important;
+    margin: 0px 10px !important;
+}
+
+.lifetime {
+    background-color: white !important;
+    border-radius: 10px !important;
+    
+}
+
+.widths-btns {
+    width: 145px !important;
+}
+
+.active-list::after {
+    content: '✓' !important;
+    font-size: 10px !important;
+    float: right !important;
+    margin: 0px 5px !important;
+    width: 15px; 
+    height: 15px;
+    text-align: center;
+    margin-top: 2px !important;
+    transition: all 0.5s ease-in-out !important;
+}
+
+
+.float-left {
+    float: left !important;
+    padding: 25px 100px;
+    
+}
+
+.btn-col-width {
+    width: 185px !important;
+}
+
+.ant-tabs-ink-bar:hover {
     color: white !important;
 }
 
@@ -624,6 +829,10 @@ input[type='radio'], input[type='checkbox'] {
 
 .desc {
     font-size: 12px;
+}
+
+.top-marg {
+    margin: -12px 0px !important;
 }
 
 .price {
@@ -783,7 +992,7 @@ input[type='radio'], input[type='checkbox'] {
 }
 
 .css-117w1su-MuiStepIcon-text {
-    fill: white !important
+    fill: gray !important
 }
 
 .fonts-sizes {
@@ -812,17 +1021,13 @@ input[type='radio'], input[type='checkbox'] {
 }
 
 .ant-tabs-ink-bar {
-    background: #503a9f !important;
+    background-color: #503a9f !important;
     height: 35px !important;
     border-radius: 0rem;
-    border-radius: 10px !important;  
+    border-radius: 10px !important; 
 }
 
 
-
-.ant-tabs-ink-bar:hover {
-   color: white !important;
-}
 
 .right-text {
     float: right !important;
@@ -867,10 +1072,18 @@ input[type='radio'], input[type='checkbox'] {
     margin-left: -165px !important;
 }
 
+.grey-padding {
+    background-color: #f5f5f5 !important;
+    border-radius: 5px !important;
+    border: 0px !important;
+    padding: 5px !important;
+}
+
 .grey-color {
     background-color: #f5f5f5 !important;
-    border-radius: 10px !important;
+    border-radius: 5px !important;
     border: 0px !important;
+    padding: 10px !important;
 }
 
 .area-text {
@@ -929,8 +1142,33 @@ input[type='radio'], input[type='checkbox'] {
     background-color: #f5f5f5 !important; 
 }
 
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner, .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner, .ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner {
+    background-color: #503a9f !important;
+
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+    border: 0px !important;
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):first-child {
+    border-color: #503a9f !important;
+    color: #503a9f !important;
+}
+
+/* .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    border-color: #503a9f !important;
+    color: #503a9f !important;
+} */
+
 .ant-picker-body {
     background-color: #f5f5f5 !important; 
+    border-radius: 10px !important;
+   
+}
+
+.ant-picker-calendar .ant-picker-panel {
+    border-top: 0px !important;
 }
 
 .rad {
@@ -980,7 +1218,12 @@ input[type='radio'], input[type='checkbox'] {
 .forms {
     box-shadow: 1px 1px 1px 1px rgba(146, 146, 146, 0.521) !important;
     border-radius: 5px !important;
-   border: 0px !important;
+    border: 0px !important;
+}
+
+.forms .ant-select-selector {
+    border-radius: 5px !important;
+    border: 0px !important;
 }
 
 .width-forms {
@@ -1009,14 +1252,50 @@ input[type='radio'], input[type='checkbox'] {
     text-decoration: underline !important;
 }
 
+.PasswordStrength {
+    background-color: #4285F4;
+    padding: 25px;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.PasswordStrength p {
+    display: flex;
+}
+
+.PasswordStrength input {
+    padding: 5px;
+    flex-grow: 1;
+    outline: none;
+}
+
+.width-btns {
+    width: 170px !important;
+}
+
 .width-sm {
     width: 50px !important;
+}
+
+.widths-mail {
+    width: 70px !important;
+}
+
+.buttons {
+    width: 180px !important;
+}
+
+.react-tel-input .form-control {
+    border: 0px !important;
+    width: 270px !important;
+    box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 25%) !important;
 }
 
 .btn-bg-color {
     background-color: #503a9f !important;
     border: 0px !important;
     height: 40px !important;
+  
     border-radius: 5px !important;
     box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 25%) !important;
     
@@ -1081,6 +1360,12 @@ input[type='radio'], input[type='checkbox'] {
     font-size: 13px !important;
     font-weight: 100 !important;
 }
+
+.ant-modal-mask {
+    background-color: #dfdfdf !important;
+    width: 1000px !important;
+    left: 29% !important;
+}  
 
 .bg-grey {
     background-color: #dfdfdf !important;
@@ -1255,20 +1540,48 @@ input[type='radio'], input[type='checkbox'] {
     color: #503a9f !important;
 }
 
+ /* .MuiButton-root .MuiButton-text .MuiButton-textPrimary .MuiButton-sizeMedium .MuiButton-textSizeMedium .MuiButtonBase-root .steps-display .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+    display: none !important;
+} */
+
 .orangeButton {
     background-color: #ffc081 !important;
-    color: #503a9f !important; 
-    
+    color: #503a9f !important;    
 }
+
+.example {
+    margin: 20px 0;
+    margin-bottom: 20px;
+    padding: 30px 50px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
 
 .greybutton {
     background-color: #f5f5f5 !important;
     color: #503a9f !important; 
 }
 
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+
+
+.form-select {
+    background-color: #f5f5f5 !important;
+    border: 0px !important;
+}
+
 
 .bg-colors {
     background-color: #f5f5f5 !important;
+    color: #503a9f !important;
 }
 
    .pluses {
@@ -1291,6 +1604,12 @@ input[type='radio'], input[type='checkbox'] {
     font-size: 14px !important;
 }
 
+.modal-radius .ant-modal-content {
+    border-radius: 15px !important;
+    left: 20% !important;
+    width: 600px !important;
+} 
+
 .active-button {
     border: 0px !important;
     box-shadow: none !important;
@@ -1308,16 +1627,32 @@ input[type='radio'], input[type='checkbox'] {
     display: none !important;
 }
 
+.margin-col {
+    margin-left: -10px !important;
+}
+
+
+.animal-buttons {
+
+}
+
 .activeses {
     border: 0px !important;
     box-shadow: none !important;
-    border-radius: 5px !important;
+    border-radius: 50px !important;
     background-color: #f5f5f5 !important;
     color: #503a9f !important;
 }
 
 .border-model-radius .ant-modal-content {
     border-radius: 20px !important;
+}
+
+
+
+.avatar-radius  .ant-upload {
+    border-radius: 50% !important;
+    border: 0px !important;
 }
 
 .text-cancel {

@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Layout, Card, Form, Input, Checkbox, Select, Upload, message  } from 'antd';
 import { Link } from 'react-router-dom'
 import '../../../customcss/custom.css';
 import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
-
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { getCities, getStates, getZipCode } from '../../../store/Actions/Action'
 import {
   Typography,
   TextField,
@@ -19,11 +20,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import FlagIcon from '@mui/icons-material/Flag';
 import AddIcon from '@mui/icons-material/Add';
-import { connect, useDispatch } from 'react-redux'
-import { addteam } from '../../../store/Actions/PetActions'
+
 
 const { Sider } = Layout;
 const { Option } = Select;
+
 
 function handleChange(value) {
   console.log(`selected ${value}`);
@@ -92,10 +93,33 @@ const PetLoverForms = (props) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState("")
+  const [cancel, setCancel] = useState(false);
+  
+  const dispatch = useDispatch()
+
+  const emailRegex = /\S+@\S+\.\S+/
+
+  const validateEmail = (e) => {
+    const email = e.target.value;
+    if(email == "") {
+      setMessage('Email is Required')
+    }
+    else if(emailRegex.test(email)) {
+        setIsValid(true);
+        setMessage('email is valid');
+    } else {
+      setIsValid(false);
+      setMessage('email is not valid');
+    }
+  }
+
   const [ loading, setLoading ] = useState(false);
   const isStepOptional = (step) => {
     return step === 1 || step === 2;
   };
+
 
   const { imageUrl } = loading
 
@@ -114,6 +138,7 @@ const PetLoverForms = (props) => {
       );
     }
   };
+
 
 
   const uploadButton = (
@@ -142,6 +167,20 @@ const PetLoverForms = (props) => {
     }
     setActiveStep(activeStep + 1);
   };
+
+  const handleCancel = () => {
+    setCancel(!cancel)
+  }
+  
+  const states = useSelector((state) => state.myState.states)
+  const cities = useSelector((state) => state.myCities.cities)
+  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+
+  useEffect(() => {
+    dispatch(getStates())
+    dispatch(getCities())
+    dispatch(getZipCode())
+  }, [])
   return (
     <>
      <motion.div
@@ -248,15 +287,12 @@ const PetLoverForms = (props) => {
       <Form.Item
         name="email"
         className='place'
-        rules={[
-          {
-            required: true,
-            message: 'Please input your email!',
-          },
-        ]}
+        onChange={validateEmail}
+        
       >
         <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
       </Form.Item>
+        {message && <span className={`message ${isValid ? 'success' : 'error'}`}> {message}</span>}
       </div>
       <div className='col-12 col-md-6 '>
       <Form.Item
@@ -269,7 +305,11 @@ const PetLoverForms = (props) => {
           },
         ]}
       >
-        <Input  prefix={<PhoneIcon />} placeholder=' Phone No.' className='name' />
+        <Input onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}  prefix={<PhoneIcon />} placeholder=' Phone No.' className='name' />
       </Form.Item>
       </div>
       <div className='col-12 col-md-6 '>
@@ -282,17 +322,12 @@ const PetLoverForms = (props) => {
           },
         ]}
       >
-          {/* <Select value={state} onChange={handleOnInputChange} className='state-city' defaultValue="Select State" onChange={handleChange}>
-            <Option value="sindh">sindh</Option>
-            <Option value="punjab">punjab</Option>
-            <Option value="balochistan">balochistan</Option>
-          </Select> */}
-          <select className='state-city form-select'  aria-label="Default select example">
-            <option selected>Select State</option>
-            <option value="Sindh">Sindh</option>
-            <option value="Punjab">Punjab</option>
-            <option value="Balochistan">Balochistan</option>
-          </select>
+          <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+            {states.map((state) => (
+                <Option value={state.name}>{state.name}</Option>
+            ))}
+            
+          </Select>
       </Form.Item>
      
       </div>
@@ -306,12 +341,12 @@ const PetLoverForms = (props) => {
           },
         ]}
       >
-       <select className='state-city form-select'   aria-label="Default select example">
-            <option selected>Select city</option>
-            <option value="karachi">karachi</option>
-            <option value="lahore">lahore</option>
-            <option value="islamabad">islamabad</option>
-          </select>
+       
+          <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+            {cities.map((city) => (
+               <Option value={city.name}>{city.name}</Option>
+            ))}
+          </Select>
       </Form.Item>
       </div>
       <div className='col-12 col-md-6 '>
@@ -325,7 +360,12 @@ const PetLoverForms = (props) => {
           },
         ]}
       >
-        <Input  prefix={<i class="fas fa-map-marker-alt"></i>} placeholder=' zipcode' className='name' />
+        <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={handleChange}>
+          {zipcodes.map((zip) => (
+            <Option value={zip.zipcode}>{zip.zipcode}</Option>
+          ))}
+           
+          </Select>
       </Form.Item>
       </div>
       </div>
@@ -337,9 +377,11 @@ const PetLoverForms = (props) => {
         <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
           Add
         </Button>
-        <Button size="small" className='btn-cancel col-2 float-right'  style={{fontSize: 12, textTransform: 'capitalize'}}>
-          cancel
-        </Button>
+        
+          <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-right'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+            cancel
+          </Button>
+        
         <ToastContainer />
       </Form.Item>
       </div>
@@ -358,4 +400,4 @@ const PetLoverForms = (props) => {
   )
 }
 
-export default connect(null, {addteam})(PetLoverForms)
+export default PetLoverForms
