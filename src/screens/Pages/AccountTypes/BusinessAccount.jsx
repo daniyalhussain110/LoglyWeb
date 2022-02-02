@@ -138,11 +138,11 @@ const selectedAnimals = animals => {
   }
   console.log(animals);
   return (
-        <div className='col-12 col-md-6 mt-2'>
+        <div className='col-12 font-size col-md-6 mt-2'>
           <Button
           id={animals}
           onClick={() => selectAnimal(animals)}
-          className="week-days week-btns"
+          className="week-days font-size week-btns"
           key={animals}
         >
           {animals}
@@ -162,7 +162,7 @@ function Toggles() {
               <h6>Animal Info</h6>
               <p>Select the animals you love</p>
               <div className='mt-3'>
-                <div className='row'>
+                <div className='row animal-row'>
                   {animalName.map((animals, index) => selectedAnimals(animals))}
                 </div>
               </div>
@@ -236,40 +236,18 @@ const selectedWeekdays = days => {
 function GetSteppers() {
   
   const [Loading, setLoading] = useState(false);
-  // const [sat, setSat] = useState(false)
-  // const [sun, setSun] = useState(false)
-  const [chars_left, setCharLeft] = useState(1800)
-  const [max_char, setMaxChar] = useState(1800)
-  const [isValidPercentage, setIsValidPercentage] = useState(false);
-  const [message, setMessage] = useState("")
+  const [chars_left, setCharLeft] = useState(0)
+  const [max_char, setMaxChar] = useState(0)
   const [startSelectedTime, setStartSelectedTime] = useState("00:00")
   const [endSelectedTime, setEndSelectedTime] = useState("00:00")
   const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
   const [end1SelectedTime, setEnd1SelectedTime] = useState("00:00")
   const [isModalVisible, setIsModalVisible] = useState(false);
  
-
-  const percentageRegex = /(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i;
-
-  const validPercentage = (e) => {
-    const percentage = e.target.value
-    if(percentage == "") {
-      setIsValidPercentage(false);
-      setMessage('Percentage is Required');
-    }
-    else if(percentageRegex.test(percentage)) {
-      setIsValidPercentage(true);
-        setMessage('');
-    } else {
-      setIsValidPercentage(false);
-      setMessage('Percentage is not valid');
-    }
-  }
-
   const handleWordCount = (e) => {
     const charCount = e.target.value.length
     const maxChar = max_char;
-    const charLength = maxChar - charCount;
+    const charLength = charCount - maxChar;
     setCharLeft(charLength)
   }
 
@@ -346,7 +324,7 @@ function GetSteppers() {
               maxLength="1800"
               onChange={handleWordCount}
             />
-            <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+            <p className='mt-2 float-end'><span className='text-danger'>{chars_left}</span> - 1800 </p>
             <div className='mt-5'>
               <label htmlFor="">Days of the week *</label>
               <br />
@@ -511,7 +489,7 @@ function GetSteppers() {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} onChange={validPercentage} suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
+                                        }}  suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
                   </Form.Item>
                     {/* {message && <span className={`message ${isValidPercentage ? 'success' : 'error'}`}>{message}</span>} */}
                 </div>
@@ -560,7 +538,7 @@ const selectedProduct = products => {
       <Button
         id={products}
         onClick={() => selectProduct(products)}
-        className="week-days week-btns"
+        className="week-days font-size week-btns"
         key={products}
       >
         {products}
@@ -578,7 +556,7 @@ function ProductInfo() {
         <h6>Product Info</h6>
         <p>Select the Products you sell</p>
         <div className='mt-3'>
-          <div className='row'>
+          <div className='row animal-row'>
             {AnimalProduct.map((products, index) => selectedProduct(products))}
           </div>
     </div>
@@ -595,34 +573,11 @@ function handleChange(value) {
 
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
-  const [skippedSteps, setSkippedSteps] = useState([]);
-  const steps = getSteps();
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState("")
-  const [cancel, setCancel] = useState(false);
   
   const dispatch = useDispatch()
 
-  const emailRegex = /\S+@\S+\.\S+/
 
-  const validateEmail = (e) => {
-    const email = e.target.value;
-    if(email == "") {
-      setMessage('Email is Required')
-    }
-    else if(emailRegex.test(email)) {
-        setIsValid(true);
-        setMessage('email is valid');
-    } else {
-      setIsValid(false);
-      setMessage('email is not valid');
-    }
-  }
 
   const [ loading, setLoading ] = useState(false);
 
@@ -657,11 +612,35 @@ function TeamMembers() {
   const cities = useSelector((state) => state.myCities.cities)
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
-  useEffect(() => {
-    dispatch(getStates())
-    dispatch(getCities())
-    dispatch(getZipCode())
-  }, [])
+    useEffect(() => {
+      dispatch(getStates()).then((response) => {
+        if(response.payload.status === 200) {
+  
+        }
+      })
+    }, [])
+
+  const stateChange = (value) => {
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id)).then(response => {
+        if(response.payload.status === 200) {
+         
+        }
+      })
+    }
+  }
+
+ const zipcodeChange = (value) => {
+  if(value) {
+    let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
+    dispatch(getZipCode(zipcode)).then(response => {
+      if(response.payload.status === 200) {
+         
+      } 
+    })
+  }
+ }
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -733,12 +712,22 @@ function TeamMembers() {
                   <Form.Item
                     name="email"
                     className='place'
-                    onChange={validateEmail}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'please input your email!'
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please input valid email!'
+                      }
+                    ]}
                     
                   >
                     <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
                   </Form.Item>
-                    {message && <span className={`message ${isValid ? 'success' : 'error'}`}> {message}</span>}
+                   
                   </div>
                   <div className='col-12 col-md-6 '>
                   <Form.Item
@@ -768,7 +757,7 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))}
@@ -788,7 +777,7 @@ function TeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}
@@ -836,7 +825,6 @@ function TeamMembers() {
             </div>
               </div>
             </div>
-            {/* <Button ></Button> */}
         
         </div>
     </>
@@ -881,21 +869,7 @@ function AddTeamMembers() {
   
   const dispatch = useDispatch()
 
-  const emailRegex = /\S+@\S+\.\S+/
-
-  const validateEmail = (e) => {
-    const email = e.target.value;
-    if(email == "") {
-      setMessage('Email is Required')
-    }
-    else if(emailRegex.test(email)) {
-        setIsValid(true);
-        setMessage('email is valid');
-    } else {
-      setIsValid(false);
-      setMessage('email is not valid');
-    }
-  }
+  
 
   const [ loading, setLoading ] = useState(false);
 
@@ -931,11 +905,38 @@ function AddTeamMembers() {
   const cities = useSelector((state) => state.myCities.cities)
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
-  useEffect(() => {
-    dispatch(getStates())
-    dispatch(getCities())
-    dispatch(getZipCode())
-  }, [])
+
+    useEffect(() => {
+      dispatch(getStates()).then((response) => {
+        if(response.payload.status === 200) {
+  
+        }
+      })
+    }, [])
+
+    const stateChange = (value) => {
+      if(value) {
+        let id = states.filter((state) => state.name === value)[0].id
+        dispatch(getCities(id)).then(response => {
+          if(response.payload.status === 200) {
+           
+          }
+        })
+      }
+    }
+  
+   const zipcodeChange = (value) => {
+    if(value) {
+      let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
+      dispatch(getZipCode(zipcode)).then(response => {
+        if(response.payload.status === 200) {
+           
+        } 
+      })
+    }
+   }
+
+
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -1004,7 +1005,17 @@ function AddTeamMembers() {
                   <Form.Item
                     name="email"
                     className='place'
-                    onChange={validateEmail}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'please input your email!'
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please input valid email!'
+                      }
+                    ]}
                     
                   >
                     <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
@@ -1039,7 +1050,7 @@ function AddTeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))}
@@ -1059,7 +1070,7 @@ function AddTeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}

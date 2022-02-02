@@ -72,7 +72,7 @@ export default function BusinessServiceProvider() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [Animal, setAnimal] = useState([]);
-  const [item, setItem] = useState("transportation")
+  const [item, setItem] = useState("grooming")
    
   const handleChange = (items) => {
           items === item ? setItem(null): setItem(items);    
@@ -94,13 +94,7 @@ export default function BusinessServiceProvider() {
 
   const submit = e => {
     e.preventDefault();
-    if(Animal == "") {
-      toast.warning('Please PickUp to 3 Services', {
-        position: 'top-center'
-      })    
-    } 
-
-    else if(item === "grooming") {
+    if(item === "grooming") {
       window.location.href = '/petgrooming'
     }
     
@@ -259,7 +253,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Grooming</h5>
                     </Card>
                     <div className='text-center mt-2'>
-                        <Checkbox checked={item === "grooming"}  value="grooming" onChange={onChangeAnimal}  name='grooming'></Checkbox>
+                        <Checkbox checked={item === 'grooming'}  value="grooming" onChange={(e) => handleChange('grooming')}  name='grooming'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="sheep" checked={item === "sheep"} onChange={() => handleChange("sheep")} name='sheep' /></label> */}
                     </div>
            </div>
@@ -271,7 +265,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Veterinary</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox  value="vetinary" onChange={onChangeAnimal} name='vetinary'></Checkbox>
+                        <Checkbox checked={item === 'veterinary'}  value="vetinary"onChange={(e) => handleChange('veterinary')} name='vetinary'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="vetinary" checked={item === "vetinary"} onChange={() => handleChange("vetinary")} name='vetinary' /></label> */}
                     </div>
      </div>
@@ -283,7 +277,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Transportation</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox checked={item === "transportation"} value="transportation" onChange={onChangeAnimal}  name='transportation'></Checkbox>
+                        <Checkbox checked={item === 'transportation'}  value="transportation" onChange={(e) => handleChange('transportation')}  name='transportation'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="transportation" checked={item === "transportation"} onChange={() => handleChange("transportation")} name='transportation' /></label> */}
                     </div>
      </div>
@@ -295,7 +289,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Training</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox    value="training" onChange={onChangeAnimal}  name='training'></Checkbox>
+                        <Checkbox checked={item === 'training'}  value="training" onChange={(e) => handleChange('training')}  name='training'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="training" checked={item === "training"} onChange={() => handleChange("training")} name='training' /></label> */}
                     </div>
      </div>
@@ -309,7 +303,7 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Walking</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox  value="sitting" onChange={onChangeAnimal}  name='sitting'></Checkbox>
+                        <Checkbox  checked={item === 'sitting'}   value="sitting"onChange={(e) => handleChange('sitting')}  name='sitting'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="sitting" checked={item === "sitting"} onChange={() => handleChange("sitting")} name='sitting' /></label> */}
                     </div>
      </div>
@@ -322,7 +316,7 @@ export default function BusinessServiceProvider() {
               </Card>
               
               <div className='text-center mt-2'>
-                        <Checkbox  value="breeding" onChange={onChangeAnimal}  name='breeding'></Checkbox>
+                        <Checkbox checked={item === 'breeding'}  value="breeding" onChange={(e) => handleChange('breeding')}  name='breeding'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="breeding" checked={item === "breeding"} onChange={() => handleChange("breeding")} name='breeding' /></label> */}
                     </div>
      </div>
@@ -334,11 +328,11 @@ export default function BusinessServiceProvider() {
                         <h5 className='fonts-h5 text-white mt-1'>Pet Boarding</h5>
               </Card>
               <div className='text-center mt-2'>
-                        <Checkbox value="boarding" onChange={onChangeAnimal}  name='boarding'></Checkbox>
+                        <Checkbox  checked={item === 'boarding'}  value="boarding" onChange={handleChange}onChange={(e) => handleChange('boarding')}  name='boarding'></Checkbox>
                         {/* <label htmlFor=""><input className='form-check-input' type="checkbox" value="boarding" checked={item === "boarding"} onChange={() => handleChange("boarding")} name='boarding' /></label> */}
                     </div>
      </div>
-     <div className='d-flex flex-row'>
+     <div className=''>
        
             <Link to="/welcome">
               <Button

@@ -116,12 +116,8 @@ import {
   function GetSteppers() {
   
     const [Loading, setLoading] = useState(false);
-    // const [sat, setSat] = useState(false)
-    // const [sun, setSun] = useState(false)
-    const [chars_left, setCharLeft] = useState(1800)
-    const [max_char, setMaxChar] = useState(1800)
-    const [isValidPercentage, setIsValidPercentage] = useState(false);
-    const [message, setMessage] = useState("")
+    const [chars_left, setCharLeft] = useState(0)
+    const [max_char, setMaxChar] = useState(0)
     const [startSelectedTime, setStartSelectedTime] = useState("00:00")
     const [endSelectedTime, setEndSelectedTime] = useState("00:00")
     const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
@@ -129,27 +125,11 @@ import {
     const [isModalVisible, setIsModalVisible] = useState(false);
    
   
-    const percentageRegex = /(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i;
-  
-    const validPercentage = (e) => {
-      const percentage = e.target.value
-      if(percentage == "") {
-        setIsValidPercentage(false);
-        setMessage('Percentage is Required');
-      }
-      else if(percentageRegex.test(percentage)) {
-        setIsValidPercentage(true);
-          setMessage('');
-      } else {
-        setIsValidPercentage(false);
-        setMessage('Percentage is not valid');
-      }
-    }
-  
+
     const handleWordCount = (e) => {
       const charCount = e.target.value.length
       const maxChar = max_char;
-      const charLength = maxChar - charCount;
+      const charLength = charCount - maxChar;
       setCharLeft(charLength)
     }
   
@@ -207,6 +187,7 @@ import {
             <div className='col-12 col-md-12'>
               
               <div>
+               
               <Upload
                   name="avatar"
                   listType="picture-card"
@@ -226,7 +207,7 @@ import {
                 maxLength="1800"
                 onChange={handleWordCount}
               />
-              <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+                <p className='mt-2 float-end'><span className='text-danger'>{chars_left}</span> - 1800 </p>
               <div className='mt-5'>
                 <label htmlFor="">Days of the week *</label>
                 <br />
@@ -374,19 +355,38 @@ import {
                 <div className='col-12 col-md-6'>
                   <div className='mt-4'>
                     <label htmlFor="">Tax Percentage</label>
+                    
+                    <Form.Item
+                      rules={[
+                        {
+                          required: true,
+                          message: 'please input your percentage!'
+                        },
+
+                        {
+                          pattern: new RegExp(/(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i),
+                          message: 'please input valid percentage'
+                        }
+                      ]}
+                    >
+                      
+                   
                     <Input onKeyPress={(event) => {
                                               if (!/[0-9]/.test(event.key)) {
                                               event.preventDefault();
                                               }
-                                          }} onChange={validPercentage} suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
-                      {message && <span className={`message ${isValidPercentage ? 'success' : 'error'}`}>{message}</span>}
+                                          }}  suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
+                    </Form.Item>
+                    
                   </div>
                 </div>
               </div>
+           
          </div>
          </div>
           </div>
         </div>
+        
       </>
     )
   }
@@ -427,7 +427,7 @@ import {
             <Button
             id={animals}
             onClick={() => selectAnimal(animals)}
-            className="week-days week-btns"
+            className="week-days font-size week-btns"
             key={animals}
           >
             {animals}
@@ -444,8 +444,8 @@ import {
       setVehicle(index)
     }
     const [value, setValue] = useState(1)
-    const [chars_left, setCharLeft] = useState(1800)
-    const [max_char, setMaxChar] = useState(1800)
+    const [chars_left, setCharLeft] = useState(0)
+    const [max_char, setMaxChar] = useState(0)
 
     function handleChange(value) {
       console.log(`selected ${value}`);
@@ -454,7 +454,7 @@ import {
     const handleWordCount = (e) => {
       const charCount = e.target.value.length
       const maxChar = max_char;
-      const charLength = maxChar - charCount;
+      const charLength = charCount - maxChar;
       setCharLeft(charLength)
     }
 
@@ -546,16 +546,7 @@ import {
                                          <div className='col-12 col-md-6'>
                                              <label htmlFor="">Animal Type *</label>
                                              <br />
-                                             {/* <div className='d-flex flex-row mt-2'>
-                                                <Button className='actives fonted col-12'>Dog</Button>
-                                               <Button className='bg-colors fonted col-12 ms-4'>Cat</Button>
-                                             </div>
-
-                                             <div className='d-flex flex-row mt-3'>
-                                                <Button className='bg-colors fonted col-12'>Horse</Button>
-                                               <Button className='bg-colors fonted col-12 ms-4'>Elephant</Button>
-                                             </div> */}
-                                              <div className='d-flex flex-row margin-col'>
+                                              <div className='d-flex flex-row f-bold margin-col'>
                                                 {animalName.map((animals, index) => selectedAnimals(animals))}
                                               </div>
 
@@ -565,10 +556,10 @@ import {
                                          <div className='container-fluid g-0 mt-4'>
                                             <label htmlFor="" className='ms-2'>Description *</label>
                                                 <TextArea maxLength="1800" onChange={handleWordCount} className='ms-2 text-area-bg mt-2' rows={5}></TextArea>
-                                                <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+                                                <p className='mt-2 float-end'><span className='text-danger'>{chars_left}</span> - 1800 </p>
                                          </div>
                                         <div className='d-flex flex-row justify-content-between mt-5'>
-                                            <Button className='actives fonted'>Add</Button>
+                                            <Button className='actives vechile-radius fonted'>Add</Button>
                                             <Button onClick={handleCancel} className='font-black'>Cancel</Button>
                                         </div>
                                      </div>
@@ -585,27 +576,557 @@ import {
       )
   }
 
+
+const week = [];
+const weeksDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",];
+
+const selectWeek = day => {
+  console.log("day", day);
+  let wD = week;
+  let index = wD.findIndex(d => d === day);
+  if (index > -1) {
+    wD.splice(index, 1);
+  } else {
+    wD.push(day);
+  }
+
+  const dayElement = document.getElementById(day);
+  dayElement.classList.toggle("selected-day");
+
+  
+  console.log("wD", week);
+};
+
+const selectedweekend = days => {
+  let index = week.findIndex(d => days.value === d);
+
+  console.log(index, "index");
+ 
+  if (index > -1) {
+    console.log(days, "INSIE INDEX COLOR");
+  }
+  console.log(days);
+  return (
+    <Avatar
+      id={days}
+      onClick={() => selectWeek(days)}
+      className="week-days"
+      key={days}
+    >
+      {days}
+    </Avatar>
+  );
+};
+
+const pickup = [];
+const pickupVechicles = ["Truck", "Pickup", "Car", "MotoBike"];
+
+const selectPickup = day => {
+  console.log("day", day);
+  let wD = pickup;
+  let index = wD.findIndex(d => d === day);
+  if (index > -1) {
+    wD.splice(index, 1);
+  } else {
+    wD.push(day);
+  }
+
+  const dayElement = document.getElementById(day);
+  dayElement.classList.toggle("selected-day");
+
+  
+  console.log("wD", pickup);
+};
+
+const selectedVechicle= days => {
+  let index = pickup.findIndex(d => days.value === d);
+
+  console.log(index, "index");
+ 
+  if (index > -1) {
+    console.log(days, "INSIE INDEX COLOR");
+  }
+  console.log(days);
+  return (
+    <Avatar
+      id={days}
+      onClick={() => selectPickup(days)}
+      className="week-days"
+      key={days}
+    >
+      {days}
+    </Avatar>
+  );
+};
+  
+  function TeamMembers() {
+    const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+    const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const [ loading, setLoading ] = useState(false);
+  
+    const { imageUrl } = loading
+  
+    const handleChange = info => {
+      if (info.file.status === 'uploading') {
+        this.setState({ loading: true });
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl =>
+          this.setState({
+            imageUrl,
+            loading: false,
+          }),
+        );
+      }
+    };
+  
+  
+  
+    const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
   
 
-  function TeamMembers() {
-      return(
-          <>
-            <div className='container-fluid g-0'>
-          <div className='row'>
-            <div className='col-12 col-md-12'>
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+
+    function onChange(time, timeString) {
+      console.log(time, timeString);
+    }
+    return(
+      <>
+         <div className='container-fluid g-0'>
+            <div className='row'>
+              <div className='col-12 col-md-12'>
               <h6>Manage Team Members</h6>
-          
-            <div className='mt-5'> 
-                <Link to="/addtransportteammember">
-                <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"><Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography></Button></Link>
+              <div className='mt-5'>
+              <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"  onClick={showModal}>
+                <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography>
+              </Button>
+            
+                    <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+               
+                    <Form
+                  
+                  name="basic"
+                 
+                  initialValues={{
+                    remember: true,
+                  }}
+                 
+                  autoComplete="off"
+                >
+              
+                  <div className='row'>
+                    <div className='col-12 col-md-12 text-center p-0'>
+              
+                    <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader avatar-radius"
+                    showUploadList={false}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  </Upload>
+                    </div>
+                   
+                    <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="name"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your name!',
+                      },
+                    ]}
+                  >
+                    <Input  placeholder='Name'  className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="email"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your email!',
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please enter valid email'
+                      }
+                    ]}
+                  >
+                    <Input placeholder='Email' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="phone"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phoneNo!',
+                      },
+                    ]}
+                  >
+                    <Input onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }} placeholder='Phone' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-12 mt-3'>
+                    <label htmlFor="">Work Days *</label>
+                    <br />
+                    <div className='mt-2'>
+                    <div className='d-flex flex-row'>
+                      {weekDays.map((days, index) => selectedweekend(days))}
+                    </div>
+                    </div>
+                  </div>
+                  <div className='col-12 col-md-6 mt-4'>
+                    <label htmlFor="">Work Timing *</label>
+                    <div className='d-flex flex-row'>
+                    <TimePicker 
+                    placeholder='Start Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 timepicker-range' 
+                    onChange={onChange} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(startSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setStartSelectedTime(timeString)
+                    }}
+                  />
+                  
+                 <TimePicker 
+                    placeholder='End Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 ms-3 timepicker-range' 
+                    onChange={onChange} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(endSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setEndSelectedTime(timeString)
+                    }}
+                  />
+                  </div>
+                  </div>
+                  <div className='col-12 col-md-12 mt-4'>
+                    <label htmlFor="">Vehicle Type *</label>
+                    <br />
+                    <div className='mt-2'>
+                      <div className='d-flex f-bold flex-row'>
+                        {pickupVechicles.map((days, index) => selectedVechicle(days))}
+                      </div>
+                      
+                    </div>
+                  </div>
+                  </div>
+                  <div className='mt-5'>
+                  <Form.Item
+                   
+                  >
+                 
+                    <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      Add
+                    </Button>
+                    <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      cancel
+                    </Button>
+                   
+                  </Form.Item>
+                  </div>
+                </Form>
            
-            </div>
-         </div>
+              </Modal>
+              </div>
+                </div>
+              </div>
           </div>
-        </div>
-          </>
-      )
+      </>
+    )  
   }
+
+  function AddTeamsMembers() {
+    const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+    const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const [ loading, setLoading ] = useState(false);
+  
+    const { imageUrl } = loading
+  
+    const handleChange = info => {
+      if (info.file.status === 'uploading') {
+        this.setState({ loading: true });
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl =>
+          this.setState({
+            imageUrl,
+            loading: false,
+          }),
+        );
+      }
+    };
+  
+  
+  
+    const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
+  
+
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+
+    function onChange(time, timeString) {
+      console.log(time, timeString);
+    }
+    return(
+      <>
+         <div className='container-fluid g-0'>
+            <div className='row'>
+              <div className='col-12 col-md-12'>
+              <h6>Manage Team Members</h6>
+              <div className='mt-2'>
+              <Button endIcon={<AddIcon />} className='outline-border mt-3 col-8' variant="outlined" color="primary"  onClick={showModal}>
+                <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add another team member</Typography>
+              </Button>
+            
+                    <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+               
+                    <Form
+                  
+                  name="basic"
+                 
+                  initialValues={{
+                    remember: true,
+                  }}
+                 
+                  autoComplete="off"
+                >
+              
+                  <div className='row'>
+                    <div className='col-12 col-md-12 text-center p-0'>
+              
+                    <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader avatar-radius"
+                    showUploadList={false}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  </Upload>
+                    </div>
+                   
+                    <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="name"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your name!',
+                      },
+                    ]}
+                  >
+                    <Input  placeholder='Name'  className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 mt-5'>
+                  <Form.Item
+                    name="email"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your email!',
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please enter valid email'
+                      }
+                    ]}
+                  >
+                    <Input placeholder='Email' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-6 '>
+                  <Form.Item
+                    name="phone"
+                    className='place'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phoneNo!',
+                      },
+                    ]}
+                  >
+                    <Input onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }} placeholder='Phone' className='name' />
+                  </Form.Item>
+                  </div>
+                  <div className='col-12 col-md-12 mt-3'>
+                    <label htmlFor="">Work Days *</label>
+                    <br />
+                    <div className='mt-2'>
+                    <div className='d-flex flex-row'>
+                      {weekDays.map((days, index) => selectedweekend(days))}
+                    </div>
+                    </div>
+                  </div>
+                  <div className='col-12 col-md-6 mt-4'>
+                    <label htmlFor="">Work Timing *</label>
+                    <div className='d-flex flex-row'>
+                    <TimePicker 
+                    placeholder='Start Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 timepicker-range' 
+                    onChange={onChange} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(startSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setStartSelectedTime(timeString)
+                    }}
+                  />
+                  
+                 <TimePicker 
+                    placeholder='End Time'
+                    renderExtraFooter={() => (
+                      <div className='timePickerHeader'>
+                        <div>HH</div>
+                        <div>MM</div>
+                      </div> 
+                    )} 
+                    className='upload-image mt-2 ms-3 timepicker-range' 
+                    onChange={onChange} 
+                    defaultValue={moment('00:00', 'HH:mm')}
+                    format="HH:mm"
+                    suffixIcon={<ClockCircleFilled />}
+                    showNow={false}
+                    allowClear={false}
+                    value={moment(endSelectedTime, "HH:mm")}
+                    onSelect={(value) => {
+                      const timeString = moment(value).format("HH:mm");
+                      setEndSelectedTime(timeString)
+                    }}
+                  />
+                  </div>
+                  </div>
+                  <div className='col-12 col-md-12 mt-4'>
+                    <label htmlFor="">Vehicle Type *</label>
+                    <br />
+                    <div className='mt-2'>
+                      <div className='d-flex  f-bold flex-row'>
+                        {pickupVechicles.map((days, index) => selectedVechicle(days))}
+                      </div>
+                      
+                    </div>
+                  </div>
+                  </div>
+                  <div className='mt-5'>
+                  <Form.Item
+                   
+                  >
+                 
+                    <Button  size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      Add
+                    </Button>
+                    <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>
+                      cancel
+                    </Button>
+                   
+                  </Form.Item>
+                  </div>
+                </Form>
+           
+              </Modal>
+              </div>
+                </div>
+              </div>
+          </div>
+      </>
+    )  
+  }
+  
 
   const DeleteModal = () => {
     const [visible, setVisible] = useState(false)
@@ -704,8 +1225,9 @@ import {
                </div>
                <div className='mt-5'>
                   
-                    <Link to="/addtransportteammember">
-            <Button endIcon={<AddIcon />} className='outline-border mt-5 col-8' variant="outlined" color="primary"><Typography  style={{textTransform: 'capitalize', fontSize: 12}}>Add another member</Typography></Button></Link>
+                
+                      <AddTeamsMembers />
+            {/* <Button endIcon={<AddIcon />} className='outline-border mt-5 col-8' variant="outlined" color="primary"><Typography  style={{textTransform: 'capitalize', fontSize: 12}}>Add another member</Typography></Button></Link> */}
           
          </div>
          </div>
@@ -875,7 +1397,7 @@ export default function Transportation() {
       ) : (
         <>
           <form>{getStepContent(activeStep)}</form>
-          <div className='d-flex flex-row top-btn mt-5'>
+          <div className='top-btn mt-5'>
 
               {activeStep < 1 && (
                      <Link to="/businessprovider">

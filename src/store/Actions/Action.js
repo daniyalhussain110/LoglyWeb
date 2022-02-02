@@ -1,9 +1,25 @@
 import axiosInstance from '../../Api/AxiosCreate';
 import ActionType from '../Constants/Type';
 
-export const getCities = () => async dispatch => {
+export const getStates = () => async dispatch => {
     try {
-        const res = await axiosInstance.get('/api/city/all')
+        const res = await axiosInstance.get('/state/all')
+        .then(response => response.data)
+   
+        dispatch({
+            type: ActionType.GET_STATES,
+            payload: res.data
+        })
+    }
+    catch (error) {
+        alert(error)
+    }
+   
+}
+
+export const getCities = (state) => async dispatch => {
+    try {
+        const res = await axiosInstance.get(`/city/all?stateId=${state}`)
         .then(response => response.data)
    
         dispatch({
@@ -18,25 +34,9 @@ export const getCities = () => async dispatch => {
 }
 
 
-export const getStates = () => async dispatch => {
+export const getZipCode = (city) => async dispatch => {
     try {
-        const res = await axiosInstance.get('/api/state/all')
-        .then(response => response.data)
-   
-        dispatch({
-            type: ActionType.GET_STATES,
-            payload: res.data
-        })
-    }
-    catch (error) {
-        alert(error)
-    }
-   
-}
-
-export const getZipCode = () => async dispatch => {
-    try {
-        const res = await axiosInstance.get('/api/zipcode')
+        const res = await axiosInstance.get(`/zipcode`)
         .then(response => response.data)
    
         dispatch({

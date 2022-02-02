@@ -119,12 +119,8 @@ const selectedWeekdays = days => {
   function GetSteppers() {
   
     const [Loading, setLoading] = useState(false);
-    // const [sat, setSat] = useState(false)
-    // const [sun, setSun] = useState(false)
-    const [chars_left, setCharLeft] = useState(1800)
-    const [max_char, setMaxChar] = useState(1800)
-    const [isValidPercentage, setIsValidPercentage] = useState(false);
-    const [message, setMessage] = useState("")
+    const [chars_left, setCharLeft] = useState(0)
+    const [max_char, setMaxChar] = useState(0)
     const [startSelectedTime, setStartSelectedTime] = useState("00:00")
     const [endSelectedTime, setEndSelectedTime] = useState("00:00")
     const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
@@ -132,27 +128,10 @@ const selectedWeekdays = days => {
     const [isModalVisible, setIsModalVisible] = useState(false);
    
   
-    const percentageRegex = /(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i;
-  
-    const validPercentage = (e) => {
-      const percentage = e.target.value
-      if(percentage == "") {
-        setIsValidPercentage(false);
-        setMessage('Percentage is Required');
-      }
-      else if(percentageRegex.test(percentage)) {
-        setIsValidPercentage(true);
-          setMessage('');
-      } else {
-        setIsValidPercentage(false);
-        setMessage('Percentage is not valid');
-      }
-    }
-  
     const handleWordCount = (e) => {
       const charCount = e.target.value.length
       const maxChar = max_char;
-      const charLength = maxChar - charCount;
+      const charLength = charCount - maxChar;
       setCharLeft(charLength)
     }
   
@@ -226,10 +205,10 @@ const selectedWeekdays = days => {
                 rows={4} 
                 id='value' 
                 className='text-area' 
-                maxLength="1800"
+                maxLength={1800}
                 onChange={handleWordCount}
               />
-              <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+              <p className='mt-2 float-end'><span className='text-danger'>{chars_left}</span> - 1800 </p>
               <div className='mt-5'>
                 <label htmlFor="">Days of the week *</label>
                 <br />
@@ -377,12 +356,25 @@ const selectedWeekdays = days => {
                 <div className='col-12 col-md-6'>
                   <div className='mt-4'>
                     <label htmlFor="">Tax Percentage</label>
+                    <Form.Item
+                      rules={[
+                        {
+                          required: true,
+                          message: 'please input your percentage'
+                        },
+
+                        {
+                          pattern: new RegExp(/(^100(\.0{1,2})?$)|(^([1-9]([0-9])?|0)(\.[0-9]{1,2})?$)/i),
+                          message: 'please input valid percentage'
+                        }
+                      ]}
+                    >
                     <Input onKeyPress={(event) => {
                                               if (!/[0-9]/.test(event.key)) {
                                               event.preventDefault();
                                               }
-                                          }} onChange={validPercentage} suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
-                      {message && <span className={`message ${isValidPercentage ? 'success' : 'error'}`}>{message}</span>}
+                                          }} suffix={<PercentageOutlined className='percentage' />}  className='grey-color mt-1' />
+                     </Form.Item>
                   </div>
                 </div>
               </div>
@@ -429,7 +421,7 @@ const selectedWeekdays = days => {
             <Button
             id={animals}
             onClick={() => selectAnimal(animals)}
-            className="week-days week-btns"
+            className="week-days font-size week-btns"
             key={animals}
           >
             {animals}
@@ -445,14 +437,14 @@ const selectedWeekdays = days => {
           <div className='container-fluid g-0'>
               <div className='row'>
                   <div className='col-12 col-md-12'>
-                    <Card className='color-sky-blue' style={{width: 550}}>
+                    <Card className='color-sky-blue' style={{width: 415}}>
                     <div className='d-flex flex-row justify-content-between align-items-center'>
-                        <p className='text-white fs-6'>Please Select the animal categories for  <h5 className='text-white mt-3'>Pet Grooming</h5></p>
+                        <p className='text-white font-size'>Please Select the animal categories for  <h5 className='text-white mt-3'>Pet Grooming</h5></p>
                             <img src={sheep} alt="" className='img-fluid max-fluid'  />
                         </div>
                     </Card>
                     <div className='mt-4'>
-                    <div className='row'>
+                    <div className='row animal-row'>
                       {animalName.map((animals, index) => selectedAnimals(animals))}
                     </div>
          </div>
@@ -466,8 +458,8 @@ const selectedWeekdays = days => {
 
   function AddCategory() {
     const [value, setValue] = useState(1)
-    const [chars_left, setCharLeft] = useState(1800)
-    const [max_char, setMaxChar] = useState(1800)
+    const [chars_left, setCharLeft] = useState(0)
+    const [max_char, setMaxChar] = useState(0)
 
     function handleChange(value) {
       console.log(`selected ${value}`);
@@ -476,7 +468,7 @@ const selectedWeekdays = days => {
     const handleWordCount = (e) => {
       const charCount = e.target.value.length
       const maxChar = max_char;
-      const charLength = maxChar - charCount;
+      const charLength = charCount - maxChar;
       setCharLeft(charLength)
     }
 
@@ -500,15 +492,16 @@ const selectedWeekdays = days => {
 
     function onChange(e) {
         console.log(`checked = ${e.target.checked}`);
+        setValue(e.target.value)
       }
       return(
           <>
            <div className='container-fluid g-0'>
               <div className='row'>
                   <div className='col-12 col-md-12'>
-                        <Card className='color-sky-blue' style={{width: 500}}>
+                        <Card className='color-sky-blue' style={{width: 450}}>
                         <div className='d-flex flex-row justify-content-between align-items-center'>
-                            <p className='text-white fs-6'>Please Select / Add the Services for <h5 className='text-white mt-3'>Pet Grooming</h5></p>
+                            <p className='text-white font-size'>Please Select / Add the Services for <h5 className='text-white mt-3'>Pet Grooming</h5></p>
                                 <img src={sheep} alt="" className='img-fluid max-fluid'  />
                             </div>
                         </Card>
@@ -539,7 +532,9 @@ const selectedWeekdays = days => {
                         <div className='container'>
                             <div className='row'>
                                 <div className='col-12 col-md-6 mt-3'>
+                                  
                                     <label htmlFor="">Service Name *</label>
+                                    
                                     <Form.Item
                                       name="servicename"
                                       className='place place-radius'
@@ -562,7 +557,7 @@ const selectedWeekdays = days => {
                                       rules={[
                                         {
                                           required: true,
-                                          message: 'Please input your email!',
+                                          message: 'Please input your duration!',
                                         },
                                       ]}
                                     >
@@ -586,9 +581,18 @@ const selectedWeekdays = days => {
                                           required: true,
                                           message: 'Please input your Price!',
                                         },
+
+                                        {
+                                          pattern: new RegExp(/^(?:0\.\d{0,1}[1-9]|(?!0)\d{1,6}(?:\.\d{0,1}[1-9])?)$/),
+                                          message: 'please input valid price'
+                                        }
                                       ]}
                                     >
-                                     <Input placeholder='$99' />
+                                     <Input onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }} placeholder='$99' />
                                     </Form.Item>
 
                                     
@@ -601,12 +605,13 @@ const selectedWeekdays = days => {
                                       rules={[
                                         {
                                           required: true,
-                                          message: 'Please input your Price!',
+                                          message: 'Please input your description!',
                                         },
                                       ]}
                                     >
-                                     <TextArea  onChange={handleWordCount} maxLength="300"  rows={4} />
-                                     <p className='mt-2 float-end'>you have entered <span className='text-danger'>{chars_left}</span> characters !</p>
+                                     
+                                     <TextArea  onChange={handleWordCount} maxLength="1800"  rows={4} />
+                                     <p className='mt-2 float-end'> <span className='text-danger'>{chars_left}</span> - 1800</p>
                                     </Form.Item>
                                    
                                 </div>
@@ -717,14 +722,14 @@ const selectedExpertises = days => {
   }
   console.log(days);
   return (
-    <Button
+    <Avatar
       id={days}
       onClick={() => selectExpertise(days)}
       className="expertise"
       key={days}
     >
       {days}
-    </Button>
+    </Avatar>
   );
 };
 
@@ -732,7 +737,7 @@ const selectedExpertises = days => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [startSelectedTime, setStartSelectedTime] = useState("00:00")
     const [endSelectedTime, setEndSelectedTime] = useState("00:00")
-    const [value, setValue] = React.useState(1);
+    const [value, setValue] = useState(1);
 
     const onChange = e => {
         console.log('radio checked', e.target.value);
@@ -846,6 +851,11 @@ const selectedExpertises = days => {
                         required: true,
                         message: 'Please input your email!',
                       },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please enter valid email'
+                      }
                     ]}
                   >
                     <Input placeholder='Email' className='name' />
@@ -862,7 +872,11 @@ const selectedExpertises = days => {
                       },
                     ]}
                   >
-                    <Input placeholder='Phone' className='name' />
+                    <Input onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }} placeholder='Phone' className='name' />
                   </Form.Item>
                   </div>
             
@@ -958,10 +972,10 @@ const selectedExpertises = days => {
                   </div>
                   </Form.Item>
                   </div>
-                  <div className='col-12 col-md-6'>
+                  <div className='col-12 col-md-6 mt-2'>
                       <label htmlFor="">Expertise*</label>
-                      <div className='d-flex flex-row mt-2 margin-flex'>
-                      <div className='d-flex flex-row '>
+                      <div className='d-flex flex-row margin-flex'>
+                      <div className='d-flex flex-row f-bold mt-1'>
                         {Expertise.map((days, index) => selectedExpertises(days))}
                       </div>
                       </div>
@@ -1042,7 +1056,7 @@ const selectedExpertises = days => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [startSelectedTime, setStartSelectedTime] = useState("00:00")
     const [endSelectedTime, setEndSelectedTime] = useState("00:00")
-    const [value, setValue] = React.useState(1);
+    const [value, setValue] = useState(1);
 
     function onChangeTime(time, timeString) {
       console.log(time, timeString);
@@ -1156,6 +1170,11 @@ const selectedExpertises = days => {
                         required: true,
                         message: 'Please input your email!',
                       },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please enter valid email'
+                      }
                     ]}
                   >
                     <Input placeholder='Email' className='name' />
@@ -1172,15 +1191,19 @@ const selectedExpertises = days => {
                       },
                     ]}
                   >
-                    <Input placeholder='Phone' className='name' />
+                    <Input onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }} placeholder='Phone' className='name' />
                   </Form.Item>
                   </div>
             
                   <div className='col-12 col-md-6'>
                       <label htmlFor="">Services Type *</label>
                   <Form.Item
-                    name="state"
-                  
+                   
+                
                     rules={[
                       {
                         required: true,
@@ -1268,10 +1291,10 @@ const selectedExpertises = days => {
                   </div>
                   </Form.Item>
                   </div>
-                  <div className='col-12 col-md-6'>
+                  <div className='col-12 col-md-6 mt-2'>
                       <label htmlFor="">Expertise*</label>
-                      <div className='d-flex flex-row mt-2 margin-flex'>
-                      <div className='d-flex flex-row '>
+                      <div className='d-flex flex-row mt-1 margin-flex'>
+                      <div className='d-flex flex-row f-bold'>
                         {Expertise.map((days, index) => selectedExpertises(days))}
                       </div>
                       </div>
@@ -1527,7 +1550,7 @@ export default function PetGrooming() {
       ) : (
         <>
           <form>{getStepContent(activeStep)}</form>
-          <div className='d-flex flex-row top-btn mt-5'>
+          <div className=' top-btn mt-5'>
 
             {activeStep < 1 && (
               <Link to="/businessprovider">

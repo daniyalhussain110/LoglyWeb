@@ -58,7 +58,6 @@ import AddBreedingTeamMember from './screens/Pages/TeamMembers/AddBreedingTeamMe
 import AddBoardingTeamMember from './screens/Pages/TeamMembers/AddBoardingTeamMember';
 import ResetEmailVerification from './screens/Pages/ResetEmailVerification';
 
-
 import { Provider } from 'react-redux';
 import store from './store/store'
 
@@ -76,7 +75,7 @@ function App() {
                 <Switch>
                   <Route exact path="/" component={Login} />
                   <Route path="/register" component={Register} />
-                  <Route path="/welcome" component={WelcomeScreen} />
+                  <Route path="/welcome" component={WelcomeScreen} />Pet
                   <Route path="/pricelist" component={PriceList} />
                   <Route path="/registeation" component={EmailVerification} />
                   <Route path="/creditcard" component={CreditCard} />

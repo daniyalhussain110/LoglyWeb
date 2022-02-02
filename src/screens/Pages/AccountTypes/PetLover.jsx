@@ -27,6 +27,7 @@ import rightarrows from '../../../assets/images/rightarrows.png'
 import { MailFilled, UploadOutlined, LoadingOutlined, PlusOutlined  } from '@ant-design/icons'
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
+import Avatar from 'antd/lib/avatar/avatar';
 
 const { Option } = Select;
 
@@ -126,14 +127,14 @@ const selectedAnimals = animals => {
   console.log(animals);
   return (
         <div className='col-12 col-md-6 mt-2'>
-          <Button
+          <Avatar
           id={animals}
           onClick={() => selectAnimal(animals)}
-          className="week-days week-btns"
+          className="week-days font-size week-btns"
           key={animals}
         >
           {animals}
-        </Button>
+        </Avatar>
       </div>
   );
 };
@@ -149,11 +150,9 @@ const AnimalToggle = () => {
             <div className='col-12 col-md-12'>
               <h6>Animal Info</h6>
               <p>Select the animals you love</p>
-              <div className='row'>
+              <div className='row f-bold animal-row'>
                   {animalName.map((animals, index) => selectedAnimals(animals))}
                 </div>
-
-                
          </div>
          </div>
           </div>
@@ -183,6 +182,9 @@ function handleChange(value) {
   console.log(`selected ${value}`);
 }
 
+
+
+
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -195,26 +197,12 @@ function TeamMembers() {
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState("")
   const [cancel, setCancel] = useState(false);
-  
+
   const dispatch = useDispatch()
 
-  const emailRegex = /\S+@\S+\.\S+/
-
-  const validateEmail = (e) => {
-    const email = e.target.value;
-    if(email == "") {
-      setMessage('Email is Required')
-    }
-    else if(emailRegex.test(email)) {
-        setIsValid(true);
-        setMessage('');
-    } else {
-      setIsValid(false);
-      setMessage('email is not valid');
-    }
-  }
 
   const [ loading, setLoading ] = useState(false);
+
 
   const { imageUrl } = loading
 
@@ -248,10 +236,34 @@ function TeamMembers() {
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
   useEffect(() => {
-    dispatch(getStates())
-    dispatch(getCities())
-    dispatch(getZipCode())
+    dispatch(getStates()).then((response) => {
+      if(response.payload.status === 200) {
+
+      }
+    })
   }, [])
+
+  const stateChange = (value) => {
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id)).then(response => {
+        if(response.payload.status === 200) {
+         
+        }
+      })
+    }
+  }
+
+ const zipcodeChange = (value) => {
+  if(value) {
+    let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
+    dispatch(getZipCode(zipcode)).then(response => {
+      if(response.payload.status === 200) {
+         
+      } 
+    })
+  }
+ }
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -277,7 +289,6 @@ function TeamMembers() {
           
                   <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
              
-           
             <Form
                   
                   name="basic"
@@ -323,7 +334,17 @@ function TeamMembers() {
                   <Form.Item
                     name="email"
                     className='place'
-                    onChange={validateEmail}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'please input your email'
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please input valid email'
+                      }
+                    ]}
                     
                   >
                     <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
@@ -358,12 +379,14 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
-                        {states.map((state) => (
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
+                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
-                        ))}
-                        
+                        ))} 
+
                       </Select>
+
+                      
                   </Form.Item>
                  
                   </div>
@@ -378,14 +401,16 @@ function TeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
-                        {cities.map((city) => (
+                       <Select onChange={zipcodeChange}  className='state-city' defaultValue="Select State">
+                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
-                        ))}
-                      </Select>
+                        ))} 
+                      </Select> 
+
                   </Form.Item>
                   </div>
                   <div className='col-12 col-md-6 '>
+
                   <Form.Item
                     name="zipcode"
                     className='place'
@@ -396,13 +421,15 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={handleChange}>
-                      {zipcodes.map((zip) => (
+                     <Select onChange={handleChange} className='state-city' defaultValue="Select Zipcode">
+                       {zipcodes.map((zip) => (
                         <Option value={zip.zipcode}>{zip.zipcode}</Option>
-                      ))}
-                       
-                      </Select>
+                      ))} 
+                      </Select> 
+
+           
                   </Form.Item>
+
                   </div>
                   </div>
                   <div className='mt-5'>
@@ -470,21 +497,7 @@ function AddTeamMembers() {
   
   const dispatch = useDispatch()
 
-  const emailRegex = /\S+@\S+\.\S+/
-
-  const validateEmail = (e) => {
-    const email = e.target.value;
-    if(email == "") {
-      setMessage('Email is Required')
-    }
-    else if(emailRegex.test(email)) {
-        setIsValid(true);
-        setMessage('');
-    } else {
-      setIsValid(false);
-      setMessage('email is not valid');
-    }
-  }
+  
 
   const [ loading, setLoading ] = useState(false);
 
@@ -521,10 +534,34 @@ function AddTeamMembers() {
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
   useEffect(() => {
-    dispatch(getStates())
-    dispatch(getCities())
-    dispatch(getZipCode())
+    dispatch(getStates()).then((response) => {
+      if(response.payload.status === 200) {
+
+      }
+    })
   }, [])
+
+  const stateChange = (value) => {
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id)).then(response => {
+        if(response.payload.status === 200) {
+         
+        }
+      })
+    }
+  }
+
+ const zipcodeChange = (value) => {
+  if(value) {
+    let zip = cities.filter((zip) => zip.zipcode === value).zip
+    dispatch(getZipCode(zip)).then(response => {
+      if(response.payload.status === 200) {
+         
+      } 
+    })
+  }
+ }
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -593,7 +630,17 @@ function AddTeamMembers() {
                   <Form.Item
                     name="email"
                     className='place'
-                    onChange={validateEmail}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'please input your email'
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please input valid email'
+                      }
+                    ]}
                     
                   >
                     <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
@@ -628,7 +675,7 @@ function AddTeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))}
@@ -648,7 +695,7 @@ function AddTeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}
@@ -788,8 +835,6 @@ function getStepContent(step) {
                <div className='mt-0'>
                     
                     <AddTeamMembers />
-           
-            
          </div>
          </div>
          </div>
@@ -942,7 +987,7 @@ const  PetLover = () =>  {
       ) : (
         <>
           <form>{getStepContent(activeStep)}</form>
-          <div className='d-flex flex-row'>
+          <div>
 
             {activeStep < 1 && (
               <Link to="/welcome">

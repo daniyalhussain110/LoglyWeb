@@ -135,7 +135,7 @@ const selectedListing = listings => {
       <Button
         id={listings}
         onClick={() => selectListing(listings)}
-        className="week-days week-btns"
+        className="week-days font-size week-btns"
         key={listings}
       >
         {listings}
@@ -145,23 +145,19 @@ const selectedListing = listings => {
 };
 
 const Toggles = () => {
-  
-  // const [toggleState, setToggleState] = useState(1)
-  
-  // const togglebutton = (index) => {
-  //   setToggleState(index);
-  // }
+  const [vehicle, setVehicle] = useState("")
 
+  const Vehicle = (index) => {
+    setVehicle(index)
+  }
   return(
     <>
     <motion.div
     >
-       <div className='row'>
-            {listings.map((listings, index) => selectedListing(listings))}
+          <div className='row animal-row'>
+            <Button className={vehicle === 'AnimalSelling' ? 'orangeColor font-color mt-3' : 'grey-color font-color mt-3'} onClick={() => Vehicle("AnimalSelling")}>I Deal in Animal Selling / Products</Button> <br />
+            <Button className={vehicle === 'AnimalServices' ? 'orangeColor font-color mt-3 ' : 'grey-color font-color mt-3'} onClick={() => Vehicle("AnimalServices")}>I Deal in Animal Services</Button>
           </div>
-
-      {/* <Button onClick={() => togglebutton(1)} className={(toggleState === 1 ? 'active-button' : 'activeses') + ' col-8'} variant="contained" color="primary"><Typography style={{textTransform: 'capitalize', fontSize: 12}}>I Deal in Animal Selling / Products</Typography></Button>
-      <Button onClick={() => togglebutton(2)} className={(toggleState === 2 ? 'active-button' : 'activeses') + ' col-8 mt-3'} variant="contained" color="primary" style={{textTransform: 'capitalize', fontSize: 12}}>I Deal in Animal Services</Button> */}
     </motion.div>
     </>
   )
@@ -202,7 +198,7 @@ const selectedAnimals = animals => {
           <Button
           id={animals}
           onClick={() => selectAnimal(animals)}
-          className="week-days week-btns"
+          className="week-days font-size week-btns"
           key={animals}
         >
           {animals}
@@ -221,7 +217,7 @@ function Toggle() {
               <h6>Animal Info</h6>
               <p>Select the animals you love</p>
               <div className='mt-3'>
-              <div className='row'>
+              <div className='row animal-row'>
                   {animalName.map((animals, index) => selectedAnimals(animals))}
                 </div>
          </div>
@@ -265,7 +261,7 @@ const selectedProduct = products => {
       <Button
         id={products}
         onClick={() => selectProduct(products)}
-        className="week-days week-btns"
+        className="week-days font-size week-btns"
         key={products}
       >
         {products}
@@ -283,7 +279,7 @@ function ProductInfo() {
         <h6>Product Info</h6>
         <p>Select the Products you sell</p>
         <div className='mt-3'>
-        <div className='row'>
+        <div className='row animal-row'>
             {AnimalProduct.map((products, index) => selectedProduct(products))}
           </div>
     </div>
@@ -320,34 +316,8 @@ function handleChange(value) {
 
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
-  const [skippedSteps, setSkippedSteps] = useState([]);
-  const steps = getSteps();
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState("")
-  const [cancel, setCancel] = useState(false);
-  
   const dispatch = useDispatch()
-
-  const emailRegex = /\S+@\S+\.\S+/
-
-  const validateEmail = (e) => {
-    const email = e.target.value;
-    if(email == "") {
-      setMessage('Email is Required')
-    }
-    else if(emailRegex.test(email)) {
-        setIsValid(true);
-        setMessage('email is valid');
-    } else {
-      setIsValid(false);
-      setMessage('email is not valid');
-    }
-  }
 
   const [ loading, setLoading ] = useState(false);
 
@@ -383,10 +353,34 @@ function TeamMembers() {
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
   useEffect(() => {
-    dispatch(getStates())
-    dispatch(getCities())
-    dispatch(getZipCode())
+    dispatch(getStates()).then((response) => {
+      if(response.payload.status === 200) {
+
+      }
+    })
   }, [])
+
+  const stateChange = (value) => {
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id)).then(response => {
+        if(response.payload.status === 200) {
+         
+        }
+      })
+    }
+  }
+
+ const zipcodeChange = (value) => {
+  if(value) {
+    let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
+    dispatch(getZipCode(zipcode)).then(response => {
+      if(response.payload.status === 200) {
+         
+      } 
+    })
+  }
+ }
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -458,12 +452,21 @@ function TeamMembers() {
                   <Form.Item
                     name="email"
                     className='place'
-                    onChange={validateEmail}
-                    
+                    rules={[
+                      {
+                        required: true,
+                        message: 'please input your email'
+                      },
+
+                      {
+                        pattern: new RegExp(/\S+@\S+\.\S+/),
+                        message: 'please input valid email'
+                      }
+                    ]}
                   >
                     <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
                   </Form.Item>
-                    {message && <span className={`message ${isValid ? 'success' : 'error'}`}> {message}</span>}
+                   
                   </div>
                   <div className='col-12 col-md-6 '>
                   <Form.Item
@@ -493,7 +496,7 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))}
@@ -513,7 +516,7 @@ function TeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}
@@ -571,34 +574,11 @@ function TeamMembers() {
 
 function AddTeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
-  const [skippedSteps, setSkippedSteps] = useState([]);
-  const steps = getSteps();
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState("")
-  const [cancel, setCancel] = useState(false);
+ 
   
   const dispatch = useDispatch()
 
-  const emailRegex = /\S+@\S+\.\S+/
-
-  const validateEmail = (e) => {
-    const email = e.target.value;
-    if(email == "") {
-      setMessage('Email is Required')
-    }
-    else if(emailRegex.test(email)) {
-        setIsValid(true);
-        setMessage('email is valid');
-    } else {
-      setIsValid(false);
-      setMessage('email is not valid');
-    }
-  }
+ 
 
   const [ loading, setLoading ] = useState(false);
 
@@ -635,10 +615,35 @@ function AddTeamMembers() {
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
   useEffect(() => {
-    dispatch(getStates())
-    dispatch(getCities())
-    dispatch(getZipCode())
+    dispatch(getStates()).then((response) => {
+      if(response.payload.status === 200) {
+
+      }
+    })
   }, [])
+
+  const stateChange = (value) => {
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id)).then(response => {
+        if(response.payload.status === 200) {
+         
+        }
+      })
+    }
+  }
+
+ const zipcodeChange = (value) => {
+  if(value) {
+    let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
+    dispatch(getZipCode(zipcode)).then(response => {
+      if(response.payload.status === 200) {
+         
+      } 
+    })
+  }
+ }
+
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -707,12 +712,22 @@ function AddTeamMembers() {
                   <Form.Item
                     name="email"
                     className='place'
-                    onChange={validateEmail}
+                   rules={[
+                    {
+                      required: true,
+                      message: 'please input your email'
+                    },
+
+                    {
+                      pattern: new RegExp(/\S+@\S+\.\S+/),
+                      message: 'please input valid email'
+                    }
+                   ]}
                     
                   >
                     <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
                   </Form.Item>
-                    {message && <span className={`message ${isValid ? 'success' : 'error'}`}> {message}</span>}
+                 
                   </div>
                   <div className='col-12 col-md-6 '>
                   <Form.Item
@@ -742,7 +757,7 @@ function AddTeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))}
@@ -762,7 +777,7 @@ function AddTeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={handleChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}

@@ -14,10 +14,13 @@ import { userRegister } from '../../store/Actions/UserAction'
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
+import axiosInstance from '../../Api/AxiosCreate';
+
 
 const { Option } = Select;
 
- const Register = (props) => {
+
+ export default function Register() {
   const [value, setValue] = useState()
 
   const [data, setData] = useState({
@@ -30,28 +33,46 @@ const { Option } = Select;
     password: ''
   })
 
-  const { name, email, phone, city, state, zipcode, password } = data
+  const {name, email, phone, city, state, zipcode, password} = data
 
   const dispatch = useDispatch();
+
   const history = useHistory()
 
   const HandleOnChangeinput = e => {
-    setData({...data, [e.target.value]: e.target.name})
+    const newData = {...data}
+    newData[e.target.id] = e.target.value
+    setData(newData)
   }
 
-  const {cities, states, zipcodes} = props
+  const states = useSelector((state) => state.myState.states)
+  const cities = useSelector((state) => state.myCities.cities)
+  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
-
+ 
   useEffect(() => {
-    props.getCities()
-    props.getStates()
-    props.getZipCode()
+    dispatch(getCities())
+    dispatch(getStates())
+    dispatch(getZipCode())
+
   }, [])
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-      dispatch(userRegister(data))
-      console.log(data)
+    const formData = new FormData()
+    
+    formData.append('name', name)
+    formData.append('email', email)
+    formData.append('phone', phone)
+    formData.append('city', city)
+    formData.append('state', state)
+    formData.append('zipcode', zipcode)
+    formData.append('password', password)
+
+    dispatch(userRegister(formData))
+
+    console.log(formData)
+
     }
    
   
@@ -86,11 +107,8 @@ const { Option } = Select;
     >
       <Form.Item
         rules={[{ required: true, message: 'Please input your name!' }]}
-        name='name'
-        onChange={HandleOnChangeinput} 
-        value={name}
       >
-        <Input  autoComplete='off' className="forms" prefix={<i className="fas fa-user"></i>} placeholder=" Enter Name" />
+        <Input id='name' onChange={HandleOnChangeinput} value={name} autoComplete='off' className="forms" prefix={<i className="fas fa-user"></i>} placeholder=" Enter Name" />
       </Form.Item>
     
       <Form.Item
@@ -105,20 +123,15 @@ const { Option } = Select;
             message: 'please enter valid email'
           }
         ]}
-        name="email"
-        onChange={HandleOnChangeinput}  
-        value={email}
+     
       >
-        <Input autoComplete='off' className="forms" prefix={<i className="fas fa-envelope"></i>} placeholder=" Enter Email" />
+        <Input id='email' onChange={HandleOnChangeinput} value={email} autoComplete='off' className="forms" prefix={<i className="fas fa-envelope"></i>} placeholder=" Enter Email" />
       </Form.Item>
   
       <Form.Item
-      name="phone" 
-      onChange={HandleOnChangeinput} 
-      value={phone}
         rules={[{ required: true, message: 'Please input your phone!' }]}
       >
-        <Input  className="forms" onKeyPress={(event) => {
+        <Input id='phone' value={phone} onChange={HandleOnChangeinput} className="forms" onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
@@ -126,12 +139,21 @@ const { Option } = Select;
       </Form.Item>
 
       <Form.Item
-        name="city"
-        value={city} 
-        onChange={HandleOnChangeinput}
+       
+        rules={[{ required: true, message: 'Please input your state!' }]}
+      >
+      <Select id='state' onChange={HandleOnChangeinput} value={state} className="forms" defaultValue="Select State">
+        {states.map((state) => (
+          <Option value={state.name}>{state.name}</Option>
+        ))}
+    </Select>
+    </Form.Item>
+
+      <Form.Item
+       
         rules={[{ required: true, message: 'Please input your city!' }]}
       >
-      <Select   Icon={<FlagFilled />} className="forms" defaultValue="Select City" >
+      <Select id='city' value={city} onChange={HandleOnChangeinput} Icon={<FlagFilled />} className="forms" defaultValue="Select City" >
         {cities.map((city) => (
             <Option value={city.name}>{city.name}</Option>
         
@@ -140,27 +162,14 @@ const { Option } = Select;
     </Select>
     </Form.Item>
 
-      <Form.Item
-        name="state"
-        onChange={HandleOnChangeinput} 
-        value={state}
-        rules={[{ required: true, message: 'Please input your state!' }]}
-      >
-      <Select className="forms" defaultValue="Select State">
-        {states.map((state) => (
-          <Option value={state.name}>{state.name}</Option>
-        ))}
-    </Select>
-    </Form.Item>
+      
 
 
       <Form.Item
-        name="zipcode"
+       
         rules={[{ required: true, message: 'Please input your zipcode!' }]}
-        value={zipcode} 
-        onChange={HandleOnChangeinput}
       >
-        <Select  className="forms" defaultValue="Select Zip Code">
+        <Select id='zipcode' value={zipcode} onChange={HandleOnChangeinput} className="forms" defaultValue="Select Zip Code">
            {zipcodes.map((zip) => (
             <Option value={zip.zipcode}>{zip.zipcode}</Option>
           ))} 
@@ -190,11 +199,9 @@ const { Option } = Select;
         }
 
       ]}
-      name="password"
-      onChange={HandleOnChangeinput} 
-      value={password}
+    
       >
-        <Input.Password autoComplete='off' className="forms" prefix={<i className="fas fa-lock"></i>} placeholder=" Password" />
+        <Input.Password id='password' onChange={HandleOnChangeinput} value={password} autoComplete='off' className="forms" prefix={<i className="fas fa-lock"></i>} placeholder=" Password" />
       </Form.Item>
             
       <Form.Item name="remember" >
@@ -209,11 +216,13 @@ const { Option } = Select;
           </div>
           <div className='col-12 col-md-4'>
           <Form.Item>
-            <Button onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
-                  <Link to="/pricelist">
-                    CONTINUE <i className="fas fa-arrow-circle-right"></i>
-                  </Link> 
-            </Button>
+            <Link to="/pricelist">
+              <Button  className="btn-bg-color buttons" type="primary" htmlType="submit" block>
+                    
+                      CONTINUE <i className="fas fa-arrow-circle-right"></i>
+                  
+              </Button>
+            </Link>
             </Form.Item>
           </div>
         </div>
@@ -236,14 +245,6 @@ const { Option } = Select;
     )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    cities: state.myCities.cities,
-    states: state.myState.states,
-    zipcodes: state.myZipCode.zipcodes
-  }
-}
 
 
-export default connect(mapStateToProps, {getCities, getStates, getZipCode})(Register)
 

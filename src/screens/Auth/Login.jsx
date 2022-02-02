@@ -71,8 +71,13 @@ export default function Login() {
         rules={[
           { 
             required: true,
-            message: 'Please input your email!' 
+            message: 'Please input your email!'
           },
+
+          {
+            pattern: new RegExp(/\S+@\S+\.\S+/),
+            message: 'please enter valid email'
+          }
         ]}
       >
         <Input autoComplete='off' className='forms' prefix={<i class="fas fa-envelope"></i>} placeholder=' Email'/>
