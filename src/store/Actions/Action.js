@@ -36,9 +36,8 @@ export const getCities = (state) => async dispatch => {
 
 export const getZipCode = (city) => async dispatch => {
     try {
-        const res = await axiosInstance.get(`/zipcode`)
+        const res = await axiosInstance.get(`/zipcode/city/${city}`)
         .then(response => response.data)
-   
         dispatch({
             type: ActionType.GET_ZIP_CODE,
             payload: res.data

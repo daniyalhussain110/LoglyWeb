@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../../customcss/custom.css'
-import { Form, Input, Button, Checkbox, Row, Col, Card  } from 'antd';
+import { Form, Input, Button, Checkbox, Row, Col, Card, message  } from 'antd';
 import { UserOutlined, LockOutlined, MailFilled, LockFilled } from '@ant-design/icons';
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Logo from '../../assets/images/logo-logly.png'
 import { toast, ToastContainer } from 'material-react-toastify'
@@ -11,30 +11,51 @@ import { userLogin } from '../../store/Actions/UserAction'
 import { useDispatch } from 'react-redux'
 
 export default function Login() {
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState("")
-  const [isValidPassword, setIsValidPassword] = useState(false)
-  const [msg, setMsg] = useState("")
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: ''
-  })
-
-  const {email, password} = loginData
+  const [ email, setEmail ] = useState('')
+  const [ password, setPassword ] = useState('')
+  const [ formerror, setFormError] = useState({})
+  const [ isSubmit, setIsSubmit ] = useState(false)
 
   const dispatch = useDispatch()
-
-  const onChangeHandleInput = e => {
-    setLoginData({...loginData, [e.target.value]: e.target.name})
-  }
+  let history = useHistory()
 
   const onsubmit = e => {
-    e.preventDefault();
-    dispatch(userLogin(loginData))
-    console.log(loginData)
+    e.preventDefault(); 
+     setFormError(validate())
+     
+      const params = {
+        email: email,
+        password: password,
+        "role": "breeder"
+      }
+      dispatch(userLogin(params))
+      setIsSubmit(true)
+     
+  }
+
+  const validate = () => {
+    const error = {}
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if(!email) {
+      error.email = "Email is Required"
+    } else if(!regex.test(email)) {
+      error.email = 'This is not a valid email format!'
+    }
+
+    if(!password) {
+      error.password = 'Password is required'
+    }
+     else if(password.length < 6) {
+      error.password = "Password must be more than 6 characters";
+     }
+     else if(password.length < 8) {
+      error.password = "Password must be more than 8 characters";
+     }
+     return error;
 
   }
 
+ 
     return (
         <>
            <section id='img-bg'>
@@ -65,37 +86,20 @@ export default function Login() {
     >
       <Form.Item
       className='form-text'
-        name="email"
-        onChange={onChangeHandleInput}
-        value={email}
-        rules={[
-          { 
-            required: true,
-            message: 'Please input your email!'
-          },
+      >
+        <Input onChange={e => setEmail(e.target.value)}
+         autoComplete='off' className='forms' prefix={<i className="fas fa-envelope"></i>} placeholder=' Email'/>
+        <span className='text-danger'>{formerror.email}</span>
+      </Form.Item>
 
-          {
-            pattern: new RegExp(/\S+@\S+\.\S+/),
-            message: 'please enter valid email'
-          }
-        ]}
-      >
-        <Input autoComplete='off' className='forms' prefix={<i class="fas fa-envelope"></i>} placeholder=' Email'/>
-      </Form.Item>
       <Form.Item
-        name="password"
-        onChange={onChangeHandleInput}
-        value={password}
-        rules={[
-          { 
-            required: true, 
-            message: 'Please input your password!' 
-          },
-        ]}
-       
+
       >
-        <Input.Password autoComplete='off'  className='forms ' prefix={<i class="fas fa-lock"></i>} placeholder=' Password' />
+        <Input.Password   onChange={e => setPassword(e.target.value)}
+         autoComplete='off'  className='forms ' prefix={<i className="fas fa-lock"></i>} placeholder=' Password' />
+         <span  className='text-danger'>{formerror.password}</span>
       </Form.Item>
+     
      <div className='row'>
        <div className='col-12 col-md-3'>
        <Form.Item className='remember' name="remember" >
@@ -108,12 +112,11 @@ export default function Login() {
       </div>
       </div>
       <Form.Item>
-        <Button  className='btn-bg-color mt-5' type="primary" htmlType="submit" block>
-          <Link to="/welcome">
+        <Button onClick={onsubmit} className='btn-bg-color mt-5' type="primary" htmlType="submit" block>
             LOGIN
-          </Link>
         </Button>
       </Form.Item>
+      <ToastContainer />
     </Form>
     <div className='login ms-1'>
       <span className='s-f'>Don't Have an account yet? <Link to='/register' className='color-link'>Register Here</Link></span>
@@ -130,4 +133,3 @@ export default function Login() {
     )
 }
 
-// onClick={onsubmit}

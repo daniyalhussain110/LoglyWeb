@@ -7,6 +7,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle';
 import { ToastProvider } from 'react-toast-notifications';
 import { Transition } from 'react-transition-group'
+import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 
 import 'antd/dist/antd.css';
 

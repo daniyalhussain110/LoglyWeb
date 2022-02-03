@@ -16,34 +16,22 @@ import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
 import axiosInstance from '../../Api/AxiosCreate';
 
-
 const { Option } = Select;
 
-
  export default function Register() {
-  const [value, setValue] = useState()
-
-  const [data, setData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    city: '',
-    state: '',
-    zipcode: '',
-    password: ''
-  })
-
-  const {name, email, phone, city, state, zipcode, password} = data
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [state, setState] = useState('')
+  const [city, setCity] = useState('')
+  const [zipcode, setZipcode] = useState('')
+  const [password, setPassword] = useState('')
+  const [ formerror, setFormError] = useState({})
+  const [ isSubmit, setIsSubmit ] = useState(false)
 
   const dispatch = useDispatch();
 
-  const history = useHistory()
-
-  const HandleOnChangeinput = e => {
-    const newData = {...data}
-    newData[e.target.id] = e.target.value
-    setData(newData)
-  }
+  let history = useHistory()
 
   const states = useSelector((state) => state.myState.states)
   const cities = useSelector((state) => state.myCities.cities)
@@ -51,31 +39,89 @@ const { Option } = Select;
 
  
   useEffect(() => {
-    dispatch(getCities())
     dispatch(getStates())
-    dispatch(getZipCode())
-
   }, [])
 
-  const submit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData()
+  const stateChange = (value, e) => {
+    setState(value)
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id))
+    }
     
-    formData.append('name', name)
-    formData.append('email', email)
-    formData.append('phone', phone)
-    formData.append('city', city)
-    formData.append('state', state)
-    formData.append('zipcode', zipcode)
-    formData.append('password', password)
+  }
 
-    dispatch(userRegister(formData))
+  const cityChange = (value, e) => {
+    setCity(value)
+    if(value) {
+      let city = cities.filter((id ) => id.name === value)[0].name
+      console.log(city)
+      dispatch(getZipCode(city))
+    }
+  }
 
-    console.log(formData)
+  const zipChange = (value, e) => {
+    console.log(value)
+    setZipcode(value)
+  }
+
+  const submit = async (e) => {
+    setFormError(validate())
+    e.preventDefault();
+      const params = {
+        "name": name,
+          "email": email,
+          "password": password,
+          "phone": phone,
+          "city": city,
+          "state": state,
+          "zipcode": zipcode,
+      }
+        dispatch(userRegister(params))
 
     }
-   
+
+    const validate = () => {
+      const error = {}
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+      if(!name) {
+        error.name = "Name Field is Required"
+      }
+      if(!email) {
+        error.email = "Email Field is Required"
+      } else if(!regex.test(email)) {
+        error.email = 'This is not a valid email format!'
+      }
+
+      if(!phone) {
+        error.phone = "Phone Field is Required"
+      }
+
+      if(!state) {
+        error.state = "State Field is Required"
+      }
+
+      if(!city) {
+        error.city = "City Field is Required"
+      }
+
+      if(!zipcode) {
+        error.zipcode = "Zipcode Field is Required"
+      }
+
+      if(!password) {
+        error.password = 'Password Field is required'
+      }
+       else if(password.length < 6) {
+        error.password = "Password must be more than 6 characters";
+       }
+       else if(password.length < 8) {
+        error.password = "Password must be more than 8 characters";
+       }
+       return error;
   
+    }
+   
     return (
       
         <>
@@ -106,102 +152,66 @@ const { Option } = Select;
       
     >
       <Form.Item
-        rules={[{ required: true, message: 'Please input your name!' }]}
       >
-        <Input id='name' onChange={HandleOnChangeinput} value={name} autoComplete='off' className="forms" prefix={<i className="fas fa-user"></i>} placeholder=" Enter Name" />
+        <Input onChange={e => setName(e.target.value)}  autoComplete='off' className="forms" prefix={<i className="fas fa-user"></i>} placeholder=" Enter Name" />
+        <span className='text-danger'>{formerror.name}</span>
       </Form.Item>
     
       <Form.Item
-        rules={[
-          { 
-            required: true,
-            message: 'Please input your email!' 
-          },
-
-          {
-            pattern: new RegExp(/\S+@\S+\.\S+/),
-            message: 'please enter valid email'
-          }
-        ]}
-     
       >
-        <Input id='email' onChange={HandleOnChangeinput} value={email} autoComplete='off' className="forms" prefix={<i className="fas fa-envelope"></i>} placeholder=" Enter Email" />
+        <Input onChange={e => setEmail(e.target.value)}  autoComplete='off' className="forms" prefix={<i className="fas fa-envelope"></i>} placeholder=" Enter Email" />
+        <span className='text-danger'>{formerror.email}</span>
       </Form.Item>
-  
+       
       <Form.Item
-        rules={[{ required: true, message: 'Please input your phone!' }]}
       >
-        <Input id='phone' value={phone} onChange={HandleOnChangeinput} className="forms" onKeyPress={(event) => {
+        <Input onChange={e => setPhone(e.target.value)} className="forms" onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
                                         }}  prefix={<i className="fas fa-phone"></i>} placeholder=" Enter Phone" />
+         <span className='text-danger'>{formerror.phone}</span>
       </Form.Item>
 
       <Form.Item
-       
-        rules={[{ required: true, message: 'Please input your state!' }]}
+      
       >
-      <Select id='state' onChange={HandleOnChangeinput} value={state} className="forms" defaultValue="Select State">
+      <Select onChange={stateChange}  className="forms" defaultValue='Select State'>
         {states.map((state) => (
-          <Option value={state.name}>{state.name}</Option>
+          <Option value={state.name} key={state.id}>{state.name}</Option>
         ))}
     </Select>
+    <span className='text-danger'>{formerror.state}</span>
     </Form.Item>
 
       <Form.Item
-       
-        rules={[{ required: true, message: 'Please input your city!' }]}
+            
       >
-      <Select id='city' value={city} onChange={HandleOnChangeinput} Icon={<FlagFilled />} className="forms" defaultValue="Select City" >
+      <Select onChange={cityChange} className="forms" defaultValue='Select City'>
         {cities.map((city) => (
-            <Option value={city.name}>{city.name}</Option>
-        
+            <Option value={city.name} key={city.id}>{city.name}</Option>
         ))}
                 
     </Select>
+    <span className='text-danger'>{formerror.city}</span>
     </Form.Item>
 
-      
-
-
       <Form.Item
-       
-        rules={[{ required: true, message: 'Please input your zipcode!' }]}
+
       >
-        <Select id='zipcode' value={zipcode} onChange={HandleOnChangeinput} className="forms" defaultValue="Select Zip Code">
+        <Select onChange={zipChange} className="forms" defaultValue="Select Zip Code">
            {zipcodes.map((zip) => (
-            <Option value={zip.zipcode}>{zip.zipcode}</Option>
+            <Option value={zip.zipcode} key={zip.id}>{zip.zipcode}</Option>
           ))} 
         </Select>
+        <span className='text-danger'>{formerror.zipcode}</span>
       </Form.Item>
 
       <Form.Item
-      rules={[
-        { 
-          required: true, 
-          message: 'Please input your password!' 
-        },
-
-        {
-          min: 6,
-          message: 'Password must be minimum 6 characters.'
-        },
-
-        {
-          max: 8,
-          message: 'Password must be minimum 8 characters.'
-        },
-        
-        {
-          pattern: new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/),
-          message: "Password must have 1 upper case, 1 lower case character and 1 number",
-        }
-
-      ]}
     
       >
-        <Input.Password id='password' onChange={HandleOnChangeinput} value={password} autoComplete='off' className="forms" prefix={<i className="fas fa-lock"></i>} placeholder=" Password" />
+        <Input.Password  onChange={e => setPassword(e.target.value)}  autoComplete='off' className="forms" prefix={<i className="fas fa-lock"></i>} placeholder=" Password" />
+        <span className='text-danger'>{formerror.password}</span>
       </Form.Item>
             
       <Form.Item name="remember" >
@@ -216,13 +226,13 @@ const { Option } = Select;
           </div>
           <div className='col-12 col-md-4'>
           <Form.Item>
-            <Link to="/pricelist">
-              <Button  className="btn-bg-color buttons" type="primary" htmlType="submit" block>
+           
+              <Button onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
                     
                       CONTINUE <i className="fas fa-arrow-circle-right"></i>
                   
               </Button>
-            </Link>
+         
             </Form.Item>
           </div>
         </div>

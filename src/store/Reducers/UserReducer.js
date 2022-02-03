@@ -6,6 +6,8 @@ export default function(state = {}, action) {
             return {...state, register: action.payload}
         case ActionType.LOGIN_USER:
             return {...state, loginsuccess: action.payload}
+        case ActionType.FORGET_PASSWORD:
+            return {...state, forgotpassword: action.payload}
         default:
             return state
     }

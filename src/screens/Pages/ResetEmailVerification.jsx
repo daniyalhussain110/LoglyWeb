@@ -7,14 +7,28 @@ import { motion } from 'framer-motion';
 import '../../customcss/custom.css'
 import { MailFilled } from '@ant-design/icons'
 import '../../customcss/custom.css'
+import { userForgotPassword } from '../../store/Actions/UserAction';
+import { useDispatch } from 'react-redux'
 
 export default function ResetEmailVerification() {
     const [value, setValue] = useState(1)
+
+    const dispatch = useDispatch()
+
+    const [email , setEmail] = useState('')
 
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
       };
+
+      const forgotPassword = e => {
+          e.preventDefault();
+          const params = {
+              email: email
+          }
+            dispatch(userForgotPassword(params))
+      }
     return (
         <section id='img-bg'>
         <div className='opacity-bg'>
@@ -49,13 +63,13 @@ export default function ResetEmailVerification() {
                                         ]}
                                         
                                     >
-                                        <Input autoComplete='off' className='forms input' prefix={<MailFilled />} placeholder=' Enter Your Email' />
+                                        <Input onChange={e => setEmail(e.target.value)} autoComplete='off' className='forms input' prefix={<MailFilled />} placeholder=' Enter Your Email' />
                                     </Form.Item>
                             </div>
                         </div>
                     </div>
-                    <Link to="/forgotpassword" className='text-white'>
-                        <Button type='primary mt-3 btn-bg col-5'>CONTINUE </Button></Link>
+                  
+                        <Button onClick={forgotPassword} type='primary mt-3 btn-bg col-5'>CONTINUE </Button>
                         <br />   
                     <Link to="/" className='text-white'>
                         <Button className='mt-3 btns-borders col-4'>CANCEL </Button>   </Link>
