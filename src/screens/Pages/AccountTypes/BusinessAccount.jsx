@@ -574,7 +574,10 @@ function handleChange(value) {
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  
+  const [state, setState] = useState('')
+  const [city, setCity] = useState('')
+  const [zipcode, setZipcode] = useState('')
+
   const dispatch = useDispatch()
 
 
@@ -613,34 +616,30 @@ function TeamMembers() {
   const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
     useEffect(() => {
-      dispatch(getStates()).then((response) => {
-        if(response.payload.status === 200) {
-  
-        }
-      })
+      dispatch(getStates())
     }, [])
 
-  const stateChange = (value) => {
-    if(value) {
-      let id = states.filter((state) => state.name === value)[0].id
-      dispatch(getCities(id)).then(response => {
-        if(response.payload.status === 200) {
-         
-        }
-      })
+    const stateChange = (value) => {
+      setState(value)
+      if(value) {
+        let id = states.filter((state) => state.name === value)[0].id
+        dispatch(getCities(id))
+      }
     }
-  }
+  
+   const cityChange = (value) => {
+    setCity(value)
+    if(value) {
+      let city = cities.filter((id) => id.name === value)[0].name
+      dispatch(getZipCode(city))
+    }
+   }
+  
+   const zipcodeChange = (value) => {
+     setZipcode(value)
+   }
 
- const zipcodeChange = (value) => {
-  if(value) {
-    let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
-    dispatch(getZipCode(zipcode)).then(response => {
-      if(response.payload.status === 200) {
-         
-      } 
-    })
-  }
- }
+ 
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -777,7 +776,7 @@ function TeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={cityChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}
@@ -795,7 +794,7 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={handleChange}>
+                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={zipcodeChange}>
                       {zipcodes.map((zip) => (
                         <Option value={zip.zipcode}>{zip.zipcode}</Option>
                       ))}
@@ -866,7 +865,10 @@ function AddTeamMembers() {
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState("")
   const [cancel, setCancel] = useState(false);
-  
+  const [state, setState] = useState('')
+  const [city, setCity] = useState('')
+  const [zipcode, setZipcode] = useState('')
+
   const dispatch = useDispatch()
 
   
@@ -907,33 +909,27 @@ function AddTeamMembers() {
 
 
     useEffect(() => {
-      dispatch(getStates()).then((response) => {
-        if(response.payload.status === 200) {
-  
-        }
-      })
+      dispatch(getStates())
     }, [])
 
-    const stateChange = (value) => {
+     const stateChange = (value) => {
+      setState(value)
       if(value) {
         let id = states.filter((state) => state.name === value)[0].id
-        dispatch(getCities(id)).then(response => {
-          if(response.payload.status === 200) {
-           
-          }
-        })
+        dispatch(getCities(id))
       }
     }
   
-   const zipcodeChange = (value) => {
+   const cityChange = (value) => {
+    setCity(value)
     if(value) {
-      let zipcode = cities.filter((zip) => zip.zipcode === value).zipcode
-      dispatch(getZipCode(zipcode)).then(response => {
-        if(response.payload.status === 200) {
-           
-        } 
-      })
+      let city = cities.filter((id) => id.name === value)[0].name
+      dispatch(getZipCode(city))
     }
+   }
+  
+   const zipcodeChange = (value) => {
+     setZipcode(value)
    }
 
 
@@ -953,8 +949,8 @@ function AddTeamMembers() {
     <>
  <div className='container-fluid g-0'>
           <div className='row'>
-            <div className='col-12 col-md-12'>
-            <h6>Manage Team Members</h6>
+            <div className='col-12 col-md-12 mt-5'>
+          
             <div>
             <Button endIcon={<AddIcon />} className='outline-border mt-5 col-8' variant="outlined" color="primary"  onClick={showModal}>
               <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add Another Member</Typography>
@@ -1070,7 +1066,7 @@ function AddTeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={zipcodeChange}>
+                      <Select  className='state-city form-select' defaultValue="Select City" onChange={cityChange}>
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}
@@ -1088,7 +1084,7 @@ function AddTeamMembers() {
                       },
                     ]}
                   >
-                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={handleChange}>
+                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={zipcodeChange}>
                       {zipcodes.map((zip) => (
                         <Option value={zip.zipcode}>{zip.zipcode}</Option>
                       ))}
@@ -1165,7 +1161,7 @@ function getStepContent(step) {
             <div className='col-12 col-md-12'>
               <h6>Team member added!</h6>
           
-              <div className='mt-5'>
+              <div className='mt-3'>
                <div className='card cardes mb-3' style={{maxWidth: 450, maxHeight: 74}}>
                  <div className='row g-0'>
                    <div className='col-12 col-md-2'>
@@ -1184,7 +1180,7 @@ function getStepContent(step) {
                      </div>
                  </div>
             
-                 <div className='card cardes mt-2 mb-3' style={{maxWidth: 450, maxHeight: 74}}>
+                 <div className='card cardes mt-0 mb-3' style={{maxWidth: 450, maxHeight: 74}}>
                  <div className='row g-0'>
                    <div className='col-12 col-md-2'>
                       <img src={avatar1} alt="" className='img-fluid rounded-start'  />

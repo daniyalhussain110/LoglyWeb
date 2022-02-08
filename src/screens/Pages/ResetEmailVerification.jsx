@@ -9,6 +9,7 @@ import { MailFilled } from '@ant-design/icons'
 import '../../customcss/custom.css'
 import { userForgotPassword } from '../../store/Actions/UserAction';
 import { useDispatch } from 'react-redux'
+import ForgotPassword from './ForgotPassword';
 
 export default function ResetEmailVerification() {
     const [value, setValue] = useState(1)
@@ -74,6 +75,7 @@ export default function ResetEmailVerification() {
                     <Link to="/" className='text-white'>
                         <Button className='mt-3 btns-borders col-4'>CANCEL </Button>   </Link>
                     </Card>
+                    {/* <ForgotPassword forgotPassword={forgotPassword} /> */}
                   </motion.div>
                     </div>
                 </div>

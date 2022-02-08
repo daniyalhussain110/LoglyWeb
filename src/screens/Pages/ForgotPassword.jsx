@@ -5,14 +5,32 @@ import { Link } from 'react-router-dom';
 import Lock from '../../assets/images/Lock.png'
 import { motion } from 'framer-motion';
 import '../../customcss/custom.css'
+import { resendCodeVerification } from '../../store/Actions/UserAction';
+import { useDispatch } from 'react-redux'
 
-export default function ForgotPassword() {
+export default function ForgotPassword(props) {
     const [value, setValue] = useState(1)
 
-    const onChange = e => {
-        console.log('radio checked', e.target.value);
-        setValue(e.target.value);
-      };
+    const [email, setEmail] = useState()
+    const [smsCode, setSmsCode] = useState('')
+
+    const dispatch = useDispatch();
+
+    // const onChange = e => {
+    //     console.log('radio checked', e.target.value);
+    //     setValue(e.target.value);
+    //   };
+
+    const resendCode = e => {
+        e.preventDefault();
+        const params = {
+            email: email
+        
+        }
+        console.log(params)
+        console.log(props)
+        // dispatch(resendCodeVerification(params))
+    }
 
     return (
         <>
@@ -33,15 +51,15 @@ export default function ForgotPassword() {
                             <div className='container'>
                                 <div className='row justify-content-center'>
                                     <div className='col-12 col-md-6 envelope'>
-                                    <Radio.Group onChange={onChange} value={value}>
-                                        <Radio className='radio ms-3' value={1}><i className="fas fa-envelope"></i> <span className='ms-1'>Send code via email</span> <br /> <p className='ms-4'>qwe*****@g****.com</p></Radio>
+                                    <Radio.Group>
+                                        <Radio onChange={e => setEmail(e.target.value)} className='radio ms-3' value={email}><i className="fas fa-envelope"></i> <span className='ms-1'>Send code via email</span> <br /> <p className='ms-4'>qwe*****@g****.com</p></Radio>
                                         <Radio value={2} className='radio mt-3'><i className="fas fa-mobile-alt"></i><span className='ms-1'> Send code via sms </span> <br /> <p>+12*********26</p></Radio>
                                     </Radio.Group>
                                     </div>
                                 </div>
                             </div>
-                            <Link to="/otp" className='text-white'>
-                                <Button type='primary mt-5 btn-bg col-5'>CONTINUE </Button></Link>
+                           
+                                <Button onClick={resendCode} type='primary mt-5 btn-bg col-5'>CONTINUE </Button>
                                 <br />   
                             <Link to="/" className='text-white'>
                                 <Button className='mt-3 btns-borders col-4'>CANCEL </Button>   </Link>

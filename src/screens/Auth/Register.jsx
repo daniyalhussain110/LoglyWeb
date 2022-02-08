@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import '../../customcss/custom.css'
-import { Form, Input, Button, Select, Checkbox, Row, Col } from 'antd';
+import { Form, Input, Button, Select, Checkbox, Row, Col, Empty, message } from 'antd';
 import { UserOutlined, LockOutlined, MailFilled, LockFilled, PhoneFilled, FlagFilled, } from '@ant-design/icons';
 import { Link, useHistory } from 'react-router-dom'
 import {TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -26,37 +26,65 @@ const { Option } = Select;
   const [city, setCity] = useState('')
   const [zipcode, setZipcode] = useState('')
   const [password, setPassword] = useState('')
-  const [ formerror, setFormError] = useState({})
-  const [ isSubmit, setIsSubmit ] = useState(false)
+  const [formerror, setFormError] = useState({})
+  const [term, setTerm ] = useState(false)
+  const [agree, setAgree] = useState('')
+
+  const[cities,setCities]= useState([])
+  const[states,setStatesList]= useState([])
+  const[zipcodes,setZipcodes]= useState([])
 
   const dispatch = useDispatch();
 
   let history = useHistory()
+ 
+ const checkedTerm = () => {
+    alert('Please indicate that you have read and agree to the Terms and Conditions and Privacy Policy')
+    setTerm(!term)
+ }
 
-  const states = useSelector((state) => state.myState.states)
-  const cities = useSelector((state) => state.myCities.cities)
-  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+  //const states = 
+  //useSelector((state) =>  setStatesList(state.myState.states))
+  //const cities = useSelector((state) => state.myCities.cities)
+  //const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
  
   useEffect(() => {
-    dispatch(getStates())
+    dispatch(getStates()).then((values)=>{
+      setStatesList(values)
+    })
   }, [])
+
+  // useEffect(()=>{
+  //   if(state \77)
+  //   setCities(state?.myCities.cities)
+  // },[state])
 
   const stateChange = (value, e) => {
     setState(value)
+    setCities([])
+    setZipcodes([])
+    setCity('')
+    setZipcode('')
     if(value) {
       let id = states.filter((state) => state.name === value)[0].id
-      dispatch(getCities(id))
+      dispatch(getCities(id)).then((values)=>{
+        setCities(values)
+      })
     }
     
   }
 
   const cityChange = (value, e) => {
-    setCity(value)
+    
     if(value) {
-      let city = cities.filter((id ) => id.name === value)[0].name
+      let city = cities.filter((id) => id.name === value)[0].name
       console.log(city)
-      dispatch(getZipCode(city))
+      setCity(value)
+      setZipcode('')
+      dispatch(getZipCode(city)).then((values) => {
+        setZipcodes(values)
+      })
     }
   }
 
@@ -78,12 +106,13 @@ const { Option } = Select;
           "zipcode": zipcode,
       }
         dispatch(userRegister(params))
-
+        localStorage.setItem('user', JSON.stringify(params))
     }
 
     const validate = () => {
       const error = {}
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+      const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
       if(!name) {
         error.name = "Name Field is Required"
       }
@@ -95,6 +124,8 @@ const { Option } = Select;
 
       if(!phone) {
         error.phone = "Phone Field is Required"
+      } else if(!phoneRegex.test(phone)) {
+        error.phone = "Phone Number atleast 10 Characters"
       }
 
       if(!state) {
@@ -118,8 +149,14 @@ const { Option } = Select;
        else if(password.length < 8) {
         error.password = "Password must be more than 8 characters";
        }
+
+      
        return error;
   
+    }
+
+    function onSearch(val) {
+      console.log('search:', val);
     }
    
     return (
@@ -165,7 +202,7 @@ const { Option } = Select;
        
       <Form.Item
       >
-        <Input onChange={e => setPhone(e.target.value)} className="forms" onKeyPress={(event) => {
+        <Input maxLength={10} onChange={e => setPhone(e.target.value)} className="forms" onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
@@ -176,7 +213,13 @@ const { Option } = Select;
       <Form.Item
       
       >
-      <Select onChange={stateChange}  className="forms" defaultValue='Select State'>
+      <Select onChange={stateChange}  className="forms" defaultValue='Select State' showSearch
+        placeholder="Select a person"
+        optionFilterProp="children"
+        onSearch={onSearch}
+        filterOption={(input, option) =>
+      option.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    }>
         {states.map((state) => (
           <Option value={state.name} key={state.id}>{state.name}</Option>
         ))}
@@ -187,7 +230,13 @@ const { Option } = Select;
       <Form.Item
             
       >
-      <Select onChange={cityChange} className="forms" defaultValue='Select City'>
+      <Select onChange={cityChange} className="forms" value={city?city:'Select City'} showSearch
+        placeholder="Select a person"
+        optionFilterProp="children"
+        onSearch={onSearch}
+        filterOption={(input, option) =>
+      option.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    }>
         {cities.map((city) => (
             <Option value={city.name} key={city.id}>{city.name}</Option>
         ))}
@@ -199,7 +248,13 @@ const { Option } = Select;
       <Form.Item
 
       >
-        <Select onChange={zipChange} className="forms" defaultValue="Select Zip Code">
+        <Select onChange={zipChange} className="forms"  value={zipcode?zipcode:'Select Zip Code'} showSearch
+        placeholder="Select a person"
+        optionFilterProp="children"
+        onSearch={onSearch}
+        filterOption={(input, option) =>
+      option.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    }>
            {zipcodes.map((zip) => (
             <Option value={zip.zipcode} key={zip.id}>{zip.zipcode}</Option>
           ))} 
@@ -215,7 +270,8 @@ const { Option } = Select;
       </Form.Item>
             
       <Form.Item name="remember" >
-        <Checkbox className='remember-me'><span className="s-f">I accept the <span className='color-link'>Term Of Use</span> and <span className='color-link'>Privacy policy</span></span></Checkbox>
+        <Checkbox checked={term} onClick={checkedTerm} className='remember-me'><span className="s-f">I accept the <span className='color-link'>Term Of Use</span> and <span className='color-link'>Privacy policy</span></span></Checkbox>
+        <span className='text-danger'>{formerror.agree}</span>
       </Form.Item>
 
         <div className='row'>
@@ -227,9 +283,9 @@ const { Option } = Select;
           <div className='col-12 col-md-4'>
           <Form.Item>
            
-              <Button onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
+              <Button disabled={!name || !email || !phone || !state || !city || !zipcode || !password || !term}  onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
                     
-                      CONTINUE <i className="fas fa-arrow-circle-right"></i>
+                      CONTINUE <i className="ms-1 fas fa-arrow-circle-right"></i>
                   
               </Button>
          

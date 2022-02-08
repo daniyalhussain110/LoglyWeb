@@ -57,9 +57,11 @@ import AddWalkingTeamMember from './screens/Pages/TeamMembers/AddWalkingTeamMemb
 import AddBreedingTeamMember from './screens/Pages/TeamMembers/AddBreedingTeamMember';
 import AddBoardingTeamMember from './screens/Pages/TeamMembers/AddBoardingTeamMember';
 import ResetEmailVerification from './screens/Pages/ResetEmailVerification';
-
 import { Provider } from 'react-redux';
 import store from './store/store'
+import createBrowserHistory from 'history/createBrowserHistory';
+
+export const history = createBrowserHistory({forceRefresh: true})
 
 // const Spinner = lazy(() => import('./screens/Spinner/spinner'));
 // const login = lazy(() => import('./screens/Auth/Login'));
@@ -68,7 +70,7 @@ function App() {
   return (
     <>
       <Provider store={store}>
-      <Router>
+      <Router history={history}>
          <AnimatePresence>
            {/* <Suspense fallback={<></>}>
              <Spinner> */}

@@ -15,7 +15,8 @@ export default function Login() {
   const [ password, setPassword ] = useState('')
   const [ formerror, setFormError] = useState({})
   const [ isSubmit, setIsSubmit ] = useState(false)
-
+  const [ rememberMe, setRememberMe ] = useState(false)
+ 
   const dispatch = useDispatch()
   let history = useHistory()
 
@@ -30,7 +31,8 @@ export default function Login() {
       }
       dispatch(userLogin(params))
       setIsSubmit(true)
-     
+
+      localStorage.setItem('user', JSON.stringify(params))
   }
 
   const validate = () => {
@@ -55,7 +57,10 @@ export default function Login() {
 
   }
 
- 
+  const CheckedHandleOnInput = () => {
+      setRememberMe(!rememberMe)
+  }
+
     return (
         <>
            <section id='img-bg'>
@@ -87,7 +92,7 @@ export default function Login() {
       <Form.Item
       className='form-text'
       >
-        <Input onChange={e => setEmail(e.target.value)}
+        <Input  onChange={e => setEmail(e.target.value)}
          autoComplete='off' className='forms' prefix={<i className="fas fa-envelope"></i>} placeholder=' Email'/>
         <span className='text-danger'>{formerror.email}</span>
       </Form.Item>
@@ -103,7 +108,7 @@ export default function Login() {
      <div className='row'>
        <div className='col-12 col-md-3'>
        <Form.Item className='remember' name="remember" >
-        <Checkbox className='remember-me'>Remember me</Checkbox>
+        <Checkbox onChange={CheckedHandleOnInput} name='rememberMe'  className='remember-me'>Remember me</Checkbox>
       </Form.Item>
        </div>
       

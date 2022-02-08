@@ -8,6 +8,8 @@ export default function(state = {}, action) {
             return {...state, loginsuccess: action.payload}
         case ActionType.FORGET_PASSWORD:
             return {...state, forgotpassword: action.payload}
+        case ActionType.FORGOT_PASSWORD_CHANGE:
+            return {...state, passwordchange: action.payload}
         default:
             return state
     }
