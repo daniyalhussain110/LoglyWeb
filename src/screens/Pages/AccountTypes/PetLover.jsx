@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Layout, Tooltip, Popover, Divider, Modal, Space, Form, Upload, Input, Select, message } from 'antd';
-import { motion } from 'framer-motion';
+import { Steps,message, Layout, Calendar, Form, Card, Upload, Input, Select, Alert, Tooltip, TimePicker, InputNumber, Popover, Divider, Modal, Tree  } from 'antd';
+import { PercentageOutlined, CloseOutlined, DownOutlined, ClockCircleFilled } from '@ant-design/icons';import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import '../../../customcss/custom.css'
 import AddIcon from '@mui/icons-material/Add';
@@ -28,8 +28,11 @@ import { MailFilled, UploadOutlined, LoadingOutlined, PlusOutlined  } from '@ant
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import Avatar from 'antd/lib/avatar/avatar';
+import moment from 'moment';
 
 const { Option } = Select;
+
+const { TextArea } = Input;
 
 
 const DeleteModal = () => {
@@ -78,18 +81,18 @@ const content = (
 function getSteps() {
   return [
     {
-      title: "Animal info",
+      title: "Business Details",
+      desc: "Please setup your business profile"
+    },
+
+    {
+      title: "Animal Info",
       desc: "Select the animals you love"
     },
 
     {
       title: "Team Members",
       desc: "Add Team Member"
-    },
-
-    {
-      title: "Team Members Added",
-      desc: "Add Another Member"
     }
   ];
 }
@@ -183,8 +186,6 @@ function handleChange(value) {
 }
 
 
-
-
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -234,34 +235,53 @@ function TeamMembers() {
     </div>
   );
 
-  const states = useSelector((state) => state.myState.states)
-  const cities = useSelector((state) => state.myCities.cities)
-  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+  // const states = useSelector((state) => state.myState.states)
+  // const cities = useSelector((state) => state.myCities.cities)
+  // const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+
+  const[cities,setCities]= useState([])
+  const[states,setStatesList]= useState([])
+  const[zipcodes,setZipcodes]= useState([])
+
 
   useEffect(() => {
-    dispatch(getStates())
+    dispatch(getStates()).then((values)=>{
+      setStatesList(values)
+    })
   }, [])
 
-  const stateChange = (value) => {
+  const stateChange = (value, e) => {
     setState(value)
+    setCities([])
+    setZipcodes([])
+    setCity('')
+    setZipcode('')
     if(value) {
       let id = states.filter((state) => state.name === value)[0].id
-      dispatch(getCities(id))
+      dispatch(getCities(id)).then((values)=>{
+        setCities(values)
+      })
+    }
+    
+  }
+
+  const cityChange = (value, e) => {
+    
+    if(value) {
+      let city = cities.filter((id) => id.name === value)[0].name
+      console.log(city)
+      setCity(value)
+      setZipcode('')
+      dispatch(getZipCode(city)).then((values) => {
+        setZipcodes(values)
+      })
     }
   }
 
- const cityChange = (value) => {
-  setCity(value)
-  if(value) {
-    let city = cities.filter((id) => id.name === value)[0].name
-    dispatch(getZipCode(city))
+  const zipChange = (value, e) => {
+    console.log(value)
+    setZipcode(value)
   }
- }
-
- const zipcodeChange = (value) => {
-   setZipcode(value)
- }
-
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -322,6 +342,19 @@ function TeamMembers() {
                         required: true,
                         message: 'Please input your name!',
                       },
+
+                      {
+                        pattern: new RegExp(/^[a-zA-Z0-9 ]+$/i),
+                        message: "numbers and special characters not allowed",
+                      },
+                      {
+                        min: 3,
+                        message: "Full name  should not be less than 3 characters.",
+                      },
+                      {
+                        max: 50,
+                        message: "Full name should not be more than 50 characters.",
+                      },
                     ]}
                   >
                     <Input  prefix={<PersonIcon />} placeholder=' Enter Name'  className='name' />
@@ -339,7 +372,7 @@ function TeamMembers() {
 
                       {
                         pattern: new RegExp(/\S+@\S+\.\S+/),
-                        message: 'please input valid email'
+                        message: 'Email is valid'
                       }
                     ]}
                     
@@ -357,9 +390,14 @@ function TeamMembers() {
                         required: true,
                         message: 'Please input your phoneNo!',
                       },
+
+                      {
+                        pattern: new RegExp(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g),
+                        message: 'Phone Number atleast 10 Characters'
+                      }
                     ]}
                   >
-                    <Input onKeyPress={(event) => {
+                    <Input maxLength={10} onKeyPress={(event) => {
                                                         if (!/[0-9]/.test(event.key)) {
                                                         event.preventDefault();
                                                         }
@@ -418,7 +456,7 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                     <Select onChange={zipcodeChange} className='state-city' defaultValue="Select Zipcode">
+                     <Select onChange={zipChange} className='state-city' defaultValue="Select Zipcode">
                        {zipcodes.map((zip) => (
                         <Option value={zip.zipcode}>{zip.zipcode}</Option>
                       ))} 
@@ -757,118 +795,228 @@ function Toggle() {
 }
 
 
+
+function Profile() {
+  const [Loading, setLoading] = useState(false);
+  const [chars_left, setCharLeft] = useState(0)
+  const [max_char, setMaxChar] = useState(0)
+  const [show, setShow] = useState(false)
+
+  const [startSelectedTime, setStartSelectedTime] = useState("00:00")
+  const [endSelectedTime, setEndSelectedTime] = useState("00:00")
+  const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
+  const [end1SelectedTime, setEnd1SelectedTime] = useState("00:00")
+  const [isModalVisible, setIsModalVisible] = useState(false);
+ 
+  const handleWordCount = (e) => {
+    const charCount = e.target.value.length
+    const maxChar = max_char;
+    const charLength = charCount - maxChar;
+    setCharLeft(charLength)
+  }
+
+
+  const handleChange = info => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true });
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, imageUrl =>
+        this.setState({
+          imageUrl,
+          loading: false,
+        }),
+      );
+    }
+  };
+
+  const { imageUrl } = Loading
+
+  const uploadButton = (
+    <div>
+      {Loading ? <LoadingOutlined /> : <PlusOutlined className='plus-outlined' />}
+      <div style={{ marginTop: 8 }}>Logo</div>
+    </div>
+  );
+
+  function onChange(time, timeString) {
+    console.log(time, timeString);
+  }
+
+ 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  
+  function onPanelChange(value, mode) {
+    console.log(value, mode);
+  }
+  return(
+    <>
+      <div className='container-fluid g-0 postions'>
+        <div className='row'>
+          <div className='col-12 col-md-12'>
+            
+            <div>
+            <Upload
+                name="avatar"
+                listType="picture-card"
+                className="avatar-uploader uploaders text-center"
+                showUploadList={false}
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+              >
+                {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+              </Upload>
+            <label htmlFor=""> Description *</label>
+            <TextArea 
+              rows={4} 
+              id='value' 
+              className='text-area' 
+              maxLength="1800"
+              onChange={handleWordCount}
+            />
+            <p className='mt-2 float-end'><span className='text-danger'>{chars_left}</span> - 1800 </p>
+           
+       </div>
+       </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+
 function getStepContent(step) {
   
   switch (step) {
-    case 0:
+    case 0: 
+    return(
+      <>
+        <Profile />
+      </>
+    )
+    case 1:
       return (
         <>
           <Toggle />
         </>
       );
 
-    case 1:
+    case 2:
       return (
         
         <>
          <TeamMembers />
         </>
       );
-    case 2:
-      return (
-        <>
-           <div className='container-fluid g-0'>
-          <div className='row'>
-            <div className='col-12 col-md-12'>
-              <h6>Team member added!</h6>
+    // case 3:
+    //   return (
+    //     <>
+    //        <div className='container-fluid g-0'>
+    //       <div className='row'>
+    //         <div className='col-12 col-md-12'>
+    //           <h6>Team member added!</h6>
           
-              <div className='mt-3'>
-               <div className='card cardes mb-3' style={{maxWidth: 450, maxHeight: 74}}>
-                 <div className='row g-0'>
-                   <div className='col-12 col-md-2'>
-                      <img src={avatar} alt="" className='img-fluid rounded-start'  />
-                   </div>
-                   <div className='col-12 col-md-10'>
-                      <div className='card-body'>
-                          <h6 className='card-title text-card'>Jack Rio</h6>
-                          <p className='card-text text-card'>0213462840459 
-                          {/* <Tooltip className='text-align tools-tips' placement="left" title={text}>
-                            <MoreVertIcon />
-                          </Tooltip> */}
+    //           <div className='mt-3'>
+    //            <div className='card cardes mb-3' style={{maxWidth: 450, maxHeight: 74}}>
+    //              <div className='row g-0'>
+    //                <div className='col-12 col-md-2'>
+    //                   <img src={avatar} alt="" className='img-fluid rounded-start'  />
+    //                </div>
+    //                <div className='col-12 col-md-10'>
+    //                   <div className='card-body'>
+    //                       <h6 className='card-title text-card'>Jack Rio</h6>
+    //                       <p className='card-text text-card'>0213462840459 
+    //                       {/* <Tooltip className='text-align tools-tips' placement="left" title={text}>
+    //                         <MoreVertIcon />
+    //                       </Tooltip> */}
 
-                          <Popover className='pop text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
-                            <MoreVertIcon className='vector-icon' />
-                          </Popover>
-                          </p>
+    //                       <Popover className='pop text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
+    //                         <MoreVertIcon className='vector-icon' />
+    //                       </Popover>
+    //                       </p>
                          
-                      </div>
-                     </div>
-                 </div>
+    //                   </div>
+    //                  </div>
+    //              </div>
             
                 
-                 <div className='card cardes mt-0 mb-3' style={{maxWidth: 450, maxHeight: 74}}>
-                 <div className='row g-0'>
-                   <div className='col-12 col-md-2'>
-                      <img src={avatar1} alt="" className='img-fluid rounded-start'  />
-                   </div>
-                   <div className='col-12 col-md-10'>
-                      <div className='card-body'>
-                          <h6 className='card-title text-card'>Rosie Fernadez</h6>
-                          <p className='card-text text-card'>0213222382819
-                          <Popover className='text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
-                            <MoreVertIcon className='vector-icon' />
-                          </Popover>
-                          </p>
+    //              <div className='card cardes mt-0 mb-3' style={{maxWidth: 450, maxHeight: 74}}>
+    //              <div className='row g-0'>
+    //                <div className='col-12 col-md-2'>
+    //                   <img src={avatar1} alt="" className='img-fluid rounded-start'  />
+    //                </div>
+    //                <div className='col-12 col-md-10'>
+    //                   <div className='card-body'>
+    //                       <h6 className='card-title text-card'>Rosie Fernadez</h6>
+    //                       <p className='card-text text-card'>0213222382819
+    //                       <Popover className='text-align tools-tips cursor-pointer' placement="left" content={content} trigger="click">
+    //                         <MoreVertIcon className='vector-icon' />
+    //                       </Popover>
+    //                       </p>
                           
-                      </div>
-                     </div>
+    //                   </div>
+    //                  </div>
                   
-                 </div>
-                 </div>
-               </div>
-               <div className='mt-0'>
+    //              </div>
+    //              </div>
+    //            </div>
+    //            <div className='mt-0'>
                     
-                    <AddTeamMembers />
-         </div>
-         </div>
-         </div>
-          </div>
-        </div>
+    //                 <AddTeamMembers />
+    //      </div>
+    //      </div>
+    //      </div>
+    //       </div>
+    //     </div>
          
-        </>
-      );
-    case 3:
-      return (
-        <>
-          <TextField
-            id="cardNumber"
-            label="Card Number"
-            variant="outlined"
-            placeholder="Enter Your Card Number"
-            fullWidth
-            margin="normal"
-            name="cardNumber"
-          />
-          <TextField
-            id="cardMonth"
-            label="Card Month"
-            variant="outlined"
-            placeholder="Enter Your Card Month"
-            fullWidth
-            margin="normal"
-            name="cardMonth"
-          />
-          <TextField
-            id="cardYear"
-            label="Card Year"
-            variant="outlined"
-            placeholder="Enter Your Card Year"
-            fullWidth
-            margin="normal"
-            name="cardYear"
-          />
-        </>
-      );
+    //     </>
+    //   );
+    // case 3:
+    //   return (
+    //     <>
+    //       <TextField
+    //         id="cardNumber"
+    //         label="Card Number"
+    //         variant="outlined"
+    //         placeholder="Enter Your Card Number"
+    //         fullWidth
+    //         margin="normal"
+    //         name="cardNumber"
+    //       />
+    //       <TextField
+    //         id="cardMonth"
+    //         label="Card Month"
+    //         variant="outlined"
+    //         placeholder="Enter Your Card Month"
+    //         fullWidth
+    //         margin="normal"
+    //         name="cardMonth"
+    //       />
+    //       <TextField
+    //         id="cardYear"
+    //         label="Card Year"
+    //         variant="outlined"
+    //         placeholder="Enter Your Card Year"
+    //         fullWidth
+    //         margin="normal"
+    //         name="cardYear"
+    //       />
+    //     </>
+    //   );
     default:
       return "unknown step";
   }

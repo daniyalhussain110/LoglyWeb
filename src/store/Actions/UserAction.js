@@ -8,23 +8,25 @@ export const userLogin = (dataAnimal) => async dispatch => {
    
     try {
         const res = await axiosInstance.post('/user/login', dataAnimal, {
-            headers: { auth: localStorage.getItem('auth')}
+            headers: { user: localStorage.getItem('user')}
         })
         .then((response) => {
+            console.log(response.data)
             if(response.data.status === 200) {
-                // message.success(response.data.message)
-                console.log('response -->', response.data)
-                if(!response.data.setupWizardCompleted) {
-                    window.location.href = `${url}/setupWizard`
-                } 
-                else {
-                    window.location.href = `${url}/main`
-                }
-                return response.data
-               
+                message.success(response.data.message)
+                // console.log(response.data.data.user.setupWizardCompleted,"hdgdgdg")
+                // if(!response.data.data.user.setupWizardComplete) {
+                //     const user = localStorage.getItem('user', response.data)
+                //     console.log(user)
+                    
+                // } else {
+                   
+                // }
+
             } else {
                 message.error(response.data.message)
             }
+            return response.data
         })
         dispatch({
             type: ActionType.LOGIN_USER,
@@ -39,13 +41,13 @@ export const userLogin = (dataAnimal) => async dispatch => {
 export const userRegister = (dataAnimal) => async dispatch => {
     try {
         const res = axiosInstance.post('/user/breeder/register', dataAnimal, {
-            headers: { auth: localStorage.getItem('auth')}
+            headers: { user: localStorage.getItem('user')}
         })
         .then((response) => {
             console.log('response-->', response)
             if(response.data.status === 200) {
                 message.success(response.data.message)
-                history.push('/')
+                history.push('/thankyou')
              } else {
                 message.error(response.data.message)
              }
@@ -70,7 +72,7 @@ export const userForgotPassword = (dataAnimal) => async dispatch => {
             console.log(response.data.status , response.data.message)
             if(response.status === 200) {
                 message.success(response.data.message)
-                history.push('/forgotpassword')
+                history.push('/forgotpassword', {dataAnimal})
             } else {
                 message.error(response.data.message)
             }
@@ -92,8 +94,16 @@ export const resendCodeVerification = (dataAnimal) => async dispatch => {
         const res = await axiosInstance.post('/user/resendCodeVerification', dataAnimal, {
             headers: {auth: localStorage.getItem('auth')}
         })
-        .then(response => response.data)
-
+        .then(response => {
+            if(response.data.status === 200){
+                message.success(response.data.message)
+                history.push('/otp', {dataAnimal})
+            } else {
+                message.error(response.data.message)
+            }
+            return response.data
+        })
+       
         dispatch({
             type: ActionType.RESEND_CODE_VERIFICATION,
             payload: res.data    
@@ -103,7 +113,32 @@ export const resendCodeVerification = (dataAnimal) => async dispatch => {
     }
 }
 
+export const forgotPhoneVerification = (dataAnimal) => async dispatch => {
+    try {
+        const res = await axiosInstance.post('/user/forgetpasswordphone', dataAnimal, {
+            headers: {auth: localStorage.getItem('auth')}
+        })
+        .then(response => {
+            if(response.data.status === 200){
+                message.success(response.data.message)
+                history.push('/otp', {dataAnimal})
+            } else {
+                message.error(response.data.message)
+            }
+            return response.data
+        })
+       
+        dispatch({
+            type: ActionType.FORGOT_PHONE_VERIFICATION,
+            payload: res.data    
+        })
+    } catch(err) {
+        alert(err)
+    }
+}
+
 export const resetForgetPasswordByCode = (dataAnimal) => async dispatch => {
+    
     try {
         const res = await axiosInstance.post(`/user/verifyByCodePassword`, dataAnimal, {
             headers: { auth: localStorage.getItem('auth')}
@@ -112,7 +147,7 @@ export const resetForgetPasswordByCode = (dataAnimal) => async dispatch => {
             console.log(response)
             if(response.data.status === 200) {
                 message.success(response.data.message)
-                history.push('/resetpassword')
+                history.push('/resetpassword', {dataAnimal})
             } else {
                 message.error(response.data.message)
             }
@@ -130,11 +165,19 @@ export const resetForgetPasswordByCode = (dataAnimal) => async dispatch => {
 
 
 
-export const ChangePassword = (passwordStr, dataAnimal) => async dispatch => {
+export const ChangePassword = (dataAnimal) => async dispatch => {
     try {
-        const res = await axiosInstance.post(`/user/resetForgetPasswordByCode/${passwordStr}`, dataAnimal, {
+        const res = await axiosInstance.post(`/user/resetForgetPasswordByCode`, dataAnimal, {
           headers: {auth: localStorage.getItem('auth')}  
-        }).then(response => response.data)
+        }).then(response =>  {
+            if(response.data.status === 200) {
+                message.success(response.data.message)
+                history.push('/successpassword')
+            } else {
+                message.error(response.data.message)
+            }
+            return response.data
+        })
 
         dispatch({
             type: ActionType.PASSWORD_CHANGE,

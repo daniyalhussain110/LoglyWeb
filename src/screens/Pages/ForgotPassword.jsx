@@ -5,14 +5,15 @@ import { Link } from 'react-router-dom';
 import Lock from '../../assets/images/Lock.png'
 import { motion } from 'framer-motion';
 import '../../customcss/custom.css'
-import { resendCodeVerification } from '../../store/Actions/UserAction';
+import { resendCodeVerification, forgotPhoneVerification } from '../../store/Actions/UserAction';
 import { useDispatch } from 'react-redux'
 
 export default function ForgotPassword(props) {
     const [value, setValue] = useState(1)
 
-    const [email, setEmail] = useState()
-    const [smsCode, setSmsCode] = useState('')
+    const [email, setEmail] = useState(props.location.state.dataAnimal.email)
+    const [phone, setPhone] = useState(props.location.state.dataAnimal.phone)
+    const [checkedValue, setCheckValue] = useState(null)
 
     const dispatch = useDispatch();
 
@@ -20,16 +21,22 @@ export default function ForgotPassword(props) {
     //     console.log('radio checked', e.target.value);
     //     setValue(e.target.value);
     //   };
+    // console.log(props.location.state.dataAnimal.email)
 
     const resendCode = e => {
         e.preventDefault();
         const params = {
-            email: email
+            email: email,
+            phone: phone
         
         }
-        console.log(params)
-        console.log(props)
+        console.log(params, checkedValue)
         // dispatch(resendCodeVerification(params))
+        if(checkedValue == 1){
+            dispatch(resendCodeVerification(params))
+        }else if(checkedValue == 2){
+            dispatch(forgotPhoneVerification(params))      
+        }
     }
 
     return (
@@ -51,9 +58,9 @@ export default function ForgotPassword(props) {
                             <div className='container'>
                                 <div className='row justify-content-center'>
                                     <div className='col-12 col-md-6 envelope'>
-                                    <Radio.Group>
-                                        <Radio onChange={e => setEmail(e.target.value)} className='radio ms-3' value={email}><i className="fas fa-envelope"></i> <span className='ms-1'>Send code via email</span> <br /> <p className='ms-4'>qwe*****@g****.com</p></Radio>
-                                        <Radio value={2} className='radio mt-3'><i className="fas fa-mobile-alt"></i><span className='ms-1'> Send code via sms </span> <br /> <p>+12*********26</p></Radio>
+                                    <Radio.Group onChange={(e)=> setCheckValue(e.target.value)} value={checkedValue}>
+                                        <Radio  value={1}  className='radio ms-3'><i className="fas fa-envelope"></i> <span className='ms-1'>Send code via email</span> <br /> <p className='ms-4'>{email}</p></Radio>
+                                        <Radio value={2} className='radio mt-3'><i className="fas fa-mobile-alt"></i><span className='ms-1'> Send code via sms </span> <br /> <p>{phone}</p></Radio>
                                     </Radio.Group>
                                     </div>
                                 </div>

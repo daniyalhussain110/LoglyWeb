@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux'
-import { resetForgetPasswordByCode, userForgotPassword } from '../../store/Actions/UserAction';
+import { resetForgetPasswordByCode, resendCodeVerification } from '../../store/Actions/UserAction';
 
 const REST_INTERVAL_S = 150;
 
@@ -26,7 +26,7 @@ const Timer = ({ time }) => {
 }
 
 
-export default function OtpVerification() {
+export default function OtpVerification(props) {
     let history = useHistory()
     const [time, setTime] = useState(0);
 
@@ -46,6 +46,9 @@ export default function OtpVerification() {
     const [otp4, setOpt4] = useState('')
     const [otp5, setOpt5] = useState('')
     const [otp6, setOpt6] = useState('')
+    const [email, setEmail] = useState(props.history.location.state.dataAnimal.email)
+
+    // console.log(props.history.location.state.dataAnimal.email)
 
     const dispatch = useDispatch()
 
@@ -64,6 +67,7 @@ export default function OtpVerification() {
         }
     }
 
+ 
   
 
 
@@ -80,6 +84,15 @@ export default function OtpVerification() {
                 element.target.form.elements[next].focus()
             }
         }   
+    }
+
+    const OnResenedCode = e => {
+        e.preventDefault();
+        const params = {
+            email: email
+        }
+
+        dispatch(resendCodeVerification(params))
     }
     return (
         <>
@@ -131,7 +144,7 @@ export default function OtpVerification() {
                                         }} tabIndex="6"  onChange={e => setOpt6(e.target.value)}    maxLength="1" className='m-1 widths b-r' />
                                     </Form>
                                 </div>
-                                <Button className='btn btn-border'>Resend Code <IntervalTimerFunctional /></Button>
+                                <Button onClick={OnResenedCode} className='btn btn-border'>Resend Code <IntervalTimerFunctional /></Button>
                                 <br />
                                 
                                 <Button onClick={otpsubmit} type='primary mt-3 btn-bg col-4'>CONTINUE </Button>

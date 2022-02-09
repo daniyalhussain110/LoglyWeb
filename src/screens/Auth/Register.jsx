@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import '../../customcss/custom.css'
-import { Form, Input, Button, Select, Checkbox, Row, Col, Empty, message } from 'antd';
+import { Form, Input, Button, Select, Checkbox, Row, Col, Empty, message, Popconfirm } from 'antd';
 import { UserOutlined, LockOutlined, MailFilled, LockFilled, PhoneFilled, FlagFilled, } from '@ant-design/icons';
 import { Link, useHistory } from 'react-router-dom'
 import {TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -29,6 +29,7 @@ const { Option } = Select;
   const [formerror, setFormError] = useState({})
   const [term, setTerm ] = useState(false)
   const [agree, setAgree] = useState('')
+ 
 
   const[cities,setCities]= useState([])
   const[states,setStatesList]= useState([])
@@ -37,10 +38,16 @@ const { Option } = Select;
   const dispatch = useDispatch();
 
   let history = useHistory()
- 
- const checkedTerm = () => {
-    alert('Please indicate that you have read and agree to the Terms and Conditions and Privacy Policy')
-    setTerm(!term)
+
+
+ const checkedTerm = (e) => {
+    if(!term) {
+      alert('Please indicate that you have read and agree to the Terms and Conditions and Privacy Policy')
+      setTerm(!term)
+    } else {
+      console.log('')
+    }
+   
  }
 
   //const states = 
@@ -107,6 +114,7 @@ const { Option } = Select;
       }
         dispatch(userRegister(params))
         localStorage.setItem('user', JSON.stringify(params))
+        
     }
 
     const validate = () => {
@@ -155,7 +163,8 @@ const { Option } = Select;
   
     }
 
-    function onSearch(val) {
+
+    const onSearch = (val) => {
       console.log('search:', val);
     }
    
@@ -213,13 +222,16 @@ const { Option } = Select;
       <Form.Item
       
       >
-      <Select onChange={stateChange}  className="forms" defaultValue='Select State' showSearch
-        placeholder="Select a person"
-        optionFilterProp="children"
-        onSearch={onSearch}
-        filterOption={(input, option) =>
-      option.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    }>
+      <Select onChange={stateChange}  className="forms" defaultValue='Select State' 
+       showSearch
+       placeholder="Select a person"
+       optionFilterProp="children"
+       onSearch={onSearch}
+       filterOption={(input, option) =>
+         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+       }
+      
+      >
         {states.map((state) => (
           <Option value={state.name} key={state.id}>{state.name}</Option>
         ))}
@@ -230,13 +242,15 @@ const { Option } = Select;
       <Form.Item
             
       >
-      <Select onChange={cityChange} className="forms" value={city?city:'Select City'} showSearch
-        placeholder="Select a person"
-        optionFilterProp="children"
-        onSearch={onSearch}
-        filterOption={(input, option) =>
-      option.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    }>
+      <Select onChange={cityChange} className="forms" value={city?city:'Select City'} 
+       showSearch
+       placeholder="Select a person"
+       optionFilterProp="children"
+       onSearch={onSearch}
+       filterOption={(input, option) =>
+         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+       }
+      >
         {cities.map((city) => (
             <Option value={city.name} key={city.id}>{city.name}</Option>
         ))}
@@ -248,13 +262,15 @@ const { Option } = Select;
       <Form.Item
 
       >
-        <Select onChange={zipChange} className="forms"  value={zipcode?zipcode:'Select Zip Code'} showSearch
-        placeholder="Select a person"
-        optionFilterProp="children"
-        onSearch={onSearch}
-        filterOption={(input, option) =>
-      option.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    }>
+        <Select onChange={zipChange} className="forms"  value={zipcode?zipcode:'Select Zip Code'} 
+           showSearch
+           placeholder="Select a person"
+           optionFilterProp="children"
+           onSearch={onSearch}
+           filterOption={(input, option) =>
+             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+           }
+        >
            {zipcodes.map((zip) => (
             <Option value={zip.zipcode} key={zip.id}>{zip.zipcode}</Option>
           ))} 
@@ -270,8 +286,11 @@ const { Option } = Select;
       </Form.Item>
             
       <Form.Item name="remember" >
-        <Checkbox checked={term} onClick={checkedTerm} className='remember-me'><span className="s-f">I accept the <span className='color-link'>Term Of Use</span> and <span className='color-link'>Privacy policy</span></span></Checkbox>
-        <span className='text-danger'>{formerror.agree}</span>
+     
+          <Checkbox onClick={checkedTerm} className='remember-me'><span className="s-f">I accept the <span className='color-link'>Term Of Use</span> and <span className='color-link'>Privacy policy</span></span>
+          </Checkbox>
+      
+       
       </Form.Item>
 
         <div className='row'>
@@ -283,7 +302,7 @@ const { Option } = Select;
           <div className='col-12 col-md-4'>
           <Form.Item>
            
-              <Button disabled={!name || !email || !phone || !state || !city || !zipcode || !password || !term}  onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
+              <Button   onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
                     
                       CONTINUE <i className="ms-1 fas fa-arrow-circle-right"></i>
                   

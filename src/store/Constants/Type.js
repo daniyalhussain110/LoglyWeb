@@ -9,7 +9,8 @@ const ActionType = {
     FORGET_PASSWORD_FAILED: 'forgot_password_failed',
     FORGOT_PASSWORD_CHANGE: 'forgot_password_change',
     PASSWORD_CHANGE: 'password_change',
-    RESEND_CODE_VERIFICATION: 'resend_code_verification'
+    RESEND_CODE_VERIFICATION: 'resend_code_verification',
+    FORGOT_PHONE_VERIFICATION: 'forgot_phone_verification'
 }
 
 export default ActionType

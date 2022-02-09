@@ -5,22 +5,34 @@ import { Link } from 'react-router-dom';
 import key from '../../assets/images/key.png'
 import { motion } from 'framer-motion';
 import '../../customcss/custom.css'
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
+import { ChangePassword } from '../../store/Actions/UserAction';
 
-export default function ResetPassword() {
+export default function ResetPassword(props) {
 
-    const [newPassword, setNewPassword] = useState('')
+    const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const [code, setCode] = useState(props.location.state.dataAnimal.code)
+
 
     let history = useHistory()
 
+    const dispatch = useDispatch()
+
     const updatePassword = e => {
-        if(newPassword === '' || confirmPassword === '') {
+        if(password === '' || confirmPassword === '') {
             message.error('Please Fill Out All Fields')  
-        } else if(newPassword !== confirmPassword) {    
+        } else if(password !== confirmPassword) {    
             message.error("Password Does'nt match")
         } else {
-            history.push('/successpassword')
+            const params = {
+                password: password,
+                confirmPassword: confirmPassword,
+                code: code
+            }
+            dispatch(ChangePassword(params))
+           
         }
     }
 
@@ -47,7 +59,7 @@ export default function ResetPassword() {
                                         name="password"
                                         rules={[{ required: true, message: 'Please input your password!' }]}
                                     >
-                                        <Input.Password onChange={e => setNewPassword(e.target.value)} autoComplete='off' className='forms input' prefix={<i className="fas fa-lock"></i>} placeholder=' New Password' />
+                                        <Input.Password onChange={e => setPassword(e.target.value)} autoComplete='off' className='forms input' prefix={<i className="fas fa-lock"></i>} placeholder=' New Password' />
                                     </Form.Item>
 
                                     <Form.Item
