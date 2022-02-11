@@ -1,25 +1,38 @@
-import React, { useState } from 'react'
-import { Checkbox, Card, Button  } from 'antd';
+import React, { useEffect, useState } from 'react'
+import { Checkbox, Card, Button, Radio } from 'antd';
 import '../../customcss/custom.css';
 import { Link, useHistory } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'material-react-toastify';
 import Logo from '../../assets/images/logo-logly.png'
+import { SubscriptionPacakgeType } from '../../store/Actions/SubscriptionPackageType'
+import { useDispatch, useSelector } from 'react-redux'
+import ActionType from '../../store/Constants/Type';
 
 const { Meta } = Card;
 
 export default function PriceList() {
     let history = useHistory();
-    const [togglePrice, setTogglePrice] = useState(1);
+    const [togglePrice, setTogglePrice] = useState('petLover');
     const [checkbox, setCheckbox] = useState(false);
     const [item, setItem] = useState(null)
+    const [selectType, setSelectedType] = useState(null)
 
-    const handleChange = (items) => {
-            items === item ? setItem(null): setItem(items);
+    const dispatch = useDispatch();
+
+    const accountType = useSelector((state) => state.mySubscription.accountType)
+
+    const handleChange = () => {
+            // items === item ? setItem(null): setItem(items);
+            // console.log(items)
+           
     }
+
 
     const submitCheckbox = (e) => {
         e.preventDefault();
+        setSelectedType(accountType[selectType + 1])
+        console.log(accountType)
         history.push('/registereddetails')
 
     }
@@ -29,6 +42,9 @@ export default function PriceList() {
             console.log(index)
     }
 
+    useEffect(() => {
+        dispatch(SubscriptionPacakgeType())
+    }, [])
   
     return (
         <>
@@ -51,26 +67,37 @@ export default function PriceList() {
                                 <h1 className='bold f-s reg-acc'>Register Account</h1>
                                 <p className=' f-size reg-get'>Please select the account</p>
                                 <div className='margin-space'>
-                                <Checkbox checked={item === 1} className='checkbox'>
-                                    <Card
-                                    className={(item === 1 ? 'active-card' : 'card-active') + ' cards mt-2 bg-card'}
-                                    onClick={() => handleChange(1)}
-                                        style={{ width: 280 }}
-                                    >
-                                        <p className='fw-bold lover'>Pet Lover</p>
-                                        <div className='top-marg'>
-                                            <p className='desc'>Lorem ipsum dolor sit amet consectetur .</p>
-                                            <div className='span'>
-                                                <span className='price'>Starting at <strong className='fs-6'>$99.9/Month</strong></span>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                </Checkbox>
+                                    {accountType.map((type, index) => { 
+                                        return(
+                                            <>
+                                            
+                                            <Radio.Group value={selectType} onChange={(e) => setSelectedType(e.target.value)}  className='checkbox'>
+                                                <Radio value={index - 1}>
+                                                    <Card
+                                                    className={(selectType === index - 1 ? 'active-card' : 'card-active') + ' cards mt-2 bg-card'}
+                                                    onClick={() => handleChange('petLover')}
+                                                        style={{ width: 280, height: 100 }}
+                                                    >
+                                                    
+                                                                <p className='fw-bold lover'>{type.packageType}</p>
+                                                                    <div className='top-marg'>
+                                                                    <p className='desc'>{type.description}</p>
+                                                                    <div className='span'>
+                                                                        <span className='price'>Starting at <strong className='fs-6'>{type.minprice}/Month</strong></span>
+                                                                    </div>
+                                                                </div>
+                                                    </Card>
+                                                </Radio>
+                                            </Radio.Group>
+                                            </>
+                                        )
+                                    })}
+                                
 
-                                <Checkbox checked={item === 2}  className='checkbox'  >
+                                {/* <Checkbox checked={item === 'Business Owner'}  className='checkbox'  >
                                     <Card
-                                    className={(item === 2 ? 'active-card' : 'card-active') + ' cards mt-2  bg-card'}
-                                    onClick={() => handleChange(2)}    
+                                    className={(item === 'Business Owner' ? 'active-card' : 'card-active') + ' cards mt-2  bg-card'}
+                                    onClick={() => handleChange('Business Owner')}    
                                     style={{ width: 280 }}
                                     >
                                         
@@ -84,10 +111,10 @@ export default function PriceList() {
                                     </Card>
                                 </Checkbox>
 
-                                <Checkbox  checked={item === 3} className='checkbox '  >
+                                <Checkbox  checked={item === 'Charity Organization'} className='checkbox '  >
                                     <Card
-                                    className={(item === 3 ? 'active-card ' : 'card-active') + ' cards mt-2 bg-card'}
-                                    onClick={() => handleChange(3)}       
+                                    className={(item === 'Charity Organization' ? 'active-card ' : 'card-active') + ' cards mt-2 bg-card'}
+                                    onClick={() => handleChange('Charity Organization')}       
                                     style={{ width: 280 }}
                                     >
                                         <p className='fw-bold lover'>Charity / Non Profit</p>
@@ -100,10 +127,10 @@ export default function PriceList() {
                                     </Card>
                                 </Checkbox>
 
-                                <Checkbox  checked={item === 4} className='checkbox'>
+                                <Checkbox  checked={item === 'Business Services'} className='checkbox'>
                                     <Card
-                                    className={(item === 4 ? 'active-card ' : 'card-active') + ' cards mt-2 bg-card'}
-                                    onClick={() => handleChange(4)}    
+                                    className={(item === 'Business Services' ? 'active-card ' : 'card-active') + ' cards mt-2 bg-card'}
+                                    onClick={() => handleChange('Business Services')}    
                                     style={{ width: 280 }}
                                     >
                                         <p className='fw-bold lover'>Business Services</p>
@@ -116,10 +143,10 @@ export default function PriceList() {
                                     </Card>
                                 </Checkbox>
 
-                                <Checkbox checked={item === 5} className='checkbox'  >
+                                <Checkbox checked={item === 'Business Listing'} className='checkbox'  >
                                     <Card
-                                    className={(item === 5 ? 'active-card ' : 'card-active') + ' cards mt-2 bg-card'}
-                                    onClick={() => handleChange(5)}      
+                                    className={(item === 'Business Listing' ? 'active-card ' : 'card-active') + ' cards mt-2 bg-card'}
+                                    onClick={() => handleChange('Business Listing')}      
                                     style={{ width: 280 }}
                                     >
                                         <p className='fw-bold lover'>Business Listing</p>
@@ -130,11 +157,11 @@ export default function PriceList() {
                                             </div>
                                         </div>
                                     </Card>
-                                </Checkbox>
+                                </Checkbox> */}
                                 <Link to="/register" className='text-white'>
                                 <Button className='btn-bg mt-4 fonts-sizes' type="primary">BACK</Button> </Link>
                                 
-                                <Button disabled={!item} onClick={submitCheckbox} className='btn-bg mt-4 fonts-sizes col-4 width-btn ms-3' type="primary">CONTINUE  <i className="fas fa-arrow-circle-right ml"></i></Button>
+                                <Button disabled={!selectType} onClick={submitCheckbox} className='btn-bg mt-4 fonts-sizes col-4 width-btn ms-3' type="primary">CONTINUE  <i className="fas fa-arrow-circle-right ml"></i></Button>
                                 <ToastContainer />
                                 </div>
                                
@@ -145,6 +172,7 @@ export default function PriceList() {
                 </div>
                 </div>
                 <img src={Logo} alt="" className='float-right'  height="100" />
+
             </section>
          
         </>

@@ -1,18 +1,67 @@
-import React, { useState } from 'react'
-import { Form, Input, Button, Checkbox, Select, Row, Col, Card, Upload, Popover } from 'antd';
+import React, { useState, useEffect } from 'react'
+import { Form, Input, Button, Checkbox, Select, Row, Col, Card, Upload, Popover, message, Space  } from 'antd';
 import { PaperClipOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '../../assets/images/logo-logly.png'
 import Info from '../../assets/images/info.png'
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { useHistory } from 'react-router-dom'
 
+const items = [
+  {
+    EmployeeNumber: 10
+  },
+  {
+    EmployeeNumber: 20
+  },
+
+  {
+    EmployeeNumber: 30
+  },
+]
 
 
 const { Option } = Select;
 export default function RegisteredDetails() {
 
   const [visible, setVisible] = useState(false)
+
+  const [businessName, setbusinessName] = useState('')
+  const [NumberOfEmployee, setNumberOfEmployee] = useState('')
+  const [websiteUrl, setwebsiteUrl] = useState('')
+  const [Imageurl, setImageUrl] = useState('');
+
+  const [array, setArray] = useState(items)
+
+  let history = useHistory() 
+
+  const businessOwner = e => {
+    e.preventDefault();
+    if(businessName === "" || NumberOfEmployee === "" || websiteUrl === "" || Imageurl === "") {
+      message.error('Please Fill Out All Fields')
+    } else {
+      const params = {
+        businessName: businessName,
+        NumberOfEmployee: NumberOfEmployee,
+        websiteUrl: websiteUrl,
+        Imageurl: Imageurl
+    }
+      const businessOwners = localStorage.setItem('businessOwner', JSON.stringify(params))
+      console.log(businessOwners)
+      message.success('BusinessOwner Added Successfully')
+      history.push('/verification')
+    }
+  }
+
+
+  const EmployeeHandleOnChangeInput = (value) => {
+    setNumberOfEmployee(value)
+  }
+
+  const ImageUrlOnChangeInput = (value) => {
+    setImageUrl(value)
+  }
 
 
   const hide = () => {
@@ -22,6 +71,7 @@ export default function RegisteredDetails() {
   const handleVisibleChange = visible => {
     setVisible(visible)
   }
+
 
   const content = (
     <div>
@@ -40,6 +90,8 @@ export default function RegisteredDetails() {
         verified.</p>
     </div>
   );
+
+ 
     return (
         <>
             <section id='img-bg'>
@@ -71,7 +123,7 @@ export default function RegisteredDetails() {
         name="businessname"
         rules={[{ required: true, message: 'Please input your business name!' }]}
       >
-        <Input autoComplete='off' className='forms width-forms' placeholder='Business Name'/>
+        <Input  onChange={e => setbusinessName(e.target.value)} autoComplete='off' className='forms width-forms' placeholder='Business Name'/>
       </Form.Item>
 
       <Form.Item
@@ -79,10 +131,16 @@ export default function RegisteredDetails() {
         className='form-radius'
         rules={[{ required: true, message: 'Please input your Employee !' }]}
       >
-      <Select className="forms" defaultValue="No Of Employee">
-      <Option value="jack">1 - 10</Option>
-      <Option value="lucy">20 - 50</Option>
-      <Option value="Yiminghe">30 - 60</Option>
+      <Select onChange={EmployeeHandleOnChangeInput} className="forms" defaultValue='No Of Employees'>
+        {array.map((items) => {
+          return(
+            <>
+              <Option value={items.EmployeeNumber}>{items.EmployeeNumber}</Option>
+            </>
+          )
+        })
+
+        }
     </Select>
     </Form.Item>
       <Form.Item
@@ -99,7 +157,7 @@ export default function RegisteredDetails() {
          }
        ]}
       >
-        <Input autoComplete='off'  className='forms width-forms' placeholder='Website Url' />
+        <Input name='websiteUrl' onChange={e => setwebsiteUrl(e.target.value)} autoComplete='off'  className='forms width-forms' placeholder='Website Url' />
       </Form.Item>
         {/* {URL && (
           <div className={`URL ${isValidURL ? 'success' : 'error'}`}>{URL}</div>
@@ -107,22 +165,32 @@ export default function RegisteredDetails() {
         <h6 className='upload'>Upload your Photo ID 
          <Popover placement="right" content={content} trigger="click" visible={visible} onVisibleChange={handleVisibleChange}>
           <img src={Info} className="img-fluid ms-1" />
-        </Popover>
+        </Popover> 
         </h6>
       <Form.Item
         name="upload"
         valuePropName="fileList"
       >
-        <Upload className='img-upload ' name="logo" action="/upload.do" listType="picture">
-          <Button icon={<PaperClipOutlined />} size='medium' className='font-upload'>Upload Image</Button>
-        </Upload>
+        {/* <Upload onChange={getBase64} className='img-upload ' name="logo" action="/upload.do" listType="picture">
+          <Button onClick={FileUpload} icon={<PaperClipOutlined />} size='medium' className='font-upload'>Upload Image</Button>
+          </Upload> */}
+        <Space direction="vertical" style={{ width: '100%' }} size="large">
+          <Upload
+            onChange={ImageUrlOnChangeInput}
+            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            listType="picture"
+            className='img-upload'
+          >
+            <Button icon={<PaperClipOutlined />}>Upload Image</Button>
+          </Upload>
+        </Space>
       </Form.Item>
 
       <Form.Item>
       <Link to="/pricelist" className='text-white'>
       <Button className='btn-bg mt-4 fonts-sizes' type="primary">BACK</Button> </Link>
       <Link to="/verification" className='text-white'>
-      <Button className='btn-bg mt-4 widths-btns fonts-sizes col-7  ms-3' type="primary">CONTINUE <i className="fas fa-arrow-circle-right ml"></i></Button></Link> 
+      <Button onClick={businessOwner} className='btn-bg mt-4 widths-btns fonts-sizes col-7  ms-3' type="primary">CONTINUE <i className="fas fa-arrow-circle-right ml"></i></Button></Link> 
       </Form.Item>
       
     </Form>

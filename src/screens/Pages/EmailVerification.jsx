@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux'
-import { resetForgetPasswordByCode } from '../../store/Actions/UserAction';
+import { ResendVerifyByCode } from '../../store/Actions/UserAction';
 
 export default function EmailVerification() {
     let history = useHistory();
@@ -20,7 +20,29 @@ export default function EmailVerification() {
     const [otp5, setOtp5] = useState('')
     const [otp6, setOtp6] = useState('')
 
+    const [otp7, setOtp7] = useState('')
+    const [otp8, setOtp8] = useState('')
+    const [otp9, setOtp9] = useState('')
+    const [otp10, setOtp10] = useState('')
+    const [otp11, setOtp11] = useState('')
+    const [otp12, setOtp12] = useState('')
+
     const inputfocus = (element) => {
+        if(element.key === "Delete" || element.key === "Backspace" ) {
+            const next = element.target.tabIndex - 2
+            if(next > -1) {
+                element.target.form.elements[next].focus();
+            }
+        } else {
+            const next = element.target.tabIndex;
+            if (next < 6) {
+                console.log("next");
+                element.target.form.elements[next].focus()
+            }
+        }   
+    }
+
+    const inputfocus1 = (element) => {
         if(element.key === "Delete" || element.key === "Backspace" ) {
             const next = element.target.tabIndex - 2
             if(next > -1) {
@@ -39,14 +61,13 @@ export default function EmailVerification() {
         e.preventDefault();
         if(otp1 === '' || otp2 === '' || otp3 === '' || otp4 === '' || otp5 === '' || otp6 === '') {
             message.error('Please Fill Out All Fields')
+        } else {
+            const params = {
+                code: parseInt(otp1.toString() + otp2.toString() + otp3.toString() + otp4.toString() + otp5.toString() + otp6.toString())
+            }
+            dispatch(ResendVerifyByCode(params))
         }
-        // else {
-        //    const params = {
-        //         code: parseInt(otp1.toString() + otp2.toString() + otp3.toString() + otp4.toString() + otp5.toString()
-        //         + otp6.toString())
-        //    }
-        //    dispatch(resetForgetPasswordByCode(params)) 
-        // }
+      
     }
     
     return (
@@ -67,6 +88,64 @@ export default function EmailVerification() {
                                 sent you a verification code.</p>
                                 <div className='d-flex justify-content-center flex-row p-4'>
                                     <Form>
+                                        <label htmlFor="">Phone Verification</label> <br />
+                                        <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }} tabIndex="1" onChange={e => setOtp1(e.target.value)}  autoFocus={true} maxLength="1" className='m-1 widths b-r' />
+                                        <Input 
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
+                                        onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}
+                                          tabIndex="2" onChange={e => setOtp2(e.target.value)}  maxLength="1" className='m-1 widths  b-r' />
+                                        <Input
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
+                                        onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}
+                                          tabIndex="3" onChange={e => setOtp3(e.target.value)}  maxLength="1" className='m-1 widths  b-r' />
+                                        <Input
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
+                                        onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}
+                                         tabIndex="4" onChange={e => setOtp4(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
+                                        <Input
+                                        autoComplete='off'
+                                        onKeyUp={(e) => inputfocus(e)}
+                                        onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}
+                                        tabIndex="5" onChange={e => setOtp5(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
+                                        <Input
+                                        autoComplete='off' 
+                                        onKeyUp={(e) => inputfocus(e)}
+                                        onKeyPress={(event) => {
+                                            if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                            }
+                                        }}
+                                       tabIndex="6" onChange={e => setOtp6(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
+                                    </Form>
+                                  
+                                </div>
+
+                                <div className='d-flex justify-content-center flex-row p-4'>
+                                    <Form>
+                                    <label htmlFor="">Email Verification</label><br />
                                         <Input autoComplete='off' onKeyUp={(e) => inputfocus(e)} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
@@ -123,7 +202,8 @@ export default function EmailVerification() {
 
                                 <Button className='btn btn-border'>Resend Verification Code</Button>
                                 <br />
-                                <Button onClick={otpsubmit} type='primary mt-3 btn-bg col-4'>CONTINUE </Button>
+                                
+                                    <Button onClick={otpsubmit} type='primary mt-3 btn-bg col-4'>CONTINUE </Button>
                                
                                 <br />
                                 <Link to="/registereddetails"> 

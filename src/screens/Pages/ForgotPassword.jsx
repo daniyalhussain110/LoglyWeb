@@ -11,10 +11,11 @@ import { useDispatch } from 'react-redux'
 export default function ForgotPassword(props) {
     const [value, setValue] = useState(1)
 
-    const [email, setEmail] = useState(props.location.state.dataAnimal.email)
-    const [phone, setPhone] = useState(props.location.state.dataAnimal.phone)
+    const [email, setEmail] = useState(props.history.location.state.email)
+    const [phone, setPhone] = useState(props.history.location.state.phone)
     const [checkedValue, setCheckValue] = useState(null)
-
+    const [sliceEmail, setSliceEmail] = useState(email.slice(0, 3)  + '*****' + email.slice(13, 23))
+    const [slicePhone, setSlicePhone] = useState('+16' + '*********' + '00')
     const dispatch = useDispatch();
 
     // const onChange = e => {
@@ -23,11 +24,13 @@ export default function ForgotPassword(props) {
     //   };
     // console.log(props.location.state.dataAnimal.email)
 
+    console.log(email, phone)
+
     const resendCode = e => {
         e.preventDefault();
         const params = {
             email: email,
-            phone: phone
+            phone: '+16282107500'
         
         }
         console.log(params, checkedValue)
@@ -59,8 +62,8 @@ export default function ForgotPassword(props) {
                                 <div className='row justify-content-center'>
                                     <div className='col-12 col-md-6 envelope'>
                                     <Radio.Group onChange={(e)=> setCheckValue(e.target.value)} value={checkedValue}>
-                                        <Radio  value={1}  className='radio ms-3'><i className="fas fa-envelope"></i> <span className='ms-1'>Send code via email</span> <br /> <p className='ms-4'>{email}</p></Radio>
-                                        <Radio value={2} className='radio mt-3'><i className="fas fa-mobile-alt"></i><span className='ms-1'> Send code via sms </span> <br /> <p>{phone}</p></Radio>
+                                        <Radio value={1}  className='radio ms-3'><i className="fas fa-envelope" ></i> <span className='ms-1'>Send code via email</span> <br /> <p className='ms-4'>{sliceEmail}</p></Radio>
+                                        <Radio value={2} className='radio mt-3'><i className="fas fa-mobile-alt" ></i><span className='ms-1'> Send code via sms </span> <br /> <p>{slicePhone}</p></Radio>
                                     </Radio.Group>
                                     </div>
                                 </div>

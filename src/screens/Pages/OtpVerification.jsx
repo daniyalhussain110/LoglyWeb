@@ -20,11 +20,10 @@ const Timer = ({ time }) => {
     const timeRemain = REST_INTERVAL_S - (time % REST_INTERVAL_S);
     return (
         <>
-            <span>{formatTime(timeRemain)}</span>
+            <span className='ms-1'>{formatTime(timeRemain)}</span>
         </>
     )
 }
-
 
 export default function OtpVerification(props) {
     let history = useHistory()
@@ -67,9 +66,6 @@ export default function OtpVerification(props) {
         }
     }
 
- 
-  
-
 
     const inputfocus = (element) => {
         if(element.key === "Delete" || element.key === "Backspace" ) {
@@ -94,6 +90,11 @@ export default function OtpVerification(props) {
 
         dispatch(resendCodeVerification(params))
     }
+
+    // useEffect(() => {
+    //     const timer = count > 0 && setInterval(() => setCount(count - 1), 1000);
+    //     return () => clearInterval(timer);
+    // }, [count])
     return (
         <>
            <section id='img-bg'>
@@ -145,6 +146,7 @@ export default function OtpVerification(props) {
                                     </Form>
                                 </div>
                                 <Button onClick={OnResenedCode} className='btn btn-border'>Resend Code <IntervalTimerFunctional /></Button>
+                               
                                 <br />
                                 
                                 <Button onClick={otpsubmit} type='primary mt-3 btn-bg col-4'>CONTINUE </Button>

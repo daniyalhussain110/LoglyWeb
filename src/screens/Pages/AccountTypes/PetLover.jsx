@@ -262,7 +262,6 @@ function TeamMembers() {
         setCities(values)
       })
     }
-    
   }
 
   const cityChange = (value, e) => {
@@ -293,6 +292,10 @@ function TeamMembers() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  function onSearch(val) {
+    console.log('search:', val);
+  }
   return(
     <>
      <div className='container-fluid g-0'>
@@ -393,7 +396,7 @@ function TeamMembers() {
 
                       {
                         pattern: new RegExp(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g),
-                        message: 'Phone Number atleast 10 Characters'
+                        message: 'Phone Number at least 10 Characters'
                       }
                     ]}
                   >
@@ -414,7 +417,18 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
+                      <Select 
+                      className='state-city form-select' 
+                      defaultValue="Select State" 
+                      onChange={stateChange}
+                      showSearch
+                      placeholder="Select a person"
+                      optionFilterProp="children"
+                      onSearch={onSearch}
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                      >
                          {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))} 
@@ -436,7 +450,17 @@ function TeamMembers() {
                     ]}
                   >
                    
-                       <Select onChange={cityChange}  className='state-city' defaultValue="Select State">
+                       <Select onChange={cityChange}  
+                       className='state-city' 
+                       defaultValue="Select State"
+                       showSearch
+                       placeholder="Select a person"
+                       optionFilterProp="children"
+                       onSearch={onSearch}
+                       filterOption={(input, option) =>
+                         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                       }
+                       >
                          {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))} 
@@ -456,7 +480,17 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                     <Select onChange={zipChange} className='state-city' defaultValue="Select Zipcode">
+                     <Select onChange={zipChange} 
+                     className='state-city' 
+                     defaultValue="Select Zipcode"
+                     showSearch
+                     placeholder="Select a person"
+                     optionFilterProp="children"
+                     onSearch={onSearch}
+                     filterOption={(input, option) =>
+                       option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                     }
+                     >
                        {zipcodes.map((zip) => (
                         <Option value={zip.zipcode}>{zip.zipcode}</Option>
                       ))} 

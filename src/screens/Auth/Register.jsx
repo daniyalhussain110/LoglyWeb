@@ -18,7 +18,7 @@ import axiosInstance from '../../Api/AxiosCreate';
 
 const { Option } = Select;
 
- export default function Register() {
+ export default function Register(props) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -39,6 +39,8 @@ const { Option } = Select;
 
   let history = useHistory()
 
+  console.log(props)
+
 
  const checkedTerm = (e) => {
     if(!term) {
@@ -47,25 +49,14 @@ const { Option } = Select;
     } else {
       console.log('')
     }
-   
  }
 
-  //const states = 
-  //useSelector((state) =>  setStatesList(state.myState.states))
-  //const cities = useSelector((state) => state.myCities.cities)
-  //const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
-
- 
   useEffect(() => {
     dispatch(getStates()).then((values)=>{
       setStatesList(values)
     })
   }, [])
 
-  // useEffect(()=>{
-  //   if(state \77)
-  //   setCities(state?.myCities.cities)
-  // },[state])
 
   const stateChange = (value, e) => {
     setState(value)
@@ -111,6 +102,12 @@ const { Option } = Select;
           "city": city,
           "state": state,
           "zipcode": zipcode,
+          "businessName": "John business",
+          "noOfEmployees": "10",
+          "website": "https://google.com",
+          // "mobile": true,
+          "packageType": "Individual"
+          
       }
         dispatch(userRegister(params))
         localStorage.setItem('user', JSON.stringify(params))
@@ -120,9 +117,12 @@ const { Option } = Select;
     const validate = () => {
       const error = {}
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-      const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
+      const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g;
+      const nameRegex = /^[a-zA-Z0-9 ]+$/i;
       if(!name) {
         error.name = "Name Field is Required"
+      } else if(!nameRegex.test(name)) {
+        error.name = "numbers and special characters not allowed"
       }
       if(!email) {
         error.email = "Email Field is Required"
@@ -151,18 +151,12 @@ const { Option } = Select;
       if(!password) {
         error.password = 'Password Field is required'
       }
-       else if(password.length < 6) {
-        error.password = "Password must be more than 6 characters";
-       }
        else if(password.length < 8) {
         error.password = "Password must be more than 8 characters";
        }
-
-      
        return error;
   
     }
-
 
     const onSearch = (val) => {
       console.log('search:', val);
@@ -302,7 +296,7 @@ const { Option } = Select;
           <div className='col-12 col-md-4'>
           <Form.Item>
            
-              <Button   onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
+              <Button  disabled={!name || !email || !phone || !state || !city || !zipcode || !password || !term} onClick={submit} className="btn-bg-color buttons" type="primary" htmlType="submit" block>
                     
                       CONTINUE <i className="ms-1 fas fa-arrow-circle-right"></i>
                   

@@ -14,15 +14,6 @@ export const userLogin = (dataAnimal) => async dispatch => {
             console.log(response.data)
             if(response.data.status === 200) {
                 message.success(response.data.message)
-                // console.log(response.data.data.user.setupWizardCompleted,"hdgdgdg")
-                // if(!response.data.data.user.setupWizardComplete) {
-                //     const user = localStorage.getItem('user', response.data)
-                //     console.log(user)
-                    
-                // } else {
-                   
-                // }
-
             } else {
                 message.error(response.data.message)
             }
@@ -47,7 +38,8 @@ export const userRegister = (dataAnimal) => async dispatch => {
             console.log('response-->', response)
             if(response.data.status === 200) {
                 message.success(response.data.message)
-                history.push('/thankyou')
+                // history.push('/pricelist')
+                console.log(response.data.data)
              } else {
                 message.error(response.data.message)
              }
@@ -69,10 +61,9 @@ export const userForgotPassword = (dataAnimal) => async dispatch => {
             headers: { auth: localStorage.getItem('auth')}
         })
         .then((response) => {
-            console.log(response.data.status , response.data.message)
             if(response.status === 200) {
                 message.success(response.data.message)
-                history.push('/forgotpassword', {dataAnimal})
+                 history.push('/forgotpassword', {...dataAnimal , phone: response.data.data.phone})
             } else {
                 message.error(response.data.message)
             }
@@ -182,6 +173,26 @@ export const ChangePassword = (dataAnimal) => async dispatch => {
         dispatch({
             type: ActionType.PASSWORD_CHANGE,
             payload: res.data
+        })
+    } catch(err) {
+        alert(err)
+    }
+}
+
+export const ResendVerifyByCode = (dataAnimal) => async dispatch => {
+    console.log(dataAnimal)
+    try {
+        const res = await axiosInstance.post('/user/verifyByCode', dataAnimal, {
+            headers: {auth: localStorage.getItem('auth')}
+
+        }).then(response => {
+            if(response.data.status === 200) {
+                message.success(response.data.message)
+                history.push('/creditcard')
+            } else {
+                message.error(response.data.message)
+            }
+            return response.data
         })
     } catch(err) {
         alert(err)

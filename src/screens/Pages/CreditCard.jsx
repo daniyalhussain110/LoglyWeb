@@ -1,12 +1,41 @@
-import React from 'react'
+import React, {useState} from 'react'
 import '../../customcss/custom.css'
-import { Form, Input, Button, Checkbox, Select, Row, Col, Card, Upload,DatePicker, Space, Tag, Divider } from 'antd';
+import { Form, Input, Button, Checkbox, Select, Row, Col, Card, Upload,DatePicker, Space, Tag, Divider, message } from 'antd';
 import { CreditCardFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '../../assets/images/logo-logly.png'
+import { useHistory } from 'react-router-dom'
 
 export default function CreditCard() {
+    const [cardNumber, setCardNumber] = useState('')
+    const [expiryDate, setExpiryDate] = useState('')
+    const [Cvc, setCvc] = useState('')
+    const [name, setName] = useState('')
+
+    let history = useHistory();
+
+    const CreditCardSubmit = e => {
+        e.preventDefault();
+        if(cardNumber === "" || expiryDate === "" || Cvc === "" || name === "") {
+            message.error('Please Fill Out All Fields')
+        } else {
+            const params = {
+                cardNumber: cardNumber,
+                expiryDate: expiryDate,
+                Cvc: Cvc,
+                name: name
+            }
+            const creditcard = localStorage.setItem('creditCard', JSON.stringify(params))
+            message.success('CreditCard Added Successfully')
+            console.log(creditcard)
+            history.push('/thankyou')
+        }
+    }
+
+    const HandleOnChangeInput = (value)=> {
+        setExpiryDate(value)
+    }
     return (
         <>
             <section id='img-bg'>
@@ -41,7 +70,7 @@ export default function CreditCard() {
                                         name="cardnumber"
                                         rules={[{ required: true, message: 'Please input your card number!' }]}
                                     >
-                                        <Input suffix={<i class="fas fa-credit-card"></i>} autoComplete='off' className='border-radius-forms' placeholder='0000 1234 0123 0125'/>
+                                        <Input onChange={e => setCardNumber(e.target.value)} suffix={<i class="fas fa-credit-card"></i>} autoComplete='off' className='border-radius-forms' placeholder='0000 1234 0123 0125'/>
                                     </Form.Item>
 
                                     
@@ -53,7 +82,7 @@ export default function CreditCard() {
                                         rules={[{ required: true, message: 'Please input your expiry date!' }]}
                                     >
                                     <Space direction="vertical">
-                                        <DatePicker onKeyDown={(event) => {
+                                        <DatePicker onChange={HandleOnChangeInput} onKeyDown={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
@@ -68,7 +97,7 @@ export default function CreditCard() {
                                         name="cvc"
                                         rules={[{ required: true, message: 'Please input your cvc!' }]}
                                     >
-                                        <Input autoComplete='off' className='border-radius-forms' placeholder='315'/>
+                                        <Input onChange={e => setCvc(e.target.value)} autoComplete='off' className='border-radius-forms' placeholder='315'/>
                                     </Form.Item>
                                         </div>
                                     </div>
@@ -78,7 +107,7 @@ export default function CreditCard() {
                                         className='rows'
                                         rules={[{ required: true, message: 'Please input your name!' }]}
                                     >
-                                        <Input autoComplete='off' className='border-radius-forms ' placeholder='Jacob andrew'/>
+                                        <Input onChange={e => setName(e.target.value)} autoComplete='off' className='border-radius-forms ' placeholder='Jacob andrew'/>
                                     </Form.Item>
                                     <Checkbox defaultChecked className='checked rows'>Save Card Details</Checkbox>
                                    <div className='top mt-4'>
@@ -87,8 +116,9 @@ export default function CreditCard() {
                                    </div>
                                    <Link to="/registereddetails" className='text-white'>
                                     <Button className='btn-bg mt-4 fonts-sizes' type="primary">BACK</Button></Link> 
-                                    <Link to="/thankyou" className='text-white'>
-                                    <Button className='btn-bg mt-4 fonts-sizes col-4  ms-3' type="primary">CONTINUE  <i className="fas fa-arrow-circle-right ml"></i></Button></Link>
+                                    {/* <Link to="/thankyou" className='text-white'> */}
+                                        <Button onClick={CreditCardSubmit} className='btn-bg mt-4 fonts-sizes col-4  ms-3' type="primary">CONTINUE  <i className="fas fa-arrow-circle-right ml"></i></Button>
+                                    {/* </Link> */}
                                 </Form>
                                 </motion.div>
                                 </div>

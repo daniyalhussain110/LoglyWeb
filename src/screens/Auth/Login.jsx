@@ -52,9 +52,6 @@ export default function Login() {
     if(!password) {
       error.password = 'Password is required'
     }
-     else if(password.length < 6) {
-      error.password = "Password must be more than 6 characters";
-     }
      else if(password.length < 8) {
       error.password = "Password must be more than 8 characters";
      }

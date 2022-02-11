@@ -14,6 +14,8 @@ export default function(state = {}, action) {
             return {...state, forgotPhoneVerificationSuccess: action.payload}
         case ActionType.PASSWORD_CHANGE:
             return {...state, passwordChangeSuccess: action.payload}
+        case ActionType.REGISTERATION_VERIFY_BY_CODE:
+            return {...state, registrationSuccessCode: action.payload}
         default:
             return state
     }

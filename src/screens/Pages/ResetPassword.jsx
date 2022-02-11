@@ -15,7 +15,6 @@ export default function ResetPassword(props) {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [code, setCode] = useState(props.location.state.dataAnimal.code)
 
-
     let history = useHistory()
 
     const dispatch = useDispatch()
@@ -24,7 +23,7 @@ export default function ResetPassword(props) {
         if(password === '' || confirmPassword === '') {
             message.error('Please Fill Out All Fields')  
         } else if(password !== confirmPassword) {    
-            message.error("Password Does'nt match")
+            message.error("Password Doesn't match")
         } else {
             const params = {
                 password: password,
@@ -55,7 +54,7 @@ export default function ResetPassword(props) {
                                 <div className='row justify-content-center'>
                                     <div className='col-12 col-md-6 mt-3'>
                                     
-                                    <Form.Item
+                                    <Form.Item  
                                         name="password"
                                         rules={[{ required: true, message: 'Please input your password!' }]}
                                     >

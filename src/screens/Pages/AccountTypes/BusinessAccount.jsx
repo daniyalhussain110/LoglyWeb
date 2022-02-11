@@ -99,10 +99,10 @@ function getSteps() {
         desc: "Add Team Member"
       }, 
 
-      {
-        title: "Team Members Added",
-        desc: "Add Another Member"
-      }, 
+      // {
+      //   title: "Team Members Added",
+      //   desc: "Add Another Member"
+      // }, 
       
   ];
 }
@@ -573,14 +573,15 @@ function handleChange(value) {
 
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [state, setState] = useState('')
   const [city, setCity] = useState('')
   const [zipcode, setZipcode] = useState('')
 
+  const[cities,setCities]= useState([])
+  const[states,setStatesList]= useState([])
+  const[zipcodes,setZipcodes]= useState([])
+
   const dispatch = useDispatch()
-
-
 
   const [ loading, setLoading ] = useState(false);
 
@@ -611,35 +612,46 @@ function TeamMembers() {
     </div>
   );
 
-  const states = useSelector((state) => state.myState.states)
-  const cities = useSelector((state) => state.myCities.cities)
-  const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
+  // const states = useSelector((state) => state.myState.states)
+  // const cities = useSelector((state) => state.myCities.cities)
+  // const zipcodes = useSelector((state) => state.myZipCode.zipcodes)
 
-    useEffect(() => {
-      dispatch(getStates())
-    }, [])
+  useEffect(() => {
+    dispatch(getStates()).then((values)=> {
+      setStatesList(values)
+    })
+  }, [])
 
-    const stateChange = (value) => {
-      setState(value)
-      if(value) {
-        let id = states.filter((state) => state.name === value)[0].id
-        dispatch(getCities(id))
-      }
+  const stateChange = (value, e) => {
+    setState(value)
+    setCities([])
+    setZipcodes([])
+    setCity('')
+    setZipcodes('')
+    if(value) {
+      let id = states.filter((state) => state.name === value)[0].id
+      dispatch(getCities(id)).then((values)=>{
+        setCities(values)
+      })
     }
-  
-   const cityChange = (value) => {
-    setCity(value)
+  }
+
+  const cityChange = (value, e) => {
     if(value) {
       let city = cities.filter((id) => id.name === value)[0].name
-      dispatch(getZipCode(city))
+      console.log(city)
+      setCity(value)
+      setZipcode('')
+      dispatch(getZipCode(city)).then((values) => {
+        setZipcodes(values)
+      })
     }
-   }
-  
-   const zipcodeChange = (value) => {
-     setZipcode(value)
-   }
+  }
 
- 
+  const zipChange = (value, e) => {
+    console.log(value)
+    setZipcode(value)
+  }
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -652,6 +664,11 @@ function TeamMembers() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  function onSearch(val) {
+    console.log('search:', val);
+  }
+
   return(
     <>
        <div className='container-fluid g-0'>
@@ -662,10 +679,7 @@ function TeamMembers() {
             <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"  onClick={showModal}>
               <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography>
             </Button>
-          
                   <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-             
-           
             <Form
                   
                   name="basic"
@@ -702,6 +716,18 @@ function TeamMembers() {
                         required: true,
                         message: 'Please input your name!',
                       },
+                      {
+                        pattern: new RegExp(/^[a-zA-Z0-9 ]+$/i),
+                        message: "numbers and special characters not allowed",
+                      },
+                      {
+                        min: 3,
+                        message: "Full name should not be less than 3 characters.",
+                      },
+                      {
+                        max: 50,
+                        message: "Full name should not be more than 50 characters.",
+                      },
                     ]}
                   >
                     <Input  prefix={<PersonIcon />} placeholder=' Enter Name'  className='name' />
@@ -719,7 +745,7 @@ function TeamMembers() {
 
                       {
                         pattern: new RegExp(/\S+@\S+\.\S+/),
-                        message: 'please input valid email!'
+                        message: 'Email is valid'
                       }
                     ]}
                     
@@ -732,14 +758,22 @@ function TeamMembers() {
                   <Form.Item
                     name="phone"
                     className='place'
+                    
                     rules={[
                       {
                         required: true,
                         message: 'Please input your phoneNo!',
                       },
+
+                      {
+                        pattern: new RegExp(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g),
+                        message: 'Phone Number at least 10 Characters'
+                      },
+
+                      
                     ]}
                   >
-                    <Input onKeyPress={(event) => {
+                    <Input maxLength={10} onKeyPress={(event) => {
                                                         if (!/[0-9]/.test(event.key)) {
                                                         event.preventDefault();
                                                         }
@@ -756,7 +790,18 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                      <Select  className='state-city form-select' defaultValue="Select State" onChange={stateChange}>
+                      <Select  
+                      className='state-city form-select' 
+                      defaultValue="Select State" 
+                      onChange={stateChange}
+                      showSearch
+                      placeholder="Select a person"
+                      optionFilterProp="children"
+                      onSearch={onSearch}
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                      >
                         {states.map((state) => (
                             <Option value={state.name}>{state.name}</Option>
                         ))}
@@ -776,7 +821,18 @@ function TeamMembers() {
                     ]}
                   >
                    
-                      <Select  className='state-city form-select' defaultValue="Select City" onChange={cityChange}>
+                      <Select  
+                      className='state-city form-select' 
+                      defaultValue="Select City" 
+                      onChange={cityChange}
+                      showSearch
+                      placeholder="Select a person"
+                      optionFilterProp="children"
+                      onSearch={onSearch}
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                      >
                         {cities.map((city) => (
                            <Option value={city.name}>{city.name}</Option>
                         ))}
@@ -794,7 +850,18 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                    <Select  className='state-city form-select' defaultValue="Select ZipCode" onChange={zipcodeChange}>
+                    <Select  
+                    className='state-city form-select' 
+                    defaultValue="Select ZipCode" 
+                    onChange={zipChange}
+                    showSearch
+                    placeholder="Select a person"
+                    optionFilterProp="children"
+                    onSearch={onSearch}
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    >
                       {zipcodes.map((zip) => (
                         <Option value={zip.zipcode}>{zip.zipcode}</Option>
                       ))}

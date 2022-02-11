@@ -22,7 +22,7 @@ export default function SuccessPassword() {
                             <Card className='text-center opac p-5'>
                                 <img src={check} alt="" className='img-fluid width-md' />
                             <h4 className=' text-center mt-3 fw-bolder'>Passwords Reset Successfully </h4>
-                            <p>You have successfully resets your password. Please use your new password to login.</p>
+                            <p>You have successfully reset your password. Please use your new password to login.</p>
                             <Link to="/" className='text-white'>
                                 <Button type='primary mt-5 btn-bg col-4'>LOGIN </Button></Link>
                             </Card>

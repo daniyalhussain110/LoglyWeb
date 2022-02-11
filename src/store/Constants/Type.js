@@ -10,7 +10,9 @@ const ActionType = {
     FORGOT_PASSWORD_CHANGE: 'forgot_password_change',
     PASSWORD_CHANGE: 'password_change',
     RESEND_CODE_VERIFICATION: 'resend_code_verification',
-    FORGOT_PHONE_VERIFICATION: 'forgot_phone_verification'
+    FORGOT_PHONE_VERIFICATION: 'forgot_phone_verification',
+    SUBSCRIPTION_PACKAGE_TYPE: 'subscription_package_type',
+    REGISTERATION_VERIFY_BY_CODE: 'registeration_verify_by_code'
 }
 
 export default ActionType
