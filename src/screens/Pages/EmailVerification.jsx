@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux'
-import { ResendVerifyByCode } from '../../store/Actions/UserAction';
+import { ResendVerifyByCode, userVerifyCode } from '../../store/Actions/UserAction';
 
 export default function EmailVerification() {
     let history = useHistory();
@@ -63,9 +63,10 @@ export default function EmailVerification() {
             message.error('Please Fill Out All Fields')
         } else {
             const params = {
-                code: parseInt(otp1.toString() + otp2.toString() + otp3.toString() + otp4.toString() + otp5.toString() + otp6.toString())
+                "smscode": parseInt(otp1.toString() + otp2.toString() + otp3.toString() + otp4.toString() + otp5.toString() + otp6.toString()),
+               "mobile": parseInt(otp7.toString() + otp8.toString() + otp9.toString() + otp10.toString() + otp11.toString() + otp12.toString())
             }
-            dispatch(ResendVerifyByCode(params))
+            dispatch(userVerifyCode(params))
         }
       
     }
@@ -150,7 +151,7 @@ export default function EmailVerification() {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
-                                        }} tabIndex="1" onChange={e => setOtp1(e.target.value)}  autoFocus={true} maxLength="1" className='m-1 widths b-r' />
+                                        }} tabIndex="1" onChange={e => setOtp7(e.target.value)}  autoFocus={true} maxLength="1" className='m-1 widths b-r' />
                                         <Input 
                                         autoComplete='off'
                                         onKeyUp={(e) => inputfocus(e)}
@@ -159,7 +160,7 @@ export default function EmailVerification() {
                                             event.preventDefault();
                                             }
                                         }}
-                                          tabIndex="2" onChange={e => setOtp2(e.target.value)}  maxLength="1" className='m-1 widths  b-r' />
+                                          tabIndex="2" onChange={e => setOtp8(e.target.value)}  maxLength="1" className='m-1 widths  b-r' />
                                         <Input
                                         autoComplete='off'
                                         onKeyUp={(e) => inputfocus(e)}
@@ -168,7 +169,7 @@ export default function EmailVerification() {
                                             event.preventDefault();
                                             }
                                         }}
-                                          tabIndex="3" onChange={e => setOtp3(e.target.value)}  maxLength="1" className='m-1 widths  b-r' />
+                                          tabIndex="3" onChange={e => setOtp9(e.target.value)}  maxLength="1" className='m-1 widths  b-r' />
                                         <Input
                                         autoComplete='off'
                                         onKeyUp={(e) => inputfocus(e)}
@@ -177,7 +178,7 @@ export default function EmailVerification() {
                                             event.preventDefault();
                                             }
                                         }}
-                                         tabIndex="4" onChange={e => setOtp4(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
+                                         tabIndex="4" onChange={e => setOtp10(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
                                         <Input
                                         autoComplete='off'
                                         onKeyUp={(e) => inputfocus(e)}
@@ -186,7 +187,7 @@ export default function EmailVerification() {
                                             event.preventDefault();
                                             }
                                         }}
-                                        tabIndex="5" onChange={e => setOtp5(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
+                                        tabIndex="5" onChange={e => setOtp11(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
                                         <Input
                                         autoComplete='off' 
                                         onKeyUp={(e) => inputfocus(e)}
@@ -195,7 +196,7 @@ export default function EmailVerification() {
                                             event.preventDefault();
                                             }
                                         }}
-                                       tabIndex="6" onChange={e => setOtp6(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
+                                       tabIndex="6" onChange={e => setOtp12(e.target.value)}  maxLength="1" className='m-1 widths b-r' />
                                     </Form>
                                   
                                 </div>

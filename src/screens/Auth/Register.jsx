@@ -10,11 +10,13 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import Logo from '../../assets/images/logo-logly.png'
 import { getCities, getStates, getZipCode } from '../../store/Actions/Action';
-import { userRegister } from '../../store/Actions/UserAction'
+import { userRegister,emailCheckRequest } from '../../store/Actions/UserAction'
+
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'material-react-toastify'
 import 'material-react-toastify/dist/ReactToastify.css';
 import axiosInstance from '../../Api/AxiosCreate';
+import { history } from '../../App';
 
 const { Option } = Select;
 
@@ -98,19 +100,22 @@ const { Option } = Select;
         "name": name,
           "email": email,
           "password": password,
-          "phone": phone,
-          "city": city,
-          "state": state,
-          "zipcode": zipcode,
-          "businessName": "John business",
-          "noOfEmployees": "10",
-          "website": "https://google.com",
+          "phone": phone, 
+          // "website": "https://google.com",
           // "mobile": true,
-          "packageType": "Individual"
-          
+          // "packageType": "Individual",
+          "state":state,
+          "city":city,
+          "zipcode":zipcode,
+          "mobile":true,
       }
-        dispatch(userRegister(params))
+      dispatch(emailCheckRequest(email)).then(res=>{
+        if(res){
         localStorage.setItem('user', JSON.stringify(params))
+        history.push('/pricelist')
+        }
+      })
+        
         
     }
 

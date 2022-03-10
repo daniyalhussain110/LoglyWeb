@@ -69,7 +69,7 @@ export const history = createBrowserHistory({forceRefresh: true})
 function App() {
   return (
     <>
-      <Provider store={store}>
+      <Provider store={store}>  
       <Router history={history}>
          <AnimatePresence>
            {/* <Suspense fallback={<></>}>

@@ -8,6 +8,7 @@ import Logo from '../../assets/images/logo-logly.png'
 import { SubscriptionPacakgeType } from '../../store/Actions/SubscriptionPackageType'
 import { useDispatch, useSelector } from 'react-redux'
 import ActionType from '../../store/Constants/Type';
+import { userRegister } from '../../store/Actions/UserAction';
 
 const { Meta } = Card;
 
@@ -32,9 +33,19 @@ export default function PriceList() {
     const submitCheckbox = (e) => {
         e.preventDefault();
         setSelectedType(accountType[selectType + 1])
-        console.log(accountType)
-        history.push('/registereddetails')
-
+        console.log(accountType[selectType+1].type)
+        if(accountType[selectType+1].type == "Individual"){
+           let data =  JSON.parse(localStorage.getItem('user'));
+           data = {...data,packageType:accountType[selectType+1].type}
+           console.log('pricelist--->',data)
+            dispatch(userRegister(data))
+            
+        }else{
+            let data =  JSON.parse(localStorage.getItem('user'));
+           data = {...data,packageType:accountType[selectType+1].type}
+           localStorage.setItem('user',JSON.stringify(data))
+            history.push('/registereddetails')
+        }
     }
 
     const togglePriceButton = (index) => {
@@ -68,6 +79,7 @@ export default function PriceList() {
                                 <p className=' f-size reg-get'>Please select the account</p>
                                 <div className='margin-space'>
                                     {accountType.map((type, index) => { 
+                                        console.log("type",type)
                                         return(
                                             <>
                                             
@@ -79,11 +91,15 @@ export default function PriceList() {
                                                         style={{ width: 280, height: 100 }}
                                                     >
                                                     
-                                                                <p className='fw-bold lover'>{type.packageType}</p>
+                                                                <p className='fw-bold lover'>{type.packageType == "Individual"? "Pet Lover":type.packageType}</p>
                                                                     <div className='top-marg'>
                                                                     <p className='desc'>{type.description}</p>
                                                                     <div className='span'>
-                                                                        <span className='price'>Starting at <strong className='fs-6'>{type.minprice}/Month</strong></span>
+                                                                        <span className='price'>Starting at 
+                                                                        <strong className='fs-6'>
+                                                                            {type.packageType == "Individual"?"Free":type.packageType == "Charity Organization"?"Free":"$"+type.minprice}
+                                                                            </strong>
+                                                                            </span>
                                                                     </div>
                                                                 </div>
                                                     </Card>
@@ -161,7 +177,7 @@ export default function PriceList() {
                                 <Link to="/register" className='text-white'>
                                 <Button className='btn-bg mt-4 fonts-sizes' type="primary">BACK</Button> </Link>
                                 
-                                <Button disabled={!selectType} onClick={submitCheckbox} className='btn-bg mt-4 fonts-sizes col-4 width-btn ms-3' type="primary">CONTINUE  <i className="fas fa-arrow-circle-right ml"></i></Button>
+                                <Button onClick={submitCheckbox} className='btn-bg mt-4 fonts-sizes col-4 width-btn ms-3' type="primary">CONTINUE  <i className="fas fa-arrow-circle-right ml"></i></Button>
                                 <ToastContainer />
                                 </div>
                                

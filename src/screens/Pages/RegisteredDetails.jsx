@@ -7,6 +7,8 @@ import Logo from '../../assets/images/logo-logly.png'
 import Info from '../../assets/images/info.png'
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { userRegister } from '../../store/Actions/UserAction';
 
 const items = [
   {
@@ -34,23 +36,25 @@ export default function RegisteredDetails() {
 
   const [array, setArray] = useState(items)
 
-  let history = useHistory() 
+  const dispatch = useDispatch();
 
+  let history = useHistory() 
+  console.log(JSON.parse(localStorage.getItem('user')));
   const businessOwner = e => {
     e.preventDefault();
-    if(businessName === "" || NumberOfEmployee === "" || websiteUrl === "" || Imageurl === "") {
+    if(businessName === "" || NumberOfEmployee === "" || websiteUrl === "" ) {
       message.error('Please Fill Out All Fields')
     } else {
-      const params = {
-        businessName: businessName,
-        NumberOfEmployee: NumberOfEmployee,
-        websiteUrl: websiteUrl,
-        Imageurl: Imageurl
-    }
-      const businessOwners = localStorage.setItem('businessOwner', JSON.stringify(params))
-      console.log(businessOwners)
+      let data =  JSON.parse(localStorage.getItem('user'));
+      data = {...data,
+         businessName: businessName,
+         noOfEmployees: NumberOfEmployee,
+         website: websiteUrl,
+          Imageurl: Imageurl
+      }
+      localStorage.setItem('user',JSON.stringify(data))
       message.success('BusinessOwner Added Successfully')
-      history.push('/verification')
+      dispatch(userRegister(data))
     }
   }
 

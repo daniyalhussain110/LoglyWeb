@@ -12,7 +12,8 @@ const ActionType = {
     RESEND_CODE_VERIFICATION: 'resend_code_verification',
     FORGOT_PHONE_VERIFICATION: 'forgot_phone_verification',
     SUBSCRIPTION_PACKAGE_TYPE: 'subscription_package_type',
-    REGISTERATION_VERIFY_BY_CODE: 'registeration_verify_by_code'
+    REGISTERATION_VERIFY_BY_CODE: 'registeration_verify_by_code',
+    ALL_FORMS: 'all_forms'
 }
 
 export default ActionType

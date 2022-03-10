@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion';
-import { Steps,message, Layout, Calendar, Form, Card, Upload, Input, Select, Alert, Tooltip, Avatar, TimePicker, InputNumber, Popover, Divider, Modal, Tree  } from 'antd';
-import { LoadingOutlined, PlusOutlined, PercentageOutlined, CloseOutlined, MailFilled, DownOutlined, ClockCircleFilled } from '@ant-design/icons';
+import { Steps,message, Layout, Calendar, Form, Card, Upload, Input, Select, Alert, Tooltip, Avatar, TimePicker, InputNumber, Popover, Divider, Modal, Tree,List  } from 'antd';
+import { LoadingOutlined, PlusOutlined, PercentageOutlined, CloseOutlined, MailFilled, DownOutlined, ClockCircleFilled, CloseCircleFilled, EditFilled, DeleteFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom'
 import rightarrows from '../../../assets/images/rightarrows.png'
 import '../../../customcss/custom.css'
@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
+import { allForm, getTeamMember, uploadProfileImage, uploadSetupWizard } from '../../../store/Actions/setupWizards';
 
 const { TextArea } = Input;
 
@@ -108,28 +109,35 @@ function getSteps() {
 }
 
 const animal = [];
-const animalName = ["Dog", "Cat", "Horse", "Parrot"];
+const animalName = [];
+const teamMembersList=[];
+
 
 const selectAnimal = animals => {
   console.log(animal)
-  console.log("animal", animals);
+  console.log("animal", animals,selectedAnimalInfo);
   let SA = animal;
-  let index = SA.findIndex(animal => animal === animals);
+  let index = SA.findIndex(animal => animal === animals.categoryId.name);
+  let infoInd = selectedAnimalInfo.findIndex(e=>e === animals._id)
   if (index > -1) {
+    console.log("remove")
+    selectedAnimalInfo.splice(infoInd,1)
     SA.splice(index, 1);
   } else {
-    SA.push(animals);
+    console.log("add")
+    SA.push(animals.categoryId.name);
+    selectedAnimalInfo.push(animals._id)
   }
 
-  const dayElement = document.getElementById(animals);
+  const dayElement = document.getElementById(animals.categoryId.name);
   dayElement.classList.toggle("selected-day");
 
   
-  console.log("SA", animal);
+  console.log("SA", animal,selectedAnimalInfo);
 };
 
 const selectedAnimals = animals => {
-  let index = animal.findIndex(animal => animals.value === animal);
+  let index = animal.findIndex(animal => animals.categoryId.name === animal);
 
   console.log(index, "index");
  
@@ -140,12 +148,12 @@ const selectedAnimals = animals => {
   return (
         <div className='col-12 font-size col-md-6 mt-2'>
           <Button
-          id={animals}
+          id={animals.categoryId.name}
           onClick={() => selectAnimal(animals)}
           className="week-days font-size week-btns"
-          key={animals}
+          key={animals.categoryId.name}
         >
-          {animals}
+          {animals.categoryId.name}
         </Button>
       </div>
   );
@@ -154,6 +162,7 @@ const selectedAnimals = animals => {
 
     
 function Toggles() {
+  
  
   return(
     <>
@@ -192,6 +201,17 @@ function beforeUpload(file) {
 
 const weekday = [];
 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",];
+var desc ="";
+var businessTimeIn="00:00";
+var businessTimeOut="00:00";
+var breakTimeIn="00:00";
+var breakTimeOut="00:00";
+var taxPercentage=0;
+var holidayList=[];
+var selectedAnimalInfo=[]
+var selectedAnimalProduct=[]
+var employeeArray=[]
+let formData = new FormData();
 
 const selectWeekDays = day => {
   console.log("day", day);
@@ -238,34 +258,51 @@ function GetSteppers() {
   const [Loading, setLoading] = useState(false);
   const [chars_left, setCharLeft] = useState(0)
   const [max_char, setMaxChar] = useState(0)
-  const [startSelectedTime, setStartSelectedTime] = useState("00:00")
-  const [endSelectedTime, setEndSelectedTime] = useState("00:00")
-  const [start1SelectedTime, setStart1SelectedTime] = useState("00:00")
-  const [end1SelectedTime, setEnd1SelectedTime] = useState("00:00")
+  const [description, setDescription]= useState(desc)
+  const [startSelectedTime, setStartSelectedTime] = useState(businessTimeIn)
+  const [endSelectedTime, setEndSelectedTime] = useState(businessTimeOut)
+  const [start1SelectedTime, setStart1SelectedTime] = useState(breakTimeIn)
+  const [end1SelectedTime, setEnd1SelectedTime] = useState(breakTimeOut)
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [holidayDate, setHolidayDate] = useState(moment().format().split("T")[0])
+  const [holidayName, setHolidayName] = useState('')
+  const [holidayDetails,setHolidayDetails] = useState(holidayList)
+  const [taxAmount, setTaxAmount] = useState(taxPercentage)
+  const [image, setImage] = useState("")
  
-  const handleWordCount = (e) => {
+  const   handleWordCount = (e) => {
     const charCount = e.target.value.length
     const maxChar = max_char;
     const charLength = charCount - maxChar;
+    
+    setDescription( e.target.value)
+    desc= e.target.value
     setCharLeft(charLength)
   }
 
 
   const handleChange = info => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl =>
-        this.setState({
-          imageUrl,
-          loading: false,
-        }),
-      );
-    }
+    console.log(info.file.originFileObj)
+    let uri = URL.createObjectURL(info.file.originFileObj)
+    
+  formData.append('file', {
+    uri: info.file.originFileObj,
+    name: 'team_member' + moment().unix() + '.jpg', type: 'image/*',
+});
+    setImage(URL.createObjectURL(info.file.originFileObj))
+    // if (info.file.status === 'uploading') {
+    //   this.setState({ loading: true });
+    //   return;
+    // }
+    // if (info.file.status === 'done') {
+    //   // Get this url from response in real world.
+    //   getBase64(info.file.originFileObj, imageUrl =>
+    //     this.setState({
+    //       imageUrl,
+    //       loading: false,
+    //     }),
+    //   );
+    // }
   };
 
   const { imageUrl } = Loading
@@ -298,6 +335,39 @@ function GetSteppers() {
   function onPanelChange(value, mode) {
     console.log(value, mode);
   }
+  function setHolidatDate(e){
+    let d = (moment(e._d).format()).split("T")[0]
+    // let date = 
+    console.log(d,"date")
+    setHolidayDate(d)
+  }
+
+  const addHoliday = ()=>{
+    console.log(holidayDate,holidayName, holidayDetails.length)
+    holidayDetails.push({
+      id: holidayDetails.length,
+      holi_name:holidayName,
+      holi_date:holidayDate
+    })
+    setHolidayDetails(holidayDetails.concat())
+    holidayList.push({
+      id: holidayDetails.length,
+      holi_name:holidayName,
+      holi_date:holidayDate
+    })
+    setIsModalVisible(false);
+  }
+
+  const updateHolidayDetails = (e) =>{
+    console.log(e,holidayDetails)
+    const key = holidayDetails.findIndex(
+      (m) => m.id ===e
+    )
+    holidayDetails.splice(key,1)
+    holidayList.splice(key,1)
+  
+  }
+
   return(
     <>
 <div className='container-fluid g-0 postions'>
@@ -305,7 +375,7 @@ function GetSteppers() {
           <div className='col-12 col-md-12'>
             
             <div>
-            <Upload
+            {/* <Upload
                 name="avatar"
                 listType="picture-card"
                 className="avatar-uploader uploaders text-center"
@@ -315,13 +385,26 @@ function GetSteppers() {
                 onChange={handleChange}
               >
                 {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-              </Upload>
+              </Upload> */}
+              <Upload
+               name="avatar"
+               className="avatar-uploader uploaders text-center"
+               showUploadList={false}
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          listType="picture-card"
+          // fileList={fileList}
+          onPreview={(e)=>{console.log(e)}}
+          onChange={handleChange}
+        >
+          {image ? <img src={image} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+        </Upload>
             <label htmlFor=""> Description *</label>
             <TextArea 
               rows={4} 
               id='value' 
               className='text-area' 
               maxLength="1800"
+              value={description}
               onChange={handleWordCount}
             />
             <p className='mt-2 float-end'><span className='text-danger'>{chars_left}</span> - 1800 </p>
@@ -358,6 +441,7 @@ function GetSteppers() {
                     onSelect={(value) => {
                       const timeString = moment(value).format("HH:mm");
                       setStartSelectedTime(timeString)
+                      businessTimeIn=timeString
                     }}
                   />
                   
@@ -380,6 +464,7 @@ function GetSteppers() {
                     onSelect={(value) => {
                       const timeString = moment(value).format("HH:mm");
                       setEndSelectedTime(timeString)
+                      businessTimeOut=timeString
                     }}
                   />
                 </div>
@@ -409,6 +494,7 @@ function GetSteppers() {
                     onSelect={(value) => {
                       const timeString = moment(value).format("HH:mm");
                       setStart1SelectedTime(timeString)
+                      breakTimeIn=timeString
                     }}
                   />
                  <TimePicker 
@@ -430,6 +516,7 @@ function GetSteppers() {
                     onSelect={(value) => {
                       const timeString = moment(value).format("HH:mm");
                       setEnd1SelectedTime(timeString)
+                      breakTimeOut=timeString
                     }}
                   />
                 </div>
@@ -439,13 +526,34 @@ function GetSteppers() {
               <div className='col-12 col-md-6'>
                 <div className='mt-5'>
                   {/* <Link to='/calender'> */}
-                  <Button className='col-12 grey-color mt-1' variant='outlined' endIcon={<AddIcon />} onClick={showModal}>
+                  <div style={{backgroundColor:"#f5f5f5", padding:"5px", borderRadius:'5px'}}>
+                  <Button style={{display:'flex',flex:1, justifyContent:'center'}}  endIcon={<AddIcon />} onClick={showModal}>
                     <Typography style={{textTransform: 'capitalize', fontSize: 12}} className='color-holidays'>Holidays </Typography>
                   </Button>
+                  {
+                      holidayDetails.map((item,index)=>{
+                        return(
+                          <div className="d-flex flex-row" style={{display:"flex",alignItems:'center',  backgroundColor:'#fff', margin:'10px', borderRadius:'10px'}}>
+                            <div style={{justifyContent:'center', alignItems:'center', backgroundColor:'#503a9f', padding:'10px',borderRadius:'10px'}} >
+                              <Typography style={{textTransform: 'capitalize', fontSize: 12, color:'#fff', textAlign:'center'}} >{moment(item.holi_date).format("D")} </Typography>
+                              <Typography style={{textTransform: 'capitalize', fontSize: 10, color:'#fff'}} >{moment(item.holi_date).format("ddd")} </Typography>
+                            </div>
+                            <div style={{display:'flex', flex:1, justifyContent:"space-between", alignItems:'center'}}>
+                            <p style={{marginLeft:'10px',marginTop:'10px'}}>{item.holi_name}</p>
+                            <Button  className='col-1' onClick={()=>{updateHolidayDetails(item.id)}}>
+                            <CloseCircleFilled />
+                              </Button>
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+
           
                   <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                   <div className="site-calendar-demo-card">
-                      <Calendar fullscreen={false} onPanelChange={onPanelChange} />
+                      <Calendar onSelect={(e)=>(setHolidatDate(e))} fullscreen={false} onPanelChange={onPanelChange} />
                       
                     </div>
                     <Form.Item
@@ -458,10 +566,10 @@ function GetSteppers() {
                           },
                         ]}
                       >
-                        <Input  placeholder=' Enter Holiday Name'  className='name' />
+                        <Input onChange={(e)=>{setHolidayName(e.target.value)}} placeholder=' Enter Holiday Name'  className='name' />
                       </Form.Item>
                       <Form.Item>
-                        <Button size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>Add</Button>
+                        <Button onClick={addHoliday} size="small" className='btn-add col-2' type="primary" htmlType="submit" style={{fontSize: 12, textTransform: 'capitalize'}}>Add</Button>
                         <Button onClick={handleCancel} size="small" className='btn-cancel col-2 float-end'  style={{fontSize: 12, textTransform: 'capitalize'}}>Cancel</Button>
                       </Form.Item>
                   </Modal>
@@ -485,7 +593,10 @@ function GetSteppers() {
                       }
                     ]}
                   >
-                  <Input onKeyPress={(event) => {
+                  <Input onChange={(e)=>{ 
+                    setTaxAmount(e.target.value)
+                    taxPercentage=e.target.value
+                  }} onKeyPress={(event) => {
                                             if (!/[0-9]/.test(event.key)) {
                                             event.preventDefault();
                                             }
@@ -505,27 +616,35 @@ function GetSteppers() {
 
 
 const product = [];
-const AnimalProduct = ["Cage", "Dog Food", "Royal Cabin", "Sojos", "Blue Buffalo", "Bentonite Cat Litter", "Josera Active", "Pet House"];
+const AnimalProduct = [];
 
 const selectProduct = products => {
-  console.log("day", products);
-  let P = product
-  let index = P.findIndex(pro => pro === products);
+  console.log(product)
+  console.log("product", products,selectedAnimalProduct);
+  let P = product;
+  let index = P.findIndex(pro => pro === products.categoryId.name);
+  let infoInd = selectedAnimalProduct.findIndex(e=>e === products._id)
+
   if (index > -1) {
+    console.log("remove")
+    selectedAnimalProduct.splice(infoInd,1)
     P.splice(index, 1);
   } else {
-    P.push(product);
+    console.log("add")
+    P.push(products.categoryId.name);
+    selectedAnimalProduct.push(products._id)
   }
 
-  const dayElement = document.getElementById(products);
+  const dayElement = document.getElementById(products.categoryId.name);
   dayElement.classList.toggle("selected-day");
-
   
-  console.log("P", product);
+  console.log("P", product,selectedAnimalProduct);
 };
 
+
+
 const selectedProduct = products => {
-  let index = product.findIndex(pro => products.value === pro);
+  let index = product.findIndex(pro => products.categoryId.name === pro);
 
   console.log(index, "index");
  
@@ -536,12 +655,12 @@ const selectedProduct = products => {
   return (
     <div className='col-12 col-md-6 mt-2'>
       <Button
-        id={products}
+        id={products.categoryId.name}
         onClick={() => selectProduct(products)}
         className="week-days font-size week-btns"
-        key={products}
+        key={products.categoryId.name}
       >
-        {products}
+        {products.categoryId.name}
       </Button>
     </div>
   );
@@ -573,6 +692,9 @@ function handleChange(value) {
 
 function TeamMembers() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const[phoneNo, setPhoneNo] = useState('')
   const [state, setState] = useState('')
   const [city, setCity] = useState('')
   const [zipcode, setZipcode] = useState('')
@@ -627,7 +749,7 @@ function TeamMembers() {
     setCities([])
     setZipcodes([])
     setCity('')
-    setZipcodes('')
+    setZipcode('')
     if(value) {
       let id = states.filter((state) => state.name === value)[0].id
       dispatch(getCities(id)).then((values)=>{
@@ -653,7 +775,14 @@ function TeamMembers() {
     setZipcode(value)
   }
 
-  const showModal = () => {
+  const showModal = (e) => {
+    console.log(e)
+    setName(e?.name)
+setEmail(e?.email)
+setPhoneNo(e?.phone)
+setState(e?.state)
+setCity(e?.city)
+setZipcode(e?.zipCode? e.zipCode:"")
     setIsModalVisible(true);
   };
 
@@ -668,7 +797,18 @@ function TeamMembers() {
   function onSearch(val) {
     console.log('search:', val);
   }
-
+  const listOption=(e) => (
+    <div>
+     <Button onClick={()=>showModal(e)} style={{display:'flex', alignItems:'center'}}> 
+     <EditFilled /> 
+     <p style={{margin:'0px', marginLeft:'5px', color:'#000', fontWeight:'300'}}>Edit</p>
+     </Button>
+     <Button style={{display:'flex', alignItems:'center'}}> 
+       <DeleteFilled style={{color:"red"}} /> 
+       <p style={{margin:'0px', marginLeft:'5px', color:'#000', fontWeight:'300'}}>Delete</p>
+       </Button>
+    </div>
+  );
   return(
     <>
        <div className='container-fluid g-0'>
@@ -679,6 +819,23 @@ function TeamMembers() {
             <Button endIcon={<AddIcon />} className='outline left-text col-4' variant="outlined" color="primary"  onClick={showModal}>
               <Typography className='' style={{textTransform: 'capitalize', fontSize: 12}}>Add a Team member</Typography>
             </Button>
+
+            <List
+          dataSource={teamMembersList}
+          renderItem={item => (
+            <List.Item key={item.id}>
+              <List.Item.Meta
+                avatar={<Avatar src={item.image} />}
+                title={<a href="https://ant.design">{item.name}</a>}
+                description={item.phone}
+              />
+              {/* <div>Content</div> */}
+              <Popover placement="left"  content={listOption(item)}  trigger="click">
+              <Button> <MoreVertIcon style={{color:'#000'}} /></Button>
+              </Popover>
+            </List.Item>
+          )}
+        />
                   <Modal className='modal-radius' centered visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
             <Form
                   
@@ -730,7 +887,7 @@ function TeamMembers() {
                       },
                     ]}
                   >
-                    <Input  prefix={<PersonIcon />} placeholder=' Enter Name'  className='name' />
+                    <Input value={name}  prefix={<PersonIcon />} onChange={(e)=>setName(e.target.value)} placeholder=' Enter Name'  className='name' />
                   </Form.Item>
                   </div>
                   <div className='col-12 col-md-6 mt-5'>
@@ -750,7 +907,7 @@ function TeamMembers() {
                     ]}
                     
                   >
-                    <Input  prefix={<MailFilled />} placeholder=' Enter Email' className='name' />
+                    <Input  prefix={<MailFilled />} value={email} onChange={(e)=>setEmail(e.target.value)} placeholder=' Enter Email' className='name' />
                   </Form.Item>
                    
                   </div>
@@ -777,7 +934,7 @@ function TeamMembers() {
                                                         if (!/[0-9]/.test(event.key)) {
                                                         event.preventDefault();
                                                         }
-                                                    }}  prefix={<PhoneIcon />} placeholder=' Phone No.' className='name' />
+                                                    }}  prefix={<PhoneIcon />} value={phoneNo} onChange={(e)=>setPhoneNo(e.target.value)} placeholder=' Phone No.' className='name' />
                   </Form.Item>
                   </div>
                   <div className='col-12 col-md-6 '>
@@ -1328,7 +1485,28 @@ export default function BusinessAccount() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  useEffect(()=>{
+    console.log("user")
+    allForm().then(res=>{
+      console.log(res)
+      res.filter(val=>{
+        if(val.categoryId.type == 'animal'){
+        console.log(val.categoryId.type)
+        animalName.push(val)
+        }else{
+          AnimalProduct.push(val)
+        }
+      })
 
+    })
+    getTeamMember().then(res=>{
+     res.forEach(e=>{
+       employeeArray.push(e._id)
+       teamMembersList.push(e)
+       
+     })
+    })
+      },[])
   const isStepOptional = (step) => {
     return step === 0 || step === 1 || step === 2 || step === 3;
   };
@@ -1338,8 +1516,27 @@ export default function BusinessAccount() {
   };
 
   const handleNext = () => {
+    
+    console.log(activeStep,moment().format().split('T')[0])
+    if(activeStep==3){
+      console.log(weekday,desc,businessTimeIn,
+        businessTimeOut,
+        breakTimeIn,
+        breakTimeOut,taxPercentage,holidayList,"weekday")
+       let params = { 
+         businessDetails: {businessInfo:desc,daysOpen:weekday,openHrStart:moment().format().split('T')[0]+"T" +businessTimeIn,openHrEnd:moment().format().split('T')[0]+"T" + businessTimeOut,breakTimeStart:moment().format().split('T')[0]+"T"+breakTimeIn,breakTimeEnd:moment().format().split('T')[0]+"T"+breakTimeOut,holidays:holidayList,taxPercentage:taxPercentage, imageUrl: ''},
+         employeeArray: employeeArray,
+         selectedAnimalForms:selectedAnimalInfo,
+         selectedProductForm: selectedAnimalProduct,
+        }
+        console.log(params)
+        uploadSetupWizard(params)
+
+    }
     setActiveStep(activeStep + 1);
     setSkippedSteps(skippedSteps.filter((skipItem) => skipItem !== activeStep));
+   
+      // uploadProfileImage(formData)
   };
 
   const handleBack = () => {
@@ -1462,7 +1659,7 @@ export default function BusinessAccount() {
             )}
 
             {activeStep === steps.length - 1 && (
-              <Link to="/">
+              // <Link to="/">
                 <Button
                       className='mt-5 ms-2 btn-bg col-3'
                   // className={classes.button}
@@ -1472,7 +1669,7 @@ export default function BusinessAccount() {
                 >
                   Finish
                 </Button>
-              </Link>
+              // </Link>
             )}
          
           {isStepOptional(activeStep)  &&  (

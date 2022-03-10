@@ -112,7 +112,7 @@ export default function CreditCard() {
                                     <Checkbox defaultChecked className='checked rows'>Save Card Details</Checkbox>
                                    <div className='top mt-4'>
                                    <h6 className='h6-size'>Business Account &nbsp; &nbsp; &nbsp; <Link to="/pricelist" className='text-black'><i className="fas fa-edit"></i></Link></h6> 
-                                    <h6 className='h6-size'>Professional Package &nbsp; &nbsp; &nbsp; <Link to="/packages" className='text-black'><i className="fas fa-edit"></i></Link> &nbsp; &nbsp; &nbsp;  <Tag className='tags' color="geekblue">$999.9</Tag></h6>
+                                    <h6 className='h6-size'>Professional Package &nbsp; &nbsp; &nbsp; <Link to="/packages" className='text-black'><i className="fas fa-edit"></i></Link> &nbsp; &nbsp; &nbsp;  <Tag className='tags' color="geekblue">$100</Tag></h6>
                                    </div>
                                    <Link to="/registereddetails" className='text-white'>
                                     <Button className='btn-bg mt-4 fonts-sizes' type="primary">BACK</Button></Link> 
